@@ -2,16 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
-		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
-
-		<!-- Note for MacCatalyst:
-		The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
-		When specifying both architectures, use the plural <RuntimeIdentifiers> instead of the singular <RuntimeIdentifier>.
-		The Mac App Store will NOT accept apps with ONLY maccatalyst-arm64 indicated;
-		either BOTH runtimes must be indicated or ONLY macatalyst-x64. -->
-		<!-- For example: <RuntimeIdentifiers>maccatalyst-x64;maccatalyst-arm64</RuntimeIdentifiers> -->
+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>		
 
 		<OutputType>Exe</OutputType>
 		<RootNamespace>FocamapMaui</RootNamespace>
@@ -58,13 +49,7 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-	</ItemGroup>
-
+		
 	<ItemGroup>
 	  <None Remove="Data\" />
 	  <None Remove="MVVM\" />
@@ -76,7 +61,16 @@
 	  <None Remove="Services\" />
 	  <None Remove="Controls\" />
 	  <None Remove="Controls\Resources\" />
+	  <None Remove="Resources\Images\logo.png" />
+	  <None Remove="Components\" />
+	  <None Remove="Components\UI\" />
+	  <None Remove="Resources\Images\email_24.svg" />
+	  <None Remove="Resources\Images\password_24.svg" />
+	  <None Remove="Resources\Fonts\Montserrat-Bold.ttf" />
+	  <None Remove="Resources\Fonts\Montserrat-Regular.ttf" />
+	  <None Remove="Resources\Fonts\Montserrat-SemiBold.ttf" />
 	</ItemGroup>
+
 	<ItemGroup>
 	  <Folder Include="Data\" />
 	  <Folder Include="MVVM\" />
@@ -88,5 +82,30 @@
 	  <Folder Include="Services\" />
 	  <Folder Include="Controls\" />
 	  <Folder Include="Controls\Resources\" />
+	  <Folder Include="Components\" />
+	  <Folder Include="Components\UI\" />
 	</ItemGroup>
+	<ItemGroup>
+	  <BundleResource Include="Resources\Images\logo.png" />
+	  <BundleResource Include="Resources\Images\email_24.svg" />
+	  <BundleResource Include="Resources\Images\password_24.svg" />
+	  <BundleResource Include="Resources\Fonts\Montserrat-Bold.ttf" />
+	  <BundleResource Include="Resources\Fonts\Montserrat-Regular.ttf" />
+	  <BundleResource Include="Resources\Fonts\Montserrat-SemiBold.ttf" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />
+	  <PackageReference Include="DevExpress.Maui.Editors" Version="23.1.8" />	
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-ios'">
+	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />
+	  <PackageReference Include="DevExpress.Maui.Editors" Version="23.1.8" />	 
+	</ItemGroup>
+
 </Project>
