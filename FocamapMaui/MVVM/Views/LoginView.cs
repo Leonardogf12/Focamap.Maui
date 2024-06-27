@@ -1,4 +1,6 @@
 ﻿using FocamapMaui.Components.UI;
+using FocamapMaui.Controls.Extensions.Animations;
+using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 
@@ -10,22 +12,25 @@ namespace FocamapMaui.MVVM.Views
 		{
 			BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
-			Content = BuildLoginView();
+			Content = BuildLoginView;
 		}
 
         #region UI
 
-        private View BuildLoginView()
+        private static View BuildLoginView
         {
-            var grid = CreateMainGrid();
+            get
+            {
+                var grid = CreateMainGrid();
 
-            CreateLogo(grid);
+                CreateLogo(grid);
 
-            CreateInputs(grid);
+                CreateInputs(grid);
 
-            CreateButtons(grid);
+                CreateButtons(grid);
 
-            return grid;
+                return grid;
+            }
         }
 
         private static Grid CreateMainGrid()
@@ -73,7 +78,7 @@ namespace FocamapMaui.MVVM.Views
 
             var stackButtons = GetStackLayoutBasic();
 
-            var enterButton = new ButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");
+            var enterButton = new ButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");            
 
             stackButtons.Children.Add(enterButton);
 
@@ -82,18 +87,20 @@ namespace FocamapMaui.MVVM.Views
             stackButtons.Children.Add(seeMapButton);            
 
             var stackLabelButtons = GetStackLayoutBasic(spacing: 5);
-
-            var forgotPasswordLabel = GetLabelBasic(text: "Esqueceu a senha?");
+           
+            var forgotPasswordLabel = GetLabelBasic(text: "Esqueceu sua senha?");
+            forgotPasswordLabel.AddTapGesture(ForgotPasswordTapGestureRecognizer_Tapped);
             stackLabelButtons.Children.Add(forgotPasswordLabel);
 
-            var signUpLabel = GetLabelBasic(text: "Cadastrar-se"); 
-            stackLabelButtons.Children.Add(signUpLabel);
+            var registerLabel = GetLabelBasic(text: "Cadastrar-se");
+            registerLabel.AddTapGesture(RegisterTapGestureRecognizer_Tapped);
+            stackLabelButtons.Children.Add(registerLabel);
 
             mainStackButtons.Children.Add(stackButtons);
             mainStackButtons.Children.Add(stackLabelButtons);
             
             grid.AddWithSpan(mainStackButtons, 2);            
-        }        
+        }
         
         public static StackLayout GetStackLayoutBasic(int spacing = 15, bool useMargin = false)
         {
@@ -114,6 +121,30 @@ namespace FocamapMaui.MVVM.Views
                 FontSize = 16,
                 HorizontalOptions = LayoutOptions.Center
             };
+        }
+
+        #endregion
+
+        #region Events
+
+        private static async void ForgotPasswordTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if(sender is View element)
+            {
+               await element.FadeAnimation();
+
+               //todo - redirect to ForgotPasswordView;
+            }
+        }
+
+        private static async void RegisterTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if (sender is View element)
+            {
+                await element.FadeAnimation();
+
+                //todo - redirect to RegisterView;
+            }
         }
 
         #endregion

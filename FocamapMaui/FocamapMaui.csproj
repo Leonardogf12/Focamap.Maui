@@ -69,6 +69,9 @@
 	  <None Remove="Resources\Fonts\Montserrat-Bold.ttf" />
 	  <None Remove="Resources\Fonts\Montserrat-Regular.ttf" />
 	  <None Remove="Resources\Fonts\Montserrat-SemiBold.ttf" />
+	  <None Remove="Controls\Extensions\" />
+	  <None Remove="Controls\Extensions\Events\" />
+	  <None Remove="Controls\Extensions\Animations\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -84,6 +87,9 @@
 	  <Folder Include="Controls\Resources\" />
 	  <Folder Include="Components\" />
 	  <Folder Include="Components\UI\" />
+	  <Folder Include="Controls\Extensions\" />
+	  <Folder Include="Controls\Extensions\Events\" />
+	  <Folder Include="Controls\Extensions\Animations\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\logo.png" />
