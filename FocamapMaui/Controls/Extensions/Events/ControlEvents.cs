@@ -9,10 +9,9 @@
                 NumberOfTapsRequired = 1
             };
 
-            tapGestureRecognizer.Tapped += tappedEventHandler;
-
+            tapGestureRecognizer.Tapped += tappedEventHandler;                      
             element.GestureRecognizers.Add(tapGestureRecognizer);
-        }       
+        }
     }
 }
 
