@@ -72,6 +72,9 @@
 	  <None Remove="Controls\Extensions\" />
 	  <None Remove="Controls\Extensions\Events\" />
 	  <None Remove="Controls\Extensions\Animations\" />
+	  <None Remove="Services\Navigation\" />
+	  <None Remove="Components\UI\Basics\" />
+	  <None Remove="Resources\Images\back_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -90,6 +93,8 @@
 	  <Folder Include="Controls\Extensions\" />
 	  <Folder Include="Controls\Extensions\Events\" />
 	  <Folder Include="Controls\Extensions\Animations\" />
+	  <Folder Include="Services\Navigation\" />
+	  <Folder Include="Components\UI\Basics\" />
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\logo.png" />
@@ -98,6 +103,7 @@
 	  <BundleResource Include="Resources\Fonts\Montserrat-Bold.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-Regular.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-SemiBold.ttf" />
+	  <BundleResource Include="Resources\Images\back_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

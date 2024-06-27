@@ -1,4 +1,6 @@
 ﻿using DevExpress.Maui;
+using FocamapMaui.MVVM.Views;
+using FocamapMaui.Services.Navigation;
 using Microsoft.Extensions.Logging;
 
 namespace FocamapMaui;
@@ -17,6 +19,13 @@ public static class MauiProgram
                 fonts.AddFont("Montserrat-Bold.ttf", "MontserratBold");
                 fonts.AddFont("Montserrat-SemiBold.ttf", "MontserratSemibold");               
 			});
+
+
+		builder.Services.AddTransient<LoginView>();
+        builder.Services.AddTransient<RegisterView>();
+
+
+        builder.Services.AddSingleton<INavigationService, NavigationService>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

@@ -1,10 +1,14 @@
-﻿namespace FocamapMaui;
+﻿using FocamapMaui.MVVM.Views;
+
+namespace FocamapMaui;
 
 public partial class AppShell : Shell
 {
 	public AppShell()
 	{
 		InitializeComponent();
+
+		Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
 	}
 }
 

@@ -1,15 +1,25 @@
 ﻿using FocamapMaui.Components.UI;
+using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
 {
     public class LoginView : ContentPageBase
-	{        
-        public LoginView()
+	{
+        #region Properties
+
+        private readonly INavigationService _navigationService;
+
+        #endregion
+
+        public LoginView(INavigationService navigationService)
 		{
+            _navigationService = navigationService;
+
 			BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
 			Content = BuildLoginView;
@@ -17,7 +27,7 @@ namespace FocamapMaui.MVVM.Views
 
         #region UI
 
-        private static View BuildLoginView
+        private View BuildLoginView
         {
             get
             {
@@ -30,7 +40,7 @@ namespace FocamapMaui.MVVM.Views
                 CreateButtons(grid);
 
                 return grid;
-            }
+            }            
         }
 
         private static Grid CreateMainGrid()
@@ -61,7 +71,7 @@ namespace FocamapMaui.MVVM.Views
 
         private static void CreateInputs(Grid grid)
         {            
-            var stackInputs = GetStackLayoutBasic(spacing: 20, useMargin: true);
+            var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20, useMargin: true);
 
             var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
             stackInputs.Children.Add(emailInput);
@@ -72,28 +82,30 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(stackInputs, 1);
         }
 
-        private static void CreateButtons(Grid grid)
+        private void CreateButtons(Grid grid)
         {            
-            var mainStackButtons = GetStackLayoutBasic(spacing: 20);
+            var mainStackButtons = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
-            var stackButtons = GetStackLayoutBasic();
+            var stackButtons = CommomBasic.GetStackLayoutBasic();
 
-            var enterButton = new ButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");            
+            var enterButton = new PrimaryButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");            
 
             stackButtons.Children.Add(enterButton);
 
-            var seeMapButton = new ButtonCustom(text: "Ver Mapa", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
+            var seeMapButton = new PrimaryButtonCustom(text: "Ver Mapa", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
 
             stackButtons.Children.Add(seeMapButton);            
 
-            var stackLabelButtons = GetStackLayoutBasic(spacing: 5);
-           
+            var stackLabelButtons = CommomBasic.GetStackLayoutBasic(spacing: 5);
+          
             var forgotPasswordLabel = GetLabelBasic(text: "Esqueceu sua senha?");
-            forgotPasswordLabel.AddTapGesture(ForgotPasswordTapGestureRecognizer_Tapped);
+            forgotPasswordLabel.AddTapGesture(ForgotPasswordLabelTapGestureRecognizer_Tapped);
+
             stackLabelButtons.Children.Add(forgotPasswordLabel);
 
             var registerLabel = GetLabelBasic(text: "Cadastrar-se");
             registerLabel.AddTapGesture(RegisterTapGestureRecognizer_Tapped);
+
             stackLabelButtons.Children.Add(registerLabel);
 
             mainStackButtons.Children.Add(stackButtons);
@@ -101,33 +113,33 @@ namespace FocamapMaui.MVVM.Views
             
             grid.AddWithSpan(mainStackButtons, 2);            
         }
-        
-        public static StackLayout GetStackLayoutBasic(int spacing = 15, bool useMargin = false)
-        {
-            return new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                Spacing = spacing,
-                Margin = useMargin ? new Thickness(0, 0, 0, 50) : 0
-            };
-        }
 
-        public static Label GetLabelBasic(string text, string textColor = "CLWhite")
+        private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if (sender is View element)
+            {
+                await element.FadeAnimation();
+
+                //todo - redirect to ForgotPasswordView;
+            }
+        }
+        
+        public static Label GetLabelBasic(string text)
         {
             return new Label
             {
                 Text = text,
-                TextColor = ControlResources.GetResource<Color>(textColor),
+                TextColor = ControlResources.GetResource<Color>("CLWhite"),
                 FontSize = 16,
                 HorizontalOptions = LayoutOptions.Center
-            };
+            };           
         }
-
+       
         #endregion
 
         #region Events
 
-        private static async void ForgotPasswordTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        private async void ForgotPasswordTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
             if(sender is View element)
             {
@@ -136,16 +148,21 @@ namespace FocamapMaui.MVVM.Views
                //todo - redirect to ForgotPasswordView;
             }
         }
-
-        private static async void RegisterTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+      
+        private async void RegisterTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
             if (sender is View element)
             {
                 await element.FadeAnimation();
 
-                //todo - redirect to RegisterView;
+                await _navigationService.NavigationWithParameter<RegisterView>();
             }
         }
+
+        #endregion
+
+        #region Actions
+        
 
         #endregion
     }

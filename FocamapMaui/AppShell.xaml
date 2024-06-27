@@ -4,13 +4,13 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:FocamapMaui"
+    xmlns:views="clr-namespace:FocamapMaui.MVVM.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="FocamapMaui">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <ShellContent       
+        ContentTemplate="{DataTemplate views:LoginView}"
+        Route="LoginView" />
 
 </Shell>
 
