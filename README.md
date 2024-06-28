@@ -38,7 +38,8 @@
 
 ### 6) Hora de criar a view que vai renderizar o mapa.
 * <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/Views/HomeMapView.cs">View</a>
-* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/ViewModels/HomeMapViewModel.cs">ViewModel</a> 
+* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/ViewModels/HomeMapViewModel.cs">ViewModel</a>
+* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/Controls/Maps/OnMapReadyCallback.cs">OnMapReadyCallback</a>
 
 
 
