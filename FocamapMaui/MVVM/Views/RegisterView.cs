@@ -6,6 +6,7 @@ using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
 using DevExpress.Maui.Editors;
+using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -13,14 +14,18 @@ namespace FocamapMaui.MVVM.Views
 	{
         #region Properties
 
+        private readonly INavigationService _navigationService;
+
         public RegisterViewModel ViewModel = new();
 
         public ComboboxEditCustom DropdownRegions;
 
         #endregion
 
-        public RegisterView()
+        public RegisterView(INavigationService navigationService)
 		{
+            _navigationService = navigationService;
+
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
             Content = BuildRegisterView;
@@ -83,15 +88,7 @@ namespace FocamapMaui.MVVM.Views
             icon.AddTapGesture(BackButtonTapGestureRecognizer_Tapped);
             gridHeader.AddWithSpan(icon, 0, 0);
 
-            var title = new Label
-            {
-                Text = "Registro",
-                FontSize = 18,
-                FontFamily = "MontserratSemibold",
-                TextColor = ControlResources.GetResource<Color>("CLWhite"),
-                HorizontalTextAlignment = TextAlignment.Center,
-                VerticalOptions = LayoutOptions.Center
-            };
+            var title = CommomBasic.GetLabelTitleBasic(title: "Registro");
             gridHeader.AddWithSpan(title, 0, 1);
 
             var empty = new StackLayout();
@@ -104,7 +101,7 @@ namespace FocamapMaui.MVVM.Views
         {
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
-            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
             emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             stackInputs.Children.Add(emailInput);
 
@@ -125,9 +122,10 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(stackInputs, 1);
         }
        
-        private static void CreateButtons(Grid grid)
+        private void CreateButtons(Grid grid)
         {
             var enterButton = new PrimaryButtonCustom(text: "Registrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");
+            enterButton.Clicked += EnterButton_Clicked;
 
             grid.AddWithSpan(enterButton, 2);
         }
@@ -136,13 +134,15 @@ namespace FocamapMaui.MVVM.Views
 
         #region Events
 
+        private async void EnterButton_Clicked(object sender, EventArgs e) => await DisplayAlert("Clicou", "Clicou em Registrar", "OK");
+       
         private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
             if (sender is Image element)
             {
                 await element.FadeAnimation();
 
-                await Shell.Current.Navigation.PopAsync();
+                await _navigationService.GoBack();                
             }
         }
 

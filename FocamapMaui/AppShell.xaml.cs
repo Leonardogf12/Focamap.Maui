@@ -9,6 +9,7 @@ public partial class AppShell : Shell
 		InitializeComponent();
 
 		Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
-	}
+        Routing.RegisterRoute(nameof(ForgotPasswordView), typeof(ForgotPasswordView));
+    }
 }
 

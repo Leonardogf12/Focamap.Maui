@@ -12,7 +12,7 @@ namespace FocamapMaui.Components.UI
             HeightRequest = 45;
             CornerRadius = 30;
             FontSize = 16;           
-            FontFamily = "MontserratSemibold";
+            FontFamily = "MontserratSemibold";           
         }
 	}
 }

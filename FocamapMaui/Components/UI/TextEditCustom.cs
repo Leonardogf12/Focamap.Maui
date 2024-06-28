@@ -5,12 +5,13 @@ namespace FocamapMaui.Components.UI
 {
     public class TextEditCustom : TextEdit
 	{
-        public TextEditCustom(string icon = "", string placeholder = "", char maskPlaceholder = new(), string mask = null)
+        public TextEditCustom(string icon = "", string placeholder = "", Keyboard keyboard = null, char maskPlaceholder = new(), string mask = null)
         {       
             StartIcon = ImageSource.FromFile(icon);
             MaskPlaceholderChar = maskPlaceholder;
             Mask = mask;
-            PlaceholderText = placeholder;           
+            PlaceholderText = placeholder;
+            Keyboard = keyboard ?? Keyboard.Default;
             IsLabelFloating = false;
             LabelText = null;
             IconIndent = 10;           

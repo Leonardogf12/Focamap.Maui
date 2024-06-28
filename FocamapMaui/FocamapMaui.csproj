@@ -32,9 +32,7 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
-	<ItemGroup>
-	  <MauiImage Remove="Resources\Images\email_24.svg" />
-	</ItemGroup>
+	
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
@@ -64,11 +62,13 @@
 	  <None Remove="Services\" />
 	  <None Remove="Controls\" />
 	  <None Remove="Controls\Resources\" />
-	  <None Remove="Resources\Images\logo.png" />
 	  <None Remove="Components\" />
 	  <None Remove="Components\UI\" />
+	  <None Remove="Resources\Images\logo.png" />
 	  <None Remove="Resources\Images\email_24.svg" />
 	  <None Remove="Resources\Images\password_24.svg" />
+	  <None Remove="Resources\Images\back_24.svg" />
+	  <None Remove="Resources\Images\menu_24.svg" />
 	  <None Remove="Resources\Fonts\Montserrat-Bold.ttf" />
 	  <None Remove="Resources\Fonts\Montserrat-Regular.ttf" />
 	  <None Remove="Resources\Fonts\Montserrat-SemiBold.ttf" />
@@ -77,8 +77,6 @@
 	  <None Remove="Controls\Extensions\Animations\" />
 	  <None Remove="Services\Navigation\" />
 	  <None Remove="Components\UI\Basics\" />
-	  <None Remove="Resources\Images\back_24.svg" />
-	  <None Remove="Resources\Images\menu_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -100,12 +98,14 @@
 	  <Folder Include="Services\Navigation\" />
 	  <Folder Include="Components\UI\Basics\" />
 	</ItemGroup>
+
 	<ItemGroup>
-	  <BundleResource Include="Resources\Images\logo.png" />
-	  <BundleResource Include="Resources\Images\password_24.svg" />
-	  <BundleResource Include="Resources\Fonts\Montserrat-Bold.ttf" />
+      <BundleResource Include="Resources\Fonts\Montserrat-Bold.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-Regular.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-SemiBold.ttf" />
+	  <BundleResource Include="Resources\Images\logo.png" />
+	  <BundleResource Include="Resources\Images\email_24.svg" />	 
+	  <BundleResource Include="Resources\Images\password_24.svg" />
 	  <BundleResource Include="Resources\Images\back_24.svg" />
 	  <BundleResource Include="Resources\Images\menu_24.svg" />
 	</ItemGroup>
@@ -124,7 +124,4 @@
 	  <PackageReference Include="DevExpress.Maui.Editors" Version="23.1.8" />	 
 	</ItemGroup>
 
-	<ItemGroup>
-	  <EmbeddedResource Include="Resources\Images\email_24.svg" />
-	</ItemGroup>
 </Project>

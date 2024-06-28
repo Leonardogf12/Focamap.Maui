@@ -79,7 +79,7 @@ namespace FocamapMaui.MVVM.Views
         {            
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20, useMargin: true);
 
-            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
             emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             stackInputs.Children.Add(emailInput);
            
@@ -96,11 +96,12 @@ namespace FocamapMaui.MVVM.Views
 
             var stackButtons = CommomBasic.GetStackLayoutBasic();
 
-            var enterButton = new PrimaryButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");            
-
+            var enterButton = new PrimaryButtonCustom(text: "Entrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");
+            enterButton.Clicked += EnterButton_Clicked;
             stackButtons.Children.Add(enterButton);
 
             var seeMapButton = new PrimaryButtonCustom(text: "Ver Mapa", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
+            seeMapButton.Clicked += SeeMapButton_Clicked;
 
             stackButtons.Children.Add(seeMapButton);            
 
@@ -121,17 +122,7 @@ namespace FocamapMaui.MVVM.Views
             
             grid.AddWithSpan(mainStackButtons, 2);            
         }
-
-        private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-        {
-            if (sender is View element)
-            {
-                await element.FadeAnimation();
-
-                //todo - redirect to ForgotPasswordView;
-            }
-        }
-        
+       
         public static Label GetLabelBasic(string text)
         {
             return new Label
@@ -142,21 +133,31 @@ namespace FocamapMaui.MVVM.Views
                 HorizontalOptions = LayoutOptions.Center
             };           
         }
-       
+
         #endregion
 
         #region Events
 
-        private async void ForgotPasswordTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        private async void EnterButton_Clicked(object sender, EventArgs e)
         {
-            if(sender is View element)
-            {
-               await element.FadeAnimation();
+            await DisplayAlert("Clicou", "Clicou em Entrar", "OK");
+        }
 
-               //todo - redirect to ForgotPasswordView;
+        private async void SeeMapButton_Clicked(object sender, EventArgs e)
+        {
+            await DisplayAlert("Clicou", "Clicou em Ver Mapa", "OK");
+        }
+
+        private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if (sender is View element)
+            {
+                await element.FadeAnimation();
+
+                await _navigationService.NavigationWithParameter<ForgotPasswordView>();
             }
         }
-      
+
         private async void RegisterTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
             if (sender is View element)
@@ -171,7 +172,6 @@ namespace FocamapMaui.MVVM.Views
 
         #region Actions
         
-
         #endregion
     }
 }

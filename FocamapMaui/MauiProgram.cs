@@ -21,11 +21,13 @@ public static class MauiProgram
                 fonts.AddFont("Montserrat-SemiBold.ttf", "MontserratSemibold");               
 			});
 
-
-		builder.Services.AddTransient<LoginView>();
+        builder.Services.AddTransient<LoginView>();
         builder.Services.AddTransient<RegisterView>();
+        builder.Services.AddTransient<ForgotPasswordView>();
 
-		builder.Services.AddTransient<RegisterViewModel>();
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<RegisterViewModel>();
+
 
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
