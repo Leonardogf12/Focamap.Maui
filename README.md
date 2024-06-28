@@ -12,23 +12,22 @@
      .UseMauiMaps()
      
 ### 2) Em seu projeto NET MAUI vá para Platforms/Android/Android_Manifest.xml.
-#### Dentro da tag <application> escreva o meta-data para referenciar a Key do Projeto criado no Google Cloud:
-     <application android:allowBackup="true" android:icon="@mipmap/appicon" android:roundIcon="@mipmap/appicon_round" android:supportsRtl="true">
-            <meta-data android:name="com.google.android.geo.API_KEY" android:value=“API_KEY_DO_PROJETO_GOOGLECLOUD” />
-            <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-   	 </application>
+#### Dentro da tag *application* escreva os meta-datas para referenciar a Key do Projeto criado no Google Cloud:  
+     <meta-data android:name="com.google.android.geo.API_KEY" android:value=“API_KEY_DO_PROJETO_GOOGLECLOUD” />
+     <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+   	
 
 ### 3) Ainda no arquivo Android_Manifest.xml, defina as seguintes permissões. 
 #### Essas permissões garantem acesso a localização do usuário:
-     	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-  	  	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-     	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 ### 4) Vá até a pasta Resources da raiz do projeto NomeProjeto/Resources/Maps
 #### Crie uma pasta onde ficará os temas do mapa. Exemplo: Resources/Maps.
      	
 ### 5) Abra o site que gera o tema modificado do maps: 
-       https://mapstyle.withgoogle.com/
+     https://mapstyle.withgoogle.com/
 #### Caso o link nao funcione, pesquise no google por algo como: 
      gerar temas google maps personalizado android json
 #### 5.1 Escolha o tema, gere e copie o json.
