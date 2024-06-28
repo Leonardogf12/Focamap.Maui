@@ -33,6 +33,9 @@
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
 	<ItemGroup>
+	  <MauiImage Remove="Resources\Images\email_24.svg" />
+	</ItemGroup>
+	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
@@ -75,6 +78,7 @@
 	  <None Remove="Services\Navigation\" />
 	  <None Remove="Components\UI\Basics\" />
 	  <None Remove="Resources\Images\back_24.svg" />
+	  <None Remove="Resources\Images\menu_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -98,12 +102,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <BundleResource Include="Resources\Images\logo.png" />
-	  <BundleResource Include="Resources\Images\email_24.svg" />
 	  <BundleResource Include="Resources\Images\password_24.svg" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-Bold.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-Regular.ttf" />
 	  <BundleResource Include="Resources\Fonts\Montserrat-SemiBold.ttf" />
 	  <BundleResource Include="Resources\Images\back_24.svg" />
+	  <BundleResource Include="Resources\Images\menu_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -120,4 +124,7 @@
 	  <PackageReference Include="DevExpress.Maui.Editors" Version="23.1.8" />	 
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Images\email_24.svg" />
+	</ItemGroup>
 </Project>

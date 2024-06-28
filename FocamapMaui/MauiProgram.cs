@@ -1,4 +1,5 @@
 ﻿using DevExpress.Maui;
+using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.MVVM.Views;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Extensions.Logging;
@@ -24,6 +25,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LoginView>();
         builder.Services.AddTransient<RegisterView>();
 
+		builder.Services.AddTransient<RegisterViewModel>();
 
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
