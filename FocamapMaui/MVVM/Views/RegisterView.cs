@@ -4,16 +4,28 @@ using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.MVVM.ViewModels;
+using DevExpress.Maui.Editors;
 
 namespace FocamapMaui.MVVM.Views
 {
     public class RegisterView : ContentPageBase
 	{
-		public RegisterView()
+        #region Properties
+
+        public RegisterViewModel ViewModel = new();
+
+        public ComboboxEditCustom DropdownRegions;
+
+        #endregion
+
+        public RegisterView()
 		{
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
             Content = BuildRegisterView;
+
+            BindingContext = ViewModel;
         }
 
         #region UI
@@ -88,22 +100,31 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(gridHeader);
         }
 
-        private static void CreateInputs(Grid grid)
+        private void CreateInputs(Grid grid)
         {
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
             var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             stackInputs.Children.Add(emailInput);
 
             var passwordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
+            passwordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password));
             stackInputs.Children.Add(passwordInput);
 
             var repasswordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Repita a senha");
+            repasswordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.RepeatPassword));
             stackInputs.Children.Add(repasswordInput);
+
+            DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
+            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.ListRegions));
+            DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged;
+
+            stackInputs.Children.Add(DropdownRegions);
 
             grid.AddWithSpan(stackInputs, 1);
         }
-
+       
         private static void CreateButtons(Grid grid)
         {
             var enterButton = new PrimaryButtonCustom(text: "Registrar", textColor: "CLPrimary", backgroundColor: "CLPrimaryOrange");
@@ -123,6 +144,11 @@ namespace FocamapMaui.MVVM.Views
 
                 await Shell.Current.Navigation.PopAsync();
             }
+        }
+
+        private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e)
+        {
+            DropdownRegions.Unfocus();
         }
 
         #endregion

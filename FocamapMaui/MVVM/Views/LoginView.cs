@@ -4,7 +4,9 @@ using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Navigation;
+using DevExpress.Maui.Editors;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -13,6 +15,8 @@ namespace FocamapMaui.MVVM.Views
         #region Properties
 
         private readonly INavigationService _navigationService;
+
+        public LoginViewModel ViewModel = new();
 
         #endregion
 
@@ -23,6 +27,8 @@ namespace FocamapMaui.MVVM.Views
 			BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
 			Content = BuildLoginView;
+
+            BindingContext = ViewModel;
 		}
 
         #region UI
@@ -69,14 +75,16 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(logo);
         }
 
-        private static void CreateInputs(Grid grid)
+        private void CreateInputs(Grid grid)
         {            
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20, useMargin: true);
 
             var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             stackInputs.Children.Add(emailInput);
            
             var passwordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
+            passwordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password));
             stackInputs.Children.Add(passwordInput);
             
             grid.AddWithSpan(stackInputs, 1);
