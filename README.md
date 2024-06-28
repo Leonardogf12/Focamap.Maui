@@ -17,7 +17,7 @@
      <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
    	
 
-### 3) Ainda no arquivo Android_Manifest.xml, defina as seguintes permissões. 
+### 3) Ainda no arquivo Android_Manifest.xml, defina as permissões abaixo. 
 #### Essas permissões garantem acesso a localização do usuário:
      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
