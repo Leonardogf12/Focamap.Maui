@@ -1,6 +1,5 @@
-﻿using System.Reflection;
-using Android.Gms.Maps;
-using Android.Gms.Maps.Model;
+﻿using Android.Gms.Maps;
+using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
@@ -11,7 +10,7 @@ using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.Views
 {
-	public class HomeMapView : ContentPageBase
+    public class HomeMapView : ContentPageBase
 	{
         #region Properties
 
@@ -30,12 +29,13 @@ namespace FocamapMaui.MVVM.Views
 			BindingContext = ViewModel;
         }
 
+        #region UI
 
-		public View BuildHomeMapView
-		{
-			get
-			{
-				var grid = new Grid();
+        public View BuildHomeMapView
+        {
+            get
+            {
+                var grid = new Grid();
 
                 map = new Map
                 {
@@ -53,7 +53,33 @@ namespace FocamapMaui.MVVM.Views
 
                 return grid;
             }
-		}
+        }
+
+        private Pin FindPinNearClick(Location position)
+        {
+            // Define a distância máxima para considerar que o clique foi em cima de um pin
+            double toleranceInMeters = 0.05; //50 Metros
+
+            // Percorre todos os pins no ViewModel
+            foreach (var pin in ViewModel.PinsList)
+            {
+                // Calcula a distância entre o clique (position) e o pin atual
+                double distance = Location.CalculateDistance(pin.Location, position, DistanceUnits.Kilometers);
+
+                // Se a distância for menor que a tolerância, retorna o pin
+                if (distance <= toleranceInMeters)
+                {
+                    return pin;
+                }
+            }
+
+            // Retorna null se nenhum pin estiver próximo ao clique
+            return null;
+        }
+
+        #endregion
+
+        #region Events
 
         private void Map_MapClicked(object sender, MapClickedEventArgs e)
         {
@@ -83,28 +109,7 @@ namespace FocamapMaui.MVVM.Views
             ViewModel.UpdateMapPins();
         }
 
-        private Pin FindPinNearClick(Location position)
-        {
-            // Define a distância máxima para considerar que o clique foi em cima de um pin
-            double toleranceInMeters = 0.05; //50 Metros
-
-            // Percorre todos os pins no ViewModel
-            foreach (var pin in ViewModel.PinsList)
-            {
-                // Calcula a distância entre o clique (position) e o pin atual
-                double distance = Location.CalculateDistance(pin.Location, position, DistanceUnits.Kilometers);
-
-                // Se a distância for menor que a tolerância, retorna o pin
-                if (distance <= toleranceInMeters)
-                {
-                    return pin;
-                }
-            }
-
-            // Retorna null se nenhum pin estiver próximo ao clique
-            return null; 
-        }
-
+        #endregion
 
         #region Actions
 
@@ -117,9 +122,10 @@ namespace FocamapMaui.MVVM.Views
             ViewModel.UpdateMapPins();
         }
 
+        // Handler para nao deixar o mapa Nulo apos a construcao da pagina.
         protected override void OnHandlerChanged()
         {
-            // Handler para nao deixar o mapa Null apos a construcao da pagina.
+            
             base.OnHandlerChanged();
 
 #if IOS
@@ -127,35 +133,13 @@ namespace FocamapMaui.MVVM.Views
 
 #elif ANDROID
 
-            var mapHandler = map.Handler as MapHandler;
-
-            if (mapHandler != null && mapHandler.PlatformView is MapView mapView)
+            if (map.Handler is MapHandler mapHandler && mapHandler.PlatformView is MapView mapView)
             {
                 mapView.GetMapAsync(new OnMapReadyCallback());
             }
 #endif
         }
-
-        private class OnMapReadyCallback : Java.Lang.Object, IOnMapReadyCallback
-        {
-            public void OnMapReady(GoogleMap googleMap)
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-
-                // Busca o tema direto da pasta GoogleMapsSampleMaui.Resources.Maps.Styles
-                using var stream = assembly.GetManifestResourceStream("FocamapMaui.Resources.Maps.night_map_style.json");
-
-                string json = string.Empty;
-                using (var reader = new StreamReader(stream!))
-                {
-                    json = reader.ReadToEnd();
-                }
-
-                // Aplica o tema.
-                googleMap.SetMapStyle(new MapStyleOptions(json));
-            }
-        }
-
+        
         #endregion
     }
 }

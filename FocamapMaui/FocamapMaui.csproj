@@ -80,6 +80,7 @@
 	  <None Remove="Resources\Maps\" />
 	  <None Remove="Resources\Maps\night_map_style.json" />
 	  <None Remove="Resources\Maps\dark_map_style.json" />
+	  <None Remove="Controls\Maps\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -101,6 +102,7 @@
 	  <Folder Include="Services\Navigation\" />
 	  <Folder Include="Components\UI\Basics\" />
 	  <Folder Include="Resources\Maps\" />
+	  <Folder Include="Controls\Maps\" />
 	</ItemGroup>
 
 	<ItemGroup>
