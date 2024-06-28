@@ -29,17 +29,17 @@
      	
 ### 5) Abra o site que gera o tema modificado do maps: 
        https://mapstyle.withgoogle.com/
-#### caso o link nao funcione, pesquise no google por algo como: 
+#### Caso o link nao funcione, pesquise no google por algo como: 
      gerar temas google maps personalizado android json
 #### 5.1 Escolha o tema, gere e copie o json.
 #### 5.2 Dentro da pasta que vc criou no passo 4 gere um arquivo .json, Exemplo: night_map_style.json e Cole o tema que gerou.
 #### Voce terá algo como: 
-#### <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/Resources/Maps/night_map_style.json">JSON</a>
+* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/Resources/Maps/night_map_style.json">JSON</a>
 #### 5.3 Lembre-se de definir o arquivo como EmbeddedResource.
 
 ### 6) Hora de criar a view que vai renderizar o mapa.
-#### <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/Views/HomeMapView.cs">View</a>
-#### <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/ViewModels/HomeMapViewModel.cs">ViewModel</a> 
+* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/Views/HomeMapView.cs">View</a>
+* <a href="https://github.com/Leonardogf12/Focamap.Maui/blob/main/FocamapMaui/MVVM/ViewModels/HomeMapViewModel.cs">ViewModel</a> 
 
 
 
