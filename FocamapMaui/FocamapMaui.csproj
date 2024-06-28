@@ -77,6 +77,9 @@
 	  <None Remove="Controls\Extensions\Animations\" />
 	  <None Remove="Services\Navigation\" />
 	  <None Remove="Components\UI\Basics\" />
+	  <None Remove="Resources\Maps\" />
+	  <None Remove="Resources\Maps\night_map_style.json" />
+	  <None Remove="Resources\Maps\dark_map_style.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -97,6 +100,7 @@
 	  <Folder Include="Controls\Extensions\Animations\" />
 	  <Folder Include="Services\Navigation\" />
 	  <Folder Include="Components\UI\Basics\" />
+	  <Folder Include="Resources\Maps\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -114,6 +118,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="8.0.60" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />
@@ -124,4 +129,8 @@
 	  <PackageReference Include="DevExpress.Maui.Editors" Version="23.1.8" />	 
 	</ItemGroup>
 
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\Maps\dark_map_style.json" />
+	  <EmbeddedResource Include="Resources\Maps\night_map_style.json" />
+	</ItemGroup>
 </Project>

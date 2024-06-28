@@ -140,12 +140,12 @@ namespace FocamapMaui.MVVM.Views
 
         private async void EnterButton_Clicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Clicou", "Clicou em Entrar", "OK");
+            await _navigationService.NavigationWithParameter<HomeMapView>();            
         }
 
         private async void SeeMapButton_Clicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Clicou", "Clicou em Ver Mapa", "OK");
+            await _navigationService.NavigationWithParameter<HomeMapView>();
         }
 
         private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)

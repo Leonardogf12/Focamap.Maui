@@ -13,7 +13,8 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.UseDevExpress()		
+			.UseDevExpress()
+			.UseMauiMaps()
 			.ConfigureFonts(fonts =>
 			{
                 fonts.AddFont("Montserrat-Regular.ttf", "MontserratRegular");
