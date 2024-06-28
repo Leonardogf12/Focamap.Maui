@@ -14,16 +14,17 @@ namespace FocamapMaui.Components.UI
             IconIndent = 10;           
             HeightRequest = 55;
             CornerRadius = 10;
-            FocusedBorderColor = Colors.Gray;
+            FocusedBorderThickness = 1;
+            IconVerticalAlignment = LayoutAlignment.Center;
+            TextVerticalAlignment = TextAlignment.Center;
             BorderColor = Colors.Transparent;
+            FocusedBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");           
             BackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
             PlaceholderColor = ControlResources.GetResource<Color>("CLTertiary");
             TextColor = ControlResources.GetResource<Color>("CLWhite");
             CursorColor = ControlResources.GetResource<Color>("CLWhite");
             ClearIconColor = ControlResources.GetResource<Color>("CLGray");
-            IconColor = ControlResources.GetResource<Color>("CLWhite");
-            IconVerticalAlignment = LayoutAlignment.Center;
-            TextVerticalAlignment = TextAlignment.Center;
+            IconColor = ControlResources.GetResource<Color>("CLWhite");          
         }
     }
 }
