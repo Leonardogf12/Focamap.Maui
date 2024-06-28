@@ -23,7 +23,7 @@
      <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-### 4) Vá até a pasta Resources da raiz do projeto NomeProjeto/Resources/Maps
+### 4) Vá até a pasta Resources da raiz do projeto NomeProjeto/Resources.
 #### Crie uma pasta onde ficará os temas do mapa. Exemplo: Resources/Maps.
      	
 ### 5) Abra o site que gera o tema modificado do maps: 
