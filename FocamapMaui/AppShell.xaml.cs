@@ -11,6 +11,8 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
         Routing.RegisterRoute(nameof(ForgotPasswordView), typeof(ForgotPasswordView));
         Routing.RegisterRoute(nameof(HomeMapView), typeof(HomeMapView));
+        Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));
+        Routing.RegisterRoute(nameof(OccurrencesHistoryView), typeof(OccurrencesHistoryView));
     }
 }
 

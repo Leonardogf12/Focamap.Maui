@@ -1,60 +1,149 @@
 ﻿using Android.Gms.Maps;
+using DevExpress.Maui.Controls;
+using FocamapMaui.Components;
+using FocamapMaui.Components.UI;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
+using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.Views
-{
+{    
     public class HomeMapView : ContentPageBase
 	{
         #region Properties
 
-        public HomeMapViewModel ViewModel = new();
+        private readonly INavigationService _navigationService;
+
+        public HomeMapViewModel ViewModel;
 
         public Map map = new();
 
 		#endregion
 
-        public HomeMapView()
+        public HomeMapView(INavigationService navigationService)
 		{
+            _navigationService = navigationService;
+
+            SetNavigationServiceInstancaByViewModel();
+            
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
             Content = BuildHomeMapView;
 
-			BindingContext = ViewModel;
+            BindingContext = ViewModel;
         }
-
+        
         #region UI
 
         public View BuildHomeMapView
         {
             get
             {
-                var grid = new Grid();
+                var grid = CreateMainGrid();
+               
+                CreateMap(grid);
 
-                map = new Map
-                {
-                    MapType = MapType.Street,
-                    IsScrollEnabled = true,
-                    IsTrafficEnabled = false,
-                    IsZoomEnabled = true,
-                    IsShowingUser = true,
-                    BindingContext = ViewModel,
-                };
+                CreateLockUnlockButton(grid);
 
-                map.MapClicked += Map_MapClicked;
+                CreateGroupButtons(grid);
 
-                grid.AddWithSpan(map);
-
+                CreateBottomSheetAddOccurrence(grid);
+               
                 return grid;
             }
         }
+      
+        private static Grid CreateMainGrid()
+        {
+            return new Grid
+            {
+                RowDefinitions = new RowDefinitionCollection
+                {
+                    new() {Height = GridLength.Star},
+                    new() {Height = GridLength.Auto},
+                }
+            };
+        }
 
+        private void CreateMap(Grid grid)
+        {
+            map = new Map
+            {                
+                MapType = MapType.Street,
+                IsScrollEnabled = true,
+                IsTrafficEnabled = false,
+                IsZoomEnabled = true,
+                IsShowingUser = true,                
+                BindingContext = ViewModel,
+            };
+
+            map.MapClicked += Map_MapClicked;
+
+            grid.AddWithSpan(map);
+        }
+
+        private void CreateLockUnlockButton(Grid grid)
+        {
+            var stackGroup = new StackLayout
+            {
+                Margin = new Thickness(0, 10, 0, 0),
+                Spacing = 10,
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.Center
+            };
+
+            var lockUnlockButton = RoundButton.GetRoundButton(iconName: "lock_24", eventHandler: LockUnlockButton_Clicked);
+            lockUnlockButton.SetBinding(Button.ImageSourceProperty, nameof(ViewModel.LockUnlockImage), BindingMode.TwoWay);
+            lockUnlockButton.SetBinding(IsEnabledProperty, nameof(ViewModel.LockUnlockButtonIsEnabled), BindingMode.TwoWay);
+            stackGroup.Children.Add(lockUnlockButton);
+          
+            grid.AddWithSpan(stackGroup, 0);
+        }     
+        
+        private void CreateGroupButtons(Grid grid)
+        {
+            var stackGroup = new StackLayout
+            {
+                Margin = new Thickness(10,0,0,100),
+                Spacing = 10,
+                Orientation = StackOrientation.Vertical,               
+                VerticalOptions = LayoutOptions.End,
+                HorizontalOptions = LayoutOptions.Start
+            };
+
+            var occurrenceButton = RoundButton.GetRoundButton(iconName: "occurrence_24");
+            occurrenceButton.Command = ViewModel.SeeOccurrencesHistoryCommand;
+            occurrenceButton.SetBinding(IsEnabledProperty, nameof(ViewModel.OccurrenceButtonIsEnabled), BindingMode.TwoWay);
+            stackGroup.Children.Add(occurrenceButton);
+
+            var addButton = RoundButton.GetRoundButton(iconName: "add_24");
+            addButton.Command = ViewModel.AddOccurrenceCommand;
+            addButton.SetBinding(IsEnabledProperty, nameof(ViewModel.AddButtonIsEnabled), BindingMode.TwoWay);
+            stackGroup.Children.Add(addButton);
+
+            var userButton = RoundButton.GetRoundButton("user_24");
+            userButton.Command = ViewModel.UserDetailCommand;
+            userButton.SetBinding(IsEnabledProperty, nameof(ViewModel.UserButtonIsEnabled), BindingMode.TwoWay);
+            stackGroup.Children.Add(userButton);
+
+            grid.AddWithSpan(stackGroup, 0);
+        }
+
+        private void CreateBottomSheetAddOccurrence(Grid grid)
+        {
+            var bottomSheet = new BottomSheetAddOccurrenceCustom();            
+            bottomSheet.SetBinding(BottomSheet.StateProperty, nameof(ViewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
+
+            grid.AddWithSpan(bottomSheet, 0);
+        }
+        
         private Pin FindPinNearClick(Location position)
         {
             // Define a distância máxima para considerar que o clique foi em cima de um pin
@@ -109,16 +198,33 @@ namespace FocamapMaui.MVVM.Views
             ViewModel.UpdateMapPins();
         }
 
+        private void LockUnlockButton_Clicked(object sender, EventArgs e)
+        {
+            if (sender is Button element)
+            {
+                var nameImageSource = element.ImageSource.GetValue;
+
+                var name = nameImageSource.Target;
+
+                ViewModel.ChangeLockUnlokImage(name);
+            }
+        }
+
         #endregion
 
         #region Actions
+
+        private void SetNavigationServiceInstancaByViewModel()
+        {
+            ViewModel = new HomeMapViewModel(_navigationService);
+        }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
 
             ViewModel.Map = map;
-
+           
             ViewModel.UpdateMapPins();
         }
 

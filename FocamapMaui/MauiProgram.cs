@@ -25,10 +25,11 @@ public static class MauiProgram
         builder.Services.AddTransient<LoginView>();
         builder.Services.AddTransient<RegisterView>();
         builder.Services.AddTransient<ForgotPasswordView>();
-
+        builder.Services.AddTransient<HomeMapView>();
+        builder.Services.AddTransient<OccurrencesHistoryView>();
+        
         builder.Services.AddTransient<LoginViewModel>();
         builder.Services.AddTransient<RegisterViewModel>();
-
 
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 

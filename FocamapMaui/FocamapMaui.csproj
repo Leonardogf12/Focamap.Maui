@@ -81,6 +81,13 @@
 	  <None Remove="Resources\Maps\night_map_style.json" />
 	  <None Remove="Resources\Maps\dark_map_style.json" />
 	  <None Remove="Controls\Maps\" />
+	  <None Remove="Resources\Images\lock_24.svg" />
+	  <None Remove="Resources\Images\unlock_24.svg" />
+	  <None Remove="Resources\Images\occurrence_24.svg" />
+	  <None Remove="Resources\Images\add_24.svg" />
+	  <None Remove="Resources\Images\user_24.svg" />
+	  <None Remove="Resources\Images\anonymous_24.svg" />
+	  <None Remove="Helpers\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -103,6 +110,7 @@
 	  <Folder Include="Components\UI\Basics\" />
 	  <Folder Include="Resources\Maps\" />
 	  <Folder Include="Controls\Maps\" />
+	  <Folder Include="Helpers\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -114,6 +122,12 @@
 	  <BundleResource Include="Resources\Images\password_24.svg" />
 	  <BundleResource Include="Resources\Images\back_24.svg" />
 	  <BundleResource Include="Resources\Images\menu_24.svg" />
+	  <BundleResource Include="Resources\Images\lock_24.svg" />
+	  <BundleResource Include="Resources\Images\unlock_24.svg" />
+	  <BundleResource Include="Resources\Images\occurrence_24.svg" />
+	  <BundleResource Include="Resources\Images\add_24.svg" />
+	  <BundleResource Include="Resources\Images\user_24.svg" />
+	  <BundleResource Include="Resources\Images\anonymous_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -7,6 +7,7 @@ using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Navigation;
 using DevExpress.Maui.Editors;
+using FocamapMaui.Helpers;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -140,12 +141,16 @@ namespace FocamapMaui.MVVM.Views
 
         private async void EnterButton_Clicked(object sender, EventArgs e)
         {
-            await _navigationService.NavigationWithParameter<HomeMapView>();            
-        }
+            var param = ParameterHelper.SetParameter("AnonymousAccess", false);
 
+            await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);
+        }
+        
         private async void SeeMapButton_Clicked(object sender, EventArgs e)
         {
-            await _navigationService.NavigationWithParameter<HomeMapView>();
+            var param = ParameterHelper.SetParameter("AnonymousAccess", true);
+
+            await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);
         }
 
         private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
@@ -170,9 +175,6 @@ namespace FocamapMaui.MVVM.Views
 
         #endregion
 
-        #region Actions
-        
-        #endregion
     }
 }
 
