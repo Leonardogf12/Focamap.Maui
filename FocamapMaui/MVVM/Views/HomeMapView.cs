@@ -1,7 +1,7 @@
 ﻿using Android.Gms.Maps;
 using DevExpress.Maui.Controls;
-using FocamapMaui.Components;
 using FocamapMaui.Components.UI;
+using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
@@ -83,7 +83,7 @@ namespace FocamapMaui.MVVM.Views
                 BindingContext = ViewModel,
             };
 
-            map.MapClicked += Map_MapClicked;
+            //map.MapClicked += Map_MapClicked;
 
             grid.AddWithSpan(map);
         }
@@ -138,7 +138,8 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateBottomSheetAddOccurrence(Grid grid)
         {
-            var bottomSheet = new BottomSheetAddOccurrenceCustom();            
+            var bottomSheet = new BottomSheetAddOccurrenceCustom(eventHandler: CloseButtonBottomSheetTapGestureRecognizer_Tapped);            
+
             bottomSheet.SetBinding(BottomSheet.StateProperty, nameof(ViewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
 
             grid.AddWithSpan(bottomSheet, 0);
@@ -208,6 +209,16 @@ namespace FocamapMaui.MVVM.Views
 
                 ViewModel.ChangeLockUnlokImage(name);
             }
+        }
+
+        private async void CloseButtonBottomSheetTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if(sender is Image element)
+            {
+                await ClickAnimation.FadeAnimation(element);
+
+                ViewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
+            }            
         }
 
         #endregion

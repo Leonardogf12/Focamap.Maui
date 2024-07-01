@@ -13,6 +13,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(HomeMapView), typeof(HomeMapView));
         Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));
         Routing.RegisterRoute(nameof(OccurrencesHistoryView), typeof(OccurrencesHistoryView));
+        Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));        
     }
 }
 

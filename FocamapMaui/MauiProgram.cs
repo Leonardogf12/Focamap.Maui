@@ -20,24 +20,32 @@ public static class MauiProgram
                 fonts.AddFont("Montserrat-Regular.ttf", "MontserratRegular");
                 fonts.AddFont("Montserrat-Bold.ttf", "MontserratBold");
                 fonts.AddFont("Montserrat-SemiBold.ttf", "MontserratSemibold");               
-			});
+			});      
 
+        RegisterDependencyForViews(builder);
+
+        RegisterDependencyForInterfaces(builder);
+
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
+
+		return builder.Build();
+	}
+
+    private static void RegisterDependencyForViews(MauiAppBuilder builder)
+    {
         builder.Services.AddTransient<LoginView>();
         builder.Services.AddTransient<RegisterView>();
         builder.Services.AddTransient<ForgotPasswordView>();
         builder.Services.AddTransient<HomeMapView>();
         builder.Services.AddTransient<OccurrencesHistoryView>();
-        
-        builder.Services.AddTransient<LoginViewModel>();
-        builder.Services.AddTransient<RegisterViewModel>();
-
+        builder.Services.AddTransient<UserDetailView>();
+    }
+    
+    private static void RegisterDependencyForInterfaces(MauiAppBuilder builder)
+    {
         builder.Services.AddSingleton<INavigationService, NavigationService>();
-
-#if DEBUG
-		builder.Logging.AddDebug();
-#endif
-
-		return builder.Build();
-	}
+    }           
 }
 

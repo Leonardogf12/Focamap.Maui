@@ -121,7 +121,8 @@ namespace FocamapMaui.MVVM.ViewModels
         public ICommand AddOccurrenceCommand;
         public ICommand SeeOccurrencesHistoryCommand;
         public ICommand UserDetailCommand;
-       
+        public ICommand CloseDateEditCommand;
+
         #endregion
 
         public HomeMapViewModel(INavigationService navigationService)
@@ -132,9 +133,9 @@ namespace FocamapMaui.MVVM.ViewModels
 
             AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
             SeeOccurrencesHistoryCommand = new Command(OnSeeOccurrencesHistoryCommand);
-            UserDetailCommand = new Command(OnUserDetailCommand);
+            UserDetailCommand = new Command(OnUserDetailCommand);          
         }
-        
+     
         #region Public Methods
 
         public void UpdateMapPins()

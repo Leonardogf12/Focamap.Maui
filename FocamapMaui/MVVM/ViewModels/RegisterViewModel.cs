@@ -38,18 +38,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        private List<string> _listRegions;
-        public List<string> ListRegions
-        {
-            get => _listRegions;
-            set
-            {
-                _listRegions = value;
-                OnPropertyChanged();
-            }
-        }
-
+       
         private object _selectedRegion;
         public object SelectedRegion
         {
@@ -66,22 +55,7 @@ namespace FocamapMaui.MVVM.ViewModels
         public RegisterViewModel()
 		{
             LoadRegionListMock();
-		}
-
-        #region Private Methods
-
-        private void LoadRegionListMock()
-        {
-            ListRegions = new List<string>
-            {
-                "Espirito Santo",
-                "Minas Gerais",
-                "São Paulo",
-                "Rio de Janeiro"
-            };
-        }
-
-        #endregion
+		}    
     }
 }
 

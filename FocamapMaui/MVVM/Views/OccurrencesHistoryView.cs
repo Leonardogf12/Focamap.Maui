@@ -1,13 +1,19 @@
-﻿using FocamapMaui.Controls.Resources;
+﻿using FocamapMaui.Components.UI;
+using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
 {
     public class OccurrencesHistoryView : ContentPageBase
 	{
-		public OccurrencesHistoryView()
+        private readonly INavigationService _navigationService;
+
+        public OccurrencesHistoryView(INavigationService navigationService)
 		{
-			BackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+            _navigationService = navigationService;
+
+            BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
 			Content = BuildOccurrencesHistoryView;
         }
@@ -16,21 +22,52 @@ namespace FocamapMaui.MVVM.Views
 		{
 			get
 			{
-				return new VerticalStackLayout
-				{
-					VerticalOptions = LayoutOptions.Center,
-					HorizontalOptions = LayoutOptions.Center,
-					Children =
-					{
-						new Label
-						{
-							FontSize = 12,
-							Text = "Em construção - OccurrencesHistoryView"
-                        }
-					}
-				};
-			}
+                var grid = CreateMainGrid();
+
+                CreateHeader(grid);
+
+                CreateTextInProgress(grid);
+
+                return grid;
+            }
 		}
+
+        private static Grid CreateMainGrid()
+        {
+            return new Grid
+            {
+                RowDefinitions = new RowDefinitionCollection
+                {
+                    new() {Height = 80},
+                    new() {Height = GridLength.Auto},
+                    new() {Height = GridLength.Auto},
+                },
+                Margin = 10,
+                RowSpacing = 30
+            };
+        }
+
+        private void CreateHeader(Grid grid)
+        {
+            var header = new HeaderWithIconAndTitle(iconName: "back_24",
+                            textTitle: "Ocorrências", iconEventHandler: BackButtonTapGestureRecognizer_Tapped);
+
+            grid.AddWithSpan(header);
+        }
+
+        private static void CreateTextInProgress(Grid grid)
+        {
+            var text = new Label
+            {
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalOptions = LayoutOptions.Center,                
+                Text = "Em breve",
+            };
+
+            grid.AddWithSpan(text, 1,0,3,1);
+        }
+
+        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await _navigationService.GoBack();       
     }
 }
 

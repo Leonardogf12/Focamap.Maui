@@ -88,6 +88,11 @@
 	  <None Remove="Resources\Images\user_24.svg" />
 	  <None Remove="Resources\Images\anonymous_24.svg" />
 	  <None Remove="Helpers\" />
+	  <None Remove="Resources\Images\close_24.svg" />
+	  <None Remove="Resources\Images\comment_24.svg" />
+	  <None Remove="Resources\Images\map_24.svg" />
+	  <None Remove="Resources\Images\time_24.svg" />
+	  <None Remove="Resources\Images\date_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -128,6 +133,11 @@
 	  <BundleResource Include="Resources\Images\add_24.svg" />
 	  <BundleResource Include="Resources\Images\user_24.svg" />
 	  <BundleResource Include="Resources\Images\anonymous_24.svg" />
+	  <BundleResource Include="Resources\Images\close_24.svg" />
+	  <BundleResource Include="Resources\Images\comment_24.svg" />
+	  <BundleResource Include="Resources\Images\map_24.svg" />
+	  <BundleResource Include="Resources\Images\time_24.svg" />
+	  <BundleResource Include="Resources\Images\date_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

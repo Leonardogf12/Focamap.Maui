@@ -1,8 +1,6 @@
-﻿using System;
-using System.Windows.Input;
-using FocamapMaui.Controls.Resources;
+﻿using FocamapMaui.Controls.Resources;
 
-namespace FocamapMaui.Components
+namespace FocamapMaui.Components.UI
 {
     public static class RoundButton
     {
@@ -11,7 +9,7 @@ namespace FocamapMaui.Components
             var roundButton = new Button
             {
                 ImageSource = ImageSource.FromFile(iconName),              
-                BackgroundColor = ControlResources.GetResource<Color>("CLBlack"),                
+                BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),                
                 HeightRequest = 60,
                 WidthRequest = 60,
                 CornerRadius = 60,                

@@ -1,11 +1,10 @@
-﻿using FocamapMaui.Components.UI;
+﻿using DevExpress.Maui.Editors;
+using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Animations;
-using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
-using DevExpress.Maui.Editors;
 using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
@@ -68,33 +67,10 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateHeader(Grid grid)
         {
-            var gridHeader = new Grid
-            {
-                ColumnDefinitions = new ColumnDefinitionCollection
-                {
-                    new(){Width = GridLength.Star},
-                    new(){Width = GridLength.Star},
-                    new(){Width = GridLength.Star},
-                },
-            };
+            var header = new HeaderWithIconAndTitle(iconName: "back_24",
+                            textTitle: "Registro", iconEventHandler: BackButtonTapGestureRecognizer_Tapped);
 
-            var icon = new Image
-            {
-                Source = ImageSource.FromFile("back_24"),
-                HeightRequest = 24,
-                HorizontalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 0, 0, 0),
-            };
-            icon.AddTapGesture(BackButtonTapGestureRecognizer_Tapped);
-            gridHeader.AddWithSpan(icon, 0, 0);
-
-            var title = CommomBasic.GetLabelTitleBasic(title: "Registro");
-            gridHeader.AddWithSpan(title, 0, 1);
-
-            var empty = new StackLayout();
-            gridHeader.AddWithSpan(empty, 0, 2);
-
-            grid.AddWithSpan(gridHeader);
+            grid.AddWithSpan(header);
         }
 
         private void CreateInputs(Grid grid)
