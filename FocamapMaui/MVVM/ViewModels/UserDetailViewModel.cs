@@ -1,6 +1,5 @@
 ﻿using FocamapMaui.Controls;
 using FocamapMaui.MVVM.Base;
-using FocamapMaui.MVVM.Models;
 using FocamapMaui.Services.Authentication;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -8,9 +7,18 @@ namespace FocamapMaui.MVVM.ViewModels
     public class UserDetailViewModel : ViewModelBase
 	{
         #region Properties
+        
+        private string _letterUserName;
+        public string LetterUserName
+        {
+            get => _letterUserName;
+            set
+            {
+                _letterUserName = value;
+                OnPropertyChanged();
+            }
+        }
 
-        private readonly IAuthenticationService _authenticationService;
-       
         private string _name;
         public string Name
         {
@@ -52,8 +60,56 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 _displayName = value;
                 OnPropertyChanged();
+
+                Name = value;
             }
         }
+
+        private bool _isEnabledDisplayName;
+        public bool IsEnabledDisplayName
+        {
+            get => _isEnabledDisplayName;
+            set
+            {
+                _isEnabledDisplayName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isEnabledEmail;
+        public bool IsEnabledEmail
+        {
+            get => _isEnabledEmail;
+            set
+            {
+                _isEnabledEmail = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isEnabledPassword;
+        public bool IsEnabledPassword
+        {
+            get => _isEnabledPassword;
+            set
+            {
+                _isEnabledPassword = value;
+                OnPropertyChanged();
+            }
+        }
+       
+        private bool _isEnabledRegion;
+        public bool IsEnabledRegion
+        {
+            get => _isEnabledRegion;
+            set
+            {
+                _isEnabledRegion = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private readonly IAuthenticationService _authenticationService;
 
         #endregion
 
@@ -62,18 +118,54 @@ namespace FocamapMaui.MVVM.ViewModels
             _authenticationService = authenticationService;
 
             LoadRegionListMock();
-            LoadUserLogged();
+
+            LoadUserInformations();            
         }
 
-        private void LoadUserLogged()
-        {           
-            DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
+        #region Private Methods
+
+        private void LoadUserInformations()
+        {
+            try
+            {
+                Email = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_EMAIL);
+                DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);                
+                LetterUserName = DisplayName[0].ToString();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+           
         }
+
+        #endregion
+
+        #region Public Methods
 
         public async Task UpdateProfileUser()
         {
-            //await _authenticationService.UpdateUserProfile(Email, Password, Name);
+            try
+            {
+                await _authenticationService.UpdateUserProfile(Email, Password, Name);
+                EditUserProfile(false);
+                LoadUserInformations();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+               
         }
+
+        public void EditUserProfile(bool isEnabled)
+        {
+            IsEnabledDisplayName = isEnabled;
+            IsEnabledPassword = isEnabled;          
+        }
+
+        #endregion
     }
 }
 

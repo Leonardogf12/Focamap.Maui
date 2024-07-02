@@ -98,6 +98,7 @@
 	  <None Remove="Services\Authentication\" />
 	  <None Remove="Controls\Connections\" />
 	  <None Remove="Resources\Images\exit_24.svg" />
+	  <None Remove="Resources\Images\edit_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -148,6 +149,7 @@
 	  <BundleResource Include="Resources\Images\date_24.svg" />
 	  <BundleResource Include="google-services.json" />
 	  <BundleResource Include="Resources\Images\exit_24.svg" />
+	  <BundleResource Include="Resources\Images\edit_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>

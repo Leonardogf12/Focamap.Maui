@@ -1,6 +1,7 @@
 ﻿using Firebase.Auth;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Connections;
+using static AndroidX.AutoFill.Inline.V1.InlineSuggestionUi;
 
 namespace FocamapMaui.Services.Authentication
 {
@@ -105,7 +106,7 @@ namespace FocamapMaui.Services.Authentication
 
                 var content = await auth.GetFreshAuthAsync();
 
-                SaveKeyWithNameUpdatedOnPreferences(content);
+                UpdateKeysByUserOnPreferences(content);
                 
                 await App.Current.MainPage.DisplayAlert("Sucesso", "O nome do Usuário foi alterado com sucesso!", "Ok");
             }
@@ -122,18 +123,25 @@ namespace FocamapMaui.Services.Authentication
         }
 
         private static void SaveKeysOnPreferences(FirebaseAuthLink contentByUserLogged)
-        {           
+        {
+            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY);
             ControlPreferences.AddKeyObjectOnPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY, contentOfObject: contentByUserLogged);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, value: contentByUserLogged.User.LocalId);           
+
+            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, value: contentByUserLogged.User.LocalId);
+
+            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOGGED);
             ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: contentByUserLogged.User.DisplayName);
+
+            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_EMAIL);
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_EMAIL, value: contentByUserLogged.User.Email);
         }
 
-        private static void SaveKeyWithNameUpdatedOnPreferences(FirebaseAuthLink content)
+        private static void UpdateKeysByUserOnPreferences(FirebaseAuthLink content)
         {
             ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOGGED);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: content.User.DisplayName);
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: content.User.DisplayName);         
         }
-
     }
 }
 

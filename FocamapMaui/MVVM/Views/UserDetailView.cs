@@ -2,6 +2,7 @@
 using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
+using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
@@ -59,7 +60,7 @@ namespace FocamapMaui.MVVM.Views
             {
                 RowDefinitions = new RowDefinitionCollection
                 {
-                    new() {Height = 80},
+                    new() {Height = 110},
                     new() {Height = GridLength.Auto},
                     new() {Height = GridLength.Auto},
                 },
@@ -69,9 +70,10 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private void CreateHeader(Grid grid)
-        {
-            var header = new HeaderWithIconAndTitle(iconName: "back_24",
-                                 textTitle: "Registro", iconEventHandler: BackButtonTapGestureRecognizer_Tapped);
+        {           
+            var header = new HeaderWithIconAndImage(iconName: "back_24", iconGoBackEventHandler: BackButtonTapGestureRecognizer_Tapped,
+                            imageNameEventHandler: ImageNameTapGestureRecognizer_Tapped);
+            header.LabelNameUser.SetBinding(Label.TextProperty, nameof(ViewModel.LetterUserName));
 
             grid.AddWithSpan(header);
         }
@@ -80,12 +82,24 @@ namespace FocamapMaui.MVVM.Views
         {
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
+            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email), BindingMode.TwoWay);
+            emailInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledEmail), BindingMode.TwoWay);
+            stackInputs.Children.Add(emailInput);
+
             var userInput = new TextEditCustom(icon: "user_24", placeholder: "Usuário");
             userInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.DisplayName), BindingMode.TwoWay);
+            userInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledDisplayName), BindingMode.TwoWay);
             stackInputs.Children.Add(userInput);
 
+            var passwordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
+            passwordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password), BindingMode.TwoWay);
+            passwordInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledPassword), BindingMode.TwoWay);
+            stackInputs.Children.Add(passwordInput);
+
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
-            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.ListRegions));
+            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.ListRegions));         
+            DropdownRegions.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledRegion), BindingMode.TwoWay);
             DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged; ;
             stackInputs.Children.Add(DropdownRegions);
 
@@ -114,7 +128,22 @@ namespace FocamapMaui.MVVM.Views
 
         private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
-            await _navigationService.GoBack();
+            if (sender is Image element)
+            {
+                await element.FadeAnimation();
+
+                await _navigationService.GoBack();
+            }
+        }
+
+        private async void ImageNameTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        {
+            if (sender is Image element)
+            {
+                await element.FadeAnimation();
+
+                ViewModel.EditUserProfile(true);
+            }
         }
 
         #endregion
