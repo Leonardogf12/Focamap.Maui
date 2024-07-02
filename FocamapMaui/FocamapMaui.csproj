@@ -93,6 +93,11 @@
 	  <None Remove="Resources\Images\map_24.svg" />
 	  <None Remove="Resources\Images\time_24.svg" />
 	  <None Remove="Resources\Images\date_24.svg" />
+	  <None Remove="Models\" />
+	  <None Remove="google-services.json" />
+	  <None Remove="Services\Authentication\" />
+	  <None Remove="Controls\Connections\" />
+	  <None Remove="Resources\Images\exit_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -116,6 +121,9 @@
 	  <Folder Include="Resources\Maps\" />
 	  <Folder Include="Controls\Maps\" />
 	  <Folder Include="Helpers\" />
+	  <Folder Include="Models\" />
+	  <Folder Include="Services\Authentication\" />
+	  <Folder Include="Controls\Connections\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -138,6 +146,8 @@
 	  <BundleResource Include="Resources\Images\map_24.svg" />
 	  <BundleResource Include="Resources\Images\time_24.svg" />
 	  <BundleResource Include="Resources\Images\date_24.svg" />
+	  <BundleResource Include="google-services.json" />
+	  <BundleResource Include="Resources\Images\exit_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -145,6 +155,16 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Maui.Controls.Maps" Version="8.0.60" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
+		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+		<PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.8" />
+		<PackageReference Include="SQLitePCLRaw.core" Version="2.1.8" />
+		<PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.8" />
+		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.8" />
+		<PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
+		<PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
+		<PackageReference Include="FirebaseAdmin" Version="2.4.1" />
+		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.2" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />

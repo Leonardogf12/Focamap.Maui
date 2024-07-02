@@ -1,6 +1,8 @@
-﻿using DevExpress.Maui;
+﻿using CommunityToolkit.Maui;
+using DevExpress.Maui;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.MVVM.Views;
+using FocamapMaui.Services.Authentication;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +15,8 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.UseDevExpress()
+            .UseMauiCommunityToolkit()
+            .UseDevExpress()
 			.UseMauiMaps()
 			.ConfigureFonts(fonts =>
 			{
@@ -46,6 +49,7 @@ public static class MauiProgram
     private static void RegisterDependencyForInterfaces(MauiAppBuilder builder)
     {
         builder.Services.AddSingleton<INavigationService, NavigationService>();
-    }           
+        builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+    }
 }
 

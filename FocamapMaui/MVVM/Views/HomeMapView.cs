@@ -10,7 +10,9 @@ using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
+using DevExpress.Maui.Editors;
 using Map = Microsoft.Maui.Controls.Maps.Map;
+using FocamapMaui.Controls;
 
 namespace FocamapMaui.MVVM.Views
 {    
@@ -82,6 +84,8 @@ namespace FocamapMaui.MVVM.Views
                 IsShowingUser = true,                
                 BindingContext = ViewModel,
             };
+            
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(ControlMap.GetRegion(StringConstants.MG), Distance.FromKilometers(200)));
 
             //map.MapClicked += Map_MapClicked;
 
@@ -133,15 +137,23 @@ namespace FocamapMaui.MVVM.Views
             userButton.SetBinding(IsEnabledProperty, nameof(ViewModel.UserButtonIsEnabled), BindingMode.TwoWay);
             stackGroup.Children.Add(userButton);
 
+            var exitButton = RoundButton.GetRoundButton("exit_24");
+            exitButton.Command = ViewModel.ExitCommand;
+            exitButton.SetBinding(IsEnabledProperty, nameof(ViewModel.ExitButtonIsEnabled), BindingMode.TwoWay);
+            stackGroup.Children.Add(exitButton);
+
             grid.AddWithSpan(stackGroup, 0);
         }
 
         private void CreateBottomSheetAddOccurrence(Grid grid)
         {
-            var bottomSheet = new BottomSheetAddOccurrenceCustom(eventHandler: CloseButtonBottomSheetTapGestureRecognizer_Tapped);            
-
+            var bottomSheet = new BottomSheetAddOccurrenceCustom(eventHandler: SaveButton_Clicked);
             bottomSheet.SetBinding(BottomSheet.StateProperty, nameof(ViewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
-
+            bottomSheet.TextEditAddress.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Address));
+            bottomSheet.DateEditDate.SetBinding(DateEdit.DateProperty, nameof(ViewModel.Date));
+            bottomSheet.HourEditHour.SetBinding(TimeEdit.TimeSpanProperty, nameof(ViewModel.Hour));
+            bottomSheet.MultilineEditResume.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Resume));
+            
             grid.AddWithSpan(bottomSheet, 0);
         }
         
@@ -219,6 +231,11 @@ namespace FocamapMaui.MVVM.Views
 
                 ViewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
             }            
+        }
+
+        private async void SaveButton_Clicked(object sender, EventArgs e)
+        {
+            await ViewModel.SaveOccurrence();
         }
 
         #endregion

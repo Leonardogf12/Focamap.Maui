@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1029178459559",
+    "project_id": "focamapmaui-23c5c",
+    "storage_bucket": "focamapmaui-23c5c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1029178459559:android:ca44cc3d50baee0de2e282",
+        "android_client_info": {
+          "package_name": "com.companyname.focamapmaui"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8vilOeMLnhOL2fYMyoKGWsXmAHseuTwY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

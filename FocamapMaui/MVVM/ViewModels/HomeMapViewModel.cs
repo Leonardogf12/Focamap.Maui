@@ -1,7 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using DevExpress.Maui.Controls;
+using FocamapMaui.Controls;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
@@ -116,12 +118,70 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private bool _exitButtonIsEnabled = true;
+        public bool ExitButtonIsEnabled
+        {
+            get => _exitButtonIsEnabled;
+            set
+            {
+                _exitButtonIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        private string _address;
+        public string Address
+        {
+            get => _address;
+            set
+            {
+                _address = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private DateTime _date = DateTime.Now;
+        public DateTime Date
+        {
+            get => _date;
+            set
+            {
+                _date = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private TimeSpan _hour;
+        public TimeSpan Hour
+        {
+            get => _hour;
+            set
+            {
+                _hour = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _resume;
+        public string Resume
+        {
+            get => _resume;
+            set
+            {
+                _resume = value;
+                OnPropertyChanged();
+            }
+        }
+
+        
+
         private readonly INavigationService _navigationService;
 
         public ICommand AddOccurrenceCommand;
         public ICommand SeeOccurrencesHistoryCommand;
         public ICommand UserDetailCommand;
         public ICommand CloseDateEditCommand;
+        public ICommand ExitCommand;
 
         #endregion
 
@@ -133,9 +193,11 @@ namespace FocamapMaui.MVVM.ViewModels
 
             AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
             SeeOccurrencesHistoryCommand = new Command(OnSeeOccurrencesHistoryCommand);
-            UserDetailCommand = new Command(OnUserDetailCommand);          
+            UserDetailCommand = new Command(OnUserDetailCommand);
+            ExitCommand = new Command(OnExitCommand);
         }
-     
+
+      
         #region Public Methods
 
         public void UpdateMapPins()
@@ -177,29 +239,29 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 new Pin
                 {
-                    Label = "Assalto",
-                    Address = "Armado?:Sim | Feridos?:1",
+                    Label = "Boca de fumo",
+                    Address = "Nesta esquina tem uma boca de fumo, nao passem por ali.",
                     Type = PinType.Generic,
                     Location = new Location(-19.394837, -40.049279),
                 },
                 new Pin
                 {
-                    Label = "Tiros",
-                    Address = "Feridos?:1",
+                    Label = "Roubo e furto",
+                    Address = "Nesta rua costuma haver assaltos, fui assaltado recentemente ali. Nao recomendo que passe por ali.",
                     Type = PinType.Place,
                     Location = new Location(-19.391254, -40.050202)
                 },
                 new Pin
                 {
-                    Label = "Tiros",
-                    Address = "Feridos?:Não",
+                    Label = "Roubo de moto Frequente",
+                    Address = "Neste trecho tem muito roubo de moto, cuidado.",
                     Type = PinType.SearchResult,
                     Location = new Location(-19.395747, -40.037993)
                 },
                 new Pin
                 {
-                    Label = "Assalto",
-                    Address = "Armado?:Sim | Feridos?:Não",
+                    Label = "Furto",
+                    Address = "Moleques quebram o vidro e roubam telefone nessa rua, cuidado, nao pare.",
                     Type = PinType.SavedPin,
                     Location = new Location(-19.400564, -40.045224)
                 },
@@ -218,6 +280,7 @@ namespace FocamapMaui.MVVM.ViewModels
             OccurrenceButtonIsEnabled = isEnabled;
             AddButtonIsEnabled = isEnabled;
             UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
         }
 
         private void OnAddOccurrenceCommand()
@@ -235,6 +298,18 @@ namespace FocamapMaui.MVVM.ViewModels
             await _navigationService.NavigationWithParameter<UserDetailView>();
         }
 
+        private async void OnExitCommand(object obj)
+        {
+            var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
+
+            if (!result) return;
+
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
+         
+            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
+        }
+
         private void CheckAnonymousAccess(bool isEnabled)
         {
             ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
@@ -242,6 +317,29 @@ namespace FocamapMaui.MVVM.ViewModels
             OccurrenceButtonIsEnabled = isEnabled;
             AddButtonIsEnabled = isEnabled;
             UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+
+        public async Task SaveOccurrence()
+        {
+            try
+            {
+                var newOccurrence = new OccurrenceModel
+                {
+                    Address = Address,
+                    Date = Date,
+                    Hour = Hour,
+                    Resume = Resume
+                };
+
+                var teste = newOccurrence;
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }           
         }
 
         #endregion

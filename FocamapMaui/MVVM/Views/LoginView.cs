@@ -8,6 +8,8 @@ using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Navigation;
 using DevExpress.Maui.Editors;
 using FocamapMaui.Helpers;
+using FocamapMaui.Services.Authentication;
+using AndroidX.Lifecycle;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -15,17 +17,26 @@ namespace FocamapMaui.MVVM.Views
 	{
         #region Properties
 
+        private readonly IAuthenticationService _authenticationService;
+
         private readonly INavigationService _navigationService;
 
-        public LoginViewModel ViewModel = new();
+        public LoginViewModel ViewModel;
+
+        public TextEditCustom EmailTextEdit;
+
+        public PasswordEditCustom PasswordTextEdit;
 
         #endregion
 
-        public LoginView(INavigationService navigationService)
+        public LoginView(INavigationService navigationService, IAuthenticationService authenticationService)
 		{
             _navigationService = navigationService;
+            _authenticationService = authenticationService;
 
-			BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
+            ViewModel = new(_authenticationService);
+
+            BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
 			Content = BuildLoginView;
 
@@ -80,17 +91,22 @@ namespace FocamapMaui.MVVM.Views
         {            
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20, useMargin: true);
 
-            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
-            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
-            stackInputs.Children.Add(emailInput);
-           
-            var passwordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
-            passwordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password));
-            stackInputs.Children.Add(passwordInput);
+            EmailTextEdit = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
+            EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
+            EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput), BindingMode.TwoWay);
+            //EmailTextEdit.TextChanged += EmailInput_TextChanged;
+            stackInputs.Children.Add(EmailTextEdit);
+
+            PasswordTextEdit = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
+            PasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password));
+            PasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorPasswordInput), BindingMode.TwoWay);
+            //PasswordTextEdit.TextChanged += PasswordInput_TextChanged;
+            stackInputs.Children.Add(PasswordTextEdit);
             
             grid.AddWithSpan(stackInputs, 1);
         }
 
+      
         private void CreateButtons(Grid grid)
         {            
             var mainStackButtons = CommomBasic.GetStackLayoutBasic(spacing: 20);
@@ -101,7 +117,7 @@ namespace FocamapMaui.MVVM.Views
             enterButton.Clicked += EnterButton_Clicked;
             stackButtons.Children.Add(enterButton);
 
-            var seeMapButton = new PrimaryButtonCustom(text: "Ver Mapa", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
+            var seeMapButton = new PrimaryButtonCustom(text: "Ver Mapa", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");            
             seeMapButton.Clicked += SeeMapButton_Clicked;
 
             stackButtons.Children.Add(seeMapButton);            
@@ -123,7 +139,9 @@ namespace FocamapMaui.MVVM.Views
             
             grid.AddWithSpan(mainStackButtons, 2);            
         }
-       
+
+        
+
         public static Label GetLabelBasic(string text)
         {
             return new Label
@@ -139,13 +157,18 @@ namespace FocamapMaui.MVVM.Views
 
         #region Events
 
+        private void EmailInput_TextChanged(object sender, EventArgs e) => ViewModel.CheckIfInputsAreOk();        
+
+        private void PasswordInput_TextChanged(object sender, EventArgs e) => ViewModel.CheckIfInputsAreOk();
+
         private async void EnterButton_Clicked(object sender, EventArgs e)
         {
-            var param = ParameterHelper.SetParameter("AnonymousAccess", false);
+            EmailTextEdit.Unfocus();
+            PasswordTextEdit.Unfocus();
 
-            await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);
+            await ViewModel.Login();
         }
-        
+
         private async void SeeMapButton_Clicked(object sender, EventArgs e)
         {
             var param = ParameterHelper.SetParameter("AnonymousAccess", true);

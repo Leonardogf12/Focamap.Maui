@@ -1,14 +1,18 @@
-﻿using FocamapMaui.MVVM.Views;
+﻿using FocamapMaui.Controls;
 
 namespace FocamapMaui;
 
 public partial class App : Application
 {
-	public App()
+    public static string UserLocalIdLogged;
+
+    public App()
 	{
 		InitializeComponent();
 
 		MainPage = new AppShell();
-	}
+
+        ControlUsers.CheckUserHasLogged();
+    }
 }
 

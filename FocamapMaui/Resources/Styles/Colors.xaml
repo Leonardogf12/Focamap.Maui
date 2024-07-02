@@ -13,6 +13,7 @@
     <Color x:Key="CLWhite">#FFFFFF</Color>
     <Color x:Key="CLPrimaryOrange">#D49563</Color>
     <Color x:Key="CLGray">#ACACAC</Color>
+    <Color x:Key="CLErrorBorderColor">#E95D5D</Color>
 
     <!-- Original Colors -->
     <Color x:Key="Primary">#512BD4</Color>

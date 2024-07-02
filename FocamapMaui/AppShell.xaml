@@ -2,8 +2,7 @@
 <Shell
     x:Class="FocamapMaui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:FocamapMaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"   
     xmlns:views="clr-namespace:FocamapMaui.MVVM.Views"
     Shell.FlyoutBehavior="Disabled"
     Title="FocamapMaui">
@@ -11,6 +10,10 @@
     <ShellContent       
         ContentTemplate="{DataTemplate views:LoginView}"
         Route="LoginView" />
+
+      <ShellContent      
+        ContentTemplate="{DataTemplate views:HomeMapView}"
+        Route="HomeMapView" />
 
 </Shell>
 

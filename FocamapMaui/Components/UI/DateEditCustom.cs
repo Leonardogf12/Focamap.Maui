@@ -10,14 +10,18 @@ namespace FocamapMaui.Components.UI
         {
             StartIcon = ImageSource.FromFile(icon);
             PlaceholderText = placeholder;
-            IsDateIconVisible = false;
-            IsLabelFloating = false;
-            LabelText = null;
+            DisplayFormat = "dd/MM/yyyy";
+            UseNativePicker = useNativePicker;
+            MaxDate = DateTime.Now.AddYears(1);
+            MinDate = DateTime.Now.AddMonths(1);
             IconIndent = 10;
             HeightRequest = 55;
             CornerRadius = 10;
             BorderThickness = 1;
             FocusedBorderThickness = 1;
+            IsDateIconVisible = false;
+            IsLabelFloating = false;
+            LabelText = null;                    
             IconVerticalAlignment = LayoutAlignment.Center;
             TextVerticalAlignment = TextAlignment.Center;
             BorderColor = Colors.Transparent;
@@ -42,9 +46,7 @@ namespace FocamapMaui.Components.UI
                 TodayTextColor = ControlResources.GetResource<Color>("CLWhite"),
                 SelectedTextColor = ControlResources.GetResource<Color>("CLPrimary"),
                 SelectedEllipseBackgroundColor = ControlResources.GetResource<Color>("CLPrimaryOrange"),
-            };
-            DisplayFormat = "dd/MM/yyyy";
-            UseNativePicker = useNativePicker;
+            };          
         }
 
         private static View CreateTemplateButton(ICommand command)
