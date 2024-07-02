@@ -34,7 +34,7 @@
                 var typeView = typeof(T);
 
                 if (parameter is not null)
-                {
+                {                    
                     await Shell.Current.GoToAsync(typeView.Name, parameter);
                 }
                 else
@@ -51,6 +51,29 @@
                 _isBrowsing = false;
             }						
 		}
+
+        public async Task NavigationWithRoute(string route)
+        {
+            if (_isBrowsing) return;
+          
+            try
+            {
+                _isBrowsing = true;
+
+                if (string.IsNullOrEmpty(route)) return;                                   
+
+                await Shell.Current.GoToAsync(route);                              
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                _isBrowsing = false;
+            }
+        }
+
 	}
 }
 
