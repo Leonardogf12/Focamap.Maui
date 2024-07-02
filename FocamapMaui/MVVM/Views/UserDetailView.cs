@@ -1,9 +1,11 @@
-﻿using DevExpress.Maui.Editors;
+﻿using AndroidX.Lifecycle;
+using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
+using FocamapMaui.Services.Authentication;
 using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
@@ -12,22 +14,26 @@ namespace FocamapMaui.MVVM.Views
 	{
         #region Properties
 
+        private readonly IAuthenticationService _authenticationService;
+
         private readonly INavigationService _navigationService;
 
-        public UserDetailViewModel ViewModel = new();
+        public UserDetailViewModel ViewModel;
 
         public ComboboxEditCustom DropdownRegions = new();
 
         #endregion
 
-        public UserDetailView(INavigationService navigationService)
+        public UserDetailView(INavigationService navigationService, IAuthenticationService authenticationService)
 		{
             _navigationService = navigationService;
+            _authenticationService = authenticationService;
 
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
             Content = BuildUserDetailView;
 
+            ViewModel = new(_authenticationService);
             BindingContext = ViewModel;
         }
 
@@ -75,7 +81,7 @@ namespace FocamapMaui.MVVM.Views
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
             var userInput = new TextEditCustom(icon: "user_24", placeholder: "Usuário");
-            userInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.UserName));
+            userInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.DisplayName), BindingMode.TwoWay);
             stackInputs.Children.Add(userInput);
 
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
@@ -98,7 +104,7 @@ namespace FocamapMaui.MVVM.Views
 
         private async void EditButton_Clicked(object sender, EventArgs e)
         {
-            await DisplayAlert("Clicou", "Clicou em Editar UserDetail", "OK");
+            await ViewModel.UpdateProfileUser();
         }
 
         private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e)

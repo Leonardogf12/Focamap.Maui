@@ -58,6 +58,8 @@ namespace FocamapMaui.Services.Authentication
 
                 await auth.UpdateProfileAsync(name, string.Empty);
 
+                var content = await auth.GetFreshAuthAsync();
+
                 await App.Current.MainPage.DisplayAlert("Sucesso", "Usuário registrado com sucesso!", "Voltar");
 
             }
@@ -91,16 +93,47 @@ namespace FocamapMaui.Services.Authentication
             }
         }
 
+        public async Task UpdateUserProfile(string email, string password, string newName)
+        {
+            try
+            {
+                var authProvider = GetFirebaseAuthProvider();
+
+                var auth = await authProvider.SignInWithEmailAndPasswordAsync(email, password);
+
+                await auth.UpdateProfileAsync(newName, string.Empty);
+
+                var content = await auth.GetFreshAuthAsync();
+
+                SaveKeyWithNameUpdatedOnPreferences(content);
+                
+                await App.Current.MainPage.DisplayAlert("Sucesso", "O nome do Usuário foi alterado com sucesso!", "Ok");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops", "Ocorreu um erro inesperado ao tentar editar o nome de usuário.Tente novamente em alguns instantes.", "Ok");
+            }
+        }
+        
         private static FirebaseAuthProvider GetFirebaseAuthProvider()
         {
             return new FirebaseAuthProvider(new FirebaseConfig(StringConstants.FIREBASE_AUTH_PROVIDER_KEY));
         }
 
         private static void SaveKeysOnPreferences(FirebaseAuthLink contentByUserLogged)
-        {
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY, contentOfObject: contentByUserLogged);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, contentOfObject: contentByUserLogged.User.LocalId);
+        {           
+            ControlPreferences.AddKeyObjectOnPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY, contentOfObject: contentByUserLogged);
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, value: contentByUserLogged.User.LocalId);           
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: contentByUserLogged.User.DisplayName);
         }
+
+        private static void SaveKeyWithNameUpdatedOnPreferences(FirebaseAuthLink content)
+        {
+            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOGGED);
+            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: content.User.DisplayName);
+        }
+
     }
 }
 

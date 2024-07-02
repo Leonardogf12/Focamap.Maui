@@ -4,13 +4,12 @@ using Newtonsoft.Json;
 namespace FocamapMaui.Controls
 {
 	public static class ControlPreferences
-	{
-        public static string GetKeyOfPreferences(string key)
-        {
-            return Preferences.Get(key, "");
-        }
+	{                      
+        public static string GetKeyOfPreferences(string key) => Preferences.Get(key, "");
 
-        public static void AddKeyOnPreferences(string key, object contentOfObject)
+        public static void AddKeyOnPreferences(string key, string value) => Preferences.Set(key, value);
+
+        public static void AddKeyObjectOnPreferences(string key, object contentOfObject)
         {
             var serializeContent = JsonConvert.SerializeObject(contentOfObject);
 

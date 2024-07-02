@@ -1,5 +1,7 @@
-﻿using FocamapMaui.MVVM.Base;
+﻿using FocamapMaui.Controls;
+using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
+using FocamapMaui.Services.Authentication;
 
 namespace FocamapMaui.MVVM.ViewModels
 {
@@ -7,34 +9,71 @@ namespace FocamapMaui.MVVM.ViewModels
 	{
         #region Properties
 
-        private UserModel _userDetail = new();
-        public UserModel UserDetail
+        private readonly IAuthenticationService _authenticationService;
+       
+        private string _name;
+        public string Name
         {
-            get => _userDetail;
+            get => _name;
             set
             {
-                _userDetail = value;
+                _name = value;
                 OnPropertyChanged();
             }
         }
 
-        private string _userName;
-        public string UserName
+        private string _email;
+        public string Email
         {
-            get => _userName;
+            get => _email;
             set
             {
-                _userName = value;
+                _email = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _displayName;
+        public string DisplayName
+        {
+            get => _displayName;
+            set
+            {
+                _displayName = value;
                 OnPropertyChanged();
             }
         }
 
         #endregion
 
-        public UserDetailViewModel()
+        public UserDetailViewModel(IAuthenticationService authenticationService)
 		{
+            _authenticationService = authenticationService;
+
             LoadRegionListMock();
+            LoadUserLogged();
         }
-	}
+
+        private void LoadUserLogged()
+        {           
+            DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
+        }
+
+        public async Task UpdateProfileUser()
+        {
+            //await _authenticationService.UpdateUserProfile(Email, Password, Name);
+        }
+    }
 }
 

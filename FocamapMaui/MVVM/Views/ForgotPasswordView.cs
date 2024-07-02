@@ -2,26 +2,40 @@
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Navigation;
+using DevExpress.Maui.Editors;
+using FocamapMaui.Services.Authentication;
 
 namespace FocamapMaui.MVVM.Views
 {
     public class ForgotPasswordView : ContentPageBase
 	{
-
         #region Properties
 
         private readonly INavigationService _navigationService;
 
+        private readonly IAuthenticationService _authenticationService;
+
+        public ForgotPasswordViewModel ViewModel;
+
+        public TextEditCustom EmailTextEdit;
+
         #endregion
 
-        public ForgotPasswordView(INavigationService navigationService)
+        public ForgotPasswordView(INavigationService navigationService,
+                                  IAuthenticationService authenticationService)
 		{
             _navigationService = navigationService;
+            _authenticationService = authenticationService;
 
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
             Content = BuildForgotPasswordView;
+
+            ViewModel = new(_authenticationService);
+
+            BindingContext = ViewModel;
         }
 
         #region UI
@@ -85,11 +99,13 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(stackHeader);
         }
 
-        private static void CreateInputs(Grid grid)
+        private void CreateInputs(Grid grid)
         {
-            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email da conta", keyboard: Keyboard.Email);
+            EmailTextEdit = new TextEditCustom(icon: "email_24", placeholder: "Email da conta", keyboard: Keyboard.Email);
+            EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
+            EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput), BindingMode.TwoWay);
             
-            grid.AddWithSpan(emailInput, 1);
+            grid.AddWithSpan(EmailTextEdit, 1);
         }
 
         private void CreateButtons(Grid grid)
@@ -113,7 +129,11 @@ namespace FocamapMaui.MVVM.Views
 
         #region Events
 
-        private async void ResetPasswordButton_Clicked(object sender, EventArgs e) => await DisplayAlert("Clicou", "Clicou em Redefinir Senha", "OK");
+        private async void ResetPasswordButton_Clicked(object sender, EventArgs e)
+        {
+            EmailTextEdit.Unfocus();
+            await ViewModel.ResetPassword();
+        }
       
         private async void BackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();
 

@@ -306,7 +306,8 @@ namespace FocamapMaui.MVVM.ViewModels
 
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
-         
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
+
             await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
 
