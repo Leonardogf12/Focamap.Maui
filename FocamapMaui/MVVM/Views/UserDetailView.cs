@@ -1,5 +1,4 @@
-﻿using AndroidX.Lifecycle;
-using DevExpress.Maui.Editors;
+﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Animations;
@@ -22,6 +21,9 @@ namespace FocamapMaui.MVVM.Views
         public UserDetailViewModel ViewModel;
 
         public ComboboxEditCustom DropdownRegions = new();
+
+        public TextEditCustom UserTextEdit;
+        public PasswordEditCustom PasswordTextEdit;
 
         #endregion
 
@@ -83,19 +85,23 @@ namespace FocamapMaui.MVVM.Views
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
             var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
-            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email), BindingMode.TwoWay);
-            emailInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledEmail), BindingMode.TwoWay);
+            emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email), BindingMode.TwoWay);            
+            emailInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledEmail), BindingMode.TwoWay);            
             stackInputs.Children.Add(emailInput);
 
-            var userInput = new TextEditCustom(icon: "user_24", placeholder: "Usuário");
-            userInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.DisplayName), BindingMode.TwoWay);
-            userInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledDisplayName), BindingMode.TwoWay);
-            stackInputs.Children.Add(userInput);
+            UserTextEdit = new TextEditCustom(icon: "user_24", placeholder: "Usuário");
+            UserTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.DisplayName), BindingMode.TwoWay);
+            UserTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorDisplayName), BindingMode.TwoWay);
+            UserTextEdit.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledDisplayName), BindingMode.TwoWay);
+            UserTextEdit.TextChanged += UserInput_TextChanged;
+            stackInputs.Children.Add(UserTextEdit);
 
-            var passwordInput = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
-            passwordInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password), BindingMode.TwoWay);
-            passwordInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledPassword), BindingMode.TwoWay);
-            stackInputs.Children.Add(passwordInput);
+            PasswordTextEdit = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
+            PasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password), BindingMode.TwoWay);
+            PasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorPassword), BindingMode.TwoWay);
+            PasswordTextEdit.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledPassword), BindingMode.TwoWay);
+            PasswordTextEdit.TextChanged += PasswordInput_TextChanged;
+            stackInputs.Children.Add(PasswordTextEdit);
 
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
             DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.ListRegions));         
@@ -105,7 +111,7 @@ namespace FocamapMaui.MVVM.Views
 
             grid.AddWithSpan(stackInputs, 1);
         }
-
+      
         private void CreateButton(Grid grid)
         {
             var editButton = new PrimaryButtonCustom(text: "Editar", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
@@ -116,33 +122,35 @@ namespace FocamapMaui.MVVM.Views
 
         #region Events
 
+        private void PasswordInput_TextChanged(object sender, EventArgs e) => ViewModel.CheckIfInputsAreOk();
+
+        private void UserInput_TextChanged(object sender, EventArgs e) => ViewModel.CheckIfInputsAreOk();
+       
+        private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e) => DropdownRegions.Unfocus();
+
+        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await SetBodyImageElementForEvent(sender, GoBack);
+
+        private async void ImageNameTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await SetBodyImageElementForEvent(sender, SetValuesIsEnabled);
+
+        private async void GoBack() => await _navigationService.GoBack();
+
+        private void SetValuesIsEnabled() => ViewModel.SetsValueForIsEnabledInputs(true);
+
         private async void EditButton_Clicked(object sender, EventArgs e)
         {
+            UserTextEdit.Unfocus();
+            PasswordTextEdit.Unfocus();
+
             await ViewModel.UpdateProfileUser();
         }
 
-        private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e)
-        {
-            DropdownRegions.Unfocus();
-        }
-
-        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
+        private static async Task SetBodyImageElementForEvent(object sender, Action action)
         {
             if (sender is Image element)
             {
                 await element.FadeAnimation();
 
-                await _navigationService.GoBack();
-            }
-        }
-
-        private async void ImageNameTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-        {
-            if (sender is Image element)
-            {
-                await element.FadeAnimation();
-
-                ViewModel.EditUserProfile(true);
+                action();
             }
         }
 

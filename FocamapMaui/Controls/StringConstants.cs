@@ -13,6 +13,11 @@
 
         public const string HOMEMAPVIEW_ROUTE = "//HomeMapView";
         public const string LOGINVIEW_ROUTE = "//LoginView";
+
+        public const string OK = "Ok";
+        public const string INVALID_LOGIN_CREDENTIALS = "INVALID_LOGIN_CREDENTIALS";  
+        public const string FIREBASE_AUTH_EXCEPTION = "FirebaseAuthException";
+        public const string EXCEPTION = "Exception";
     }
 }
 

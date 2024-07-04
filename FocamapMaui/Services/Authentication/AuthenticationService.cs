@@ -1,7 +1,6 @@
 ﻿using Firebase.Auth;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Connections;
-using static AndroidX.AutoFill.Inline.V1.InlineSuggestionUi;
 
 namespace FocamapMaui.Services.Authentication
 {
@@ -94,8 +93,10 @@ namespace FocamapMaui.Services.Authentication
             }
         }
 
-        public async Task UpdateUserProfile(string email, string password, string newName)
+        public async Task<string> UpdateUserProfile(string email, string password, string newName)
         {
+            string result = StringConstants.OK;
+
             try
             {
                 var authProvider = GetFirebaseAuthProvider();
@@ -109,11 +110,26 @@ namespace FocamapMaui.Services.Authentication
                 UpdateKeysByUserOnPreferences(content);
                 
                 await App.Current.MainPage.DisplayAlert("Sucesso", "O nome do Usuário foi alterado com sucesso!", "Ok");
+
+                return result;
+            }
+            catch (FirebaseAuthException f)
+            {
+                if (f.ResponseData.Contains(StringConstants.INVALID_LOGIN_CREDENTIALS))
+                {
+                    await App.Current.MainPage.DisplayAlert("Ops", "Senha inválida. Favor verificar.", "Ok");
+                    
+                    return StringConstants.INVALID_LOGIN_CREDENTIALS;
+                }
+
+                return StringConstants.FIREBASE_AUTH_EXCEPTION;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 await App.Current.MainPage.DisplayAlert("Ops", "Ocorreu um erro inesperado ao tentar editar o nome de usuário.Tente novamente em alguns instantes.", "Ok");
+
+                return StringConstants.EXCEPTION;
             }
         }
         

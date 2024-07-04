@@ -1,5 +1,4 @@
-﻿using AndroidX.Lifecycle;
-using DevExpress.Maui.Editors;
+﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Animations;

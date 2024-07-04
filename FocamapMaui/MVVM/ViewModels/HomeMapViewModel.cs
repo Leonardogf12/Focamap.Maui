@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using DevExpress.Maui.Controls;
+using FocamapMaui.Components.UI;
 using FocamapMaui.Controls;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
+using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
@@ -13,7 +15,7 @@ namespace FocamapMaui.MVVM.ViewModels
 {
     [QueryProperty(nameof(AnonymousAccess), "AnonymousAccess")]
     public class HomeMapViewModel : ViewModelBase
-	{
+    {
         #region Properties
 
         private bool _anonymousAccess;
@@ -37,6 +39,17 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 _pinsList = value;
                 OnPropertyChanged();
+            }
+        }
+
+        private Grid _mainView;
+        public Grid MainView
+        {
+            get => _mainView;
+            set
+            {
+                _mainView = value;
+                OnPropertyChanged();              
             }
         }
 
@@ -73,7 +86,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
         private bool _lockUnlockButtonIsEnabled = true;
         public bool LockUnlockButtonIsEnabled
         {
@@ -128,7 +141,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
         private string _address;
         public string Address
         {
@@ -173,9 +186,30 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        
+        private bool _isShowingUser;
+        public bool IsShowingUser
+        {
+            get => _isShowingUser;
+            set
+            {
+                _isShowingUser = value;
+                OnPropertyChanged();
+            }
+        }
 
+        private bool _isOpenPopupPinMap;
+        public bool IsOpenPopupPinMap
+        {
+            get => _isOpenPopupPinMap;
+            set
+            {
+                _isOpenPopupPinMap = value;
+                OnPropertyChanged();
+            }
+        }
+        
         private readonly INavigationService _navigationService;
+        private readonly IMapService _mapService;
 
         public ICommand AddOccurrenceCommand;
         public ICommand SeeOccurrencesHistoryCommand;
@@ -185,19 +219,19 @@ namespace FocamapMaui.MVVM.ViewModels
 
         #endregion
 
-        public HomeMapViewModel(INavigationService navigationService)
-		{
+        public HomeMapViewModel(INavigationService navigationService, IMapService mapService)
+        {
             _navigationService = navigationService;
-
-            LoadPins();
+            _mapService = mapService;
 
             AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
             SeeOccurrencesHistoryCommand = new Command(OnSeeOccurrencesHistoryCommand);
             UserDetailCommand = new Command(OnUserDetailCommand);
             ExitCommand = new Command(OnExitCommand);
+
+            LoadPinsMock();
         }
 
-      
         #region Public Methods
 
         public void UpdateMapPins()
@@ -220,69 +254,46 @@ namespace FocamapMaui.MVVM.ViewModels
             if (name.Equals("lock_24"))
             {
                 ChangeIconOfLockUnlockButton("unlock_24");
-                ChangeIsEnabledOnGroupButtons(isEnabled: true);                
+                ChangeIsEnabledOnGroupButtons(isEnabled: true);
             }
             else
             {
-                ChangeIconOfLockUnlockButton("lock_24");              
-                ChangeIsEnabledOnGroupButtons(isEnabled: false);               
+                ChangeIconOfLockUnlockButton("lock_24");
+                ChangeIsEnabledOnGroupButtons(isEnabled: false);
             }
         }
-        
+
+        public async Task SaveOccurrence()
+        {
+            try
+            {
+                var newOccurrence = new OccurrenceModel
+                {
+                    Address = Address,
+                    Date = Date,
+                    Hour = Hour,
+                    Resume = Resume
+                };
+
+                var teste = newOccurrence;
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         #endregion
 
         #region Private Methods
 
-        private void LoadPins()
-        {
-            var list = new List<Pin>
-            {
-                new Pin
-                {
-                    Label = "Boca de fumo",
-                    Address = "Nesta esquina tem uma boca de fumo, nao passem por ali.",
-                    Type = PinType.Generic,
-                    Location = new Location(-19.394837, -40.049279),
-                },
-                new Pin
-                {
-                    Label = "Roubo e furto",
-                    Address = "Nesta rua costuma haver assaltos, fui assaltado recentemente ali. Nao recomendo que passe por ali.",
-                    Type = PinType.Place,
-                    Location = new Location(-19.391254, -40.050202)
-                },
-                new Pin
-                {
-                    Label = "Roubo de moto Frequente",
-                    Address = "Neste trecho tem muito roubo de moto, cuidado.",
-                    Type = PinType.SearchResult,
-                    Location = new Location(-19.395747, -40.037993)
-                },
-                new Pin
-                {
-                    Label = "Furto",
-                    Address = "Moleques quebram o vidro e roubam telefone nessa rua, cuidado, nao pare.",
-                    Type = PinType.SavedPin,
-                    Location = new Location(-19.400564, -40.045224)
-                },
-            };
-
-            PinsList = new ObservableCollection<Pin>(list);
+        private void LoadPinsMock()
+        {                      
+            PinsList = new ObservableCollection<Pin>(_mapService.GetPinsMock());
         }
-    
-        private void ChangeIconOfLockUnlockButton(string nameIcon)
-        {
-            LockUnlockImage = ImageSource.FromFile(nameIcon);
-        }
-
-        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
-        {
-            OccurrenceButtonIsEnabled = isEnabled;
-            AddButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
-        }
-
+        
         private void OnAddOccurrenceCommand()
         {
             BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
@@ -311,9 +322,23 @@ namespace FocamapMaui.MVVM.ViewModels
             await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
 
+        private void ChangeIconOfLockUnlockButton(string nameIcon)
+        {
+            LockUnlockImage = ImageSource.FromFile(nameIcon);
+        }
+
+        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
+        {
+            OccurrenceButtonIsEnabled = isEnabled;
+            AddButtonIsEnabled = isEnabled;
+            UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+       
         private void CheckAnonymousAccess(bool isEnabled)
         {
             ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
+
             LockUnlockButtonIsEnabled = isEnabled;
             OccurrenceButtonIsEnabled = isEnabled;
             AddButtonIsEnabled = isEnabled;
@@ -321,29 +346,7 @@ namespace FocamapMaui.MVVM.ViewModels
             ExitButtonIsEnabled = isEnabled;
         }
 
-        public async Task SaveOccurrence()
-        {
-            try
-            {
-                var newOccurrence = new OccurrenceModel
-                {
-                    Address = Address,
-                    Date = Date,
-                    Hour = Hour,
-                    Resume = Resume
-                };
-
-                var teste = newOccurrence;
-
-                await Task.CompletedTask;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }           
-        }
-
-        #endregion
+        #endregion               
     }
 }
 

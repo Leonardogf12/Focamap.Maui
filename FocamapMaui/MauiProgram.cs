@@ -3,6 +3,7 @@ using DevExpress.Maui;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.MVVM.Views;
 using FocamapMaui.Services.Authentication;
+using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Extensions.Logging;
 
@@ -50,6 +51,7 @@ public static class MauiProgram
     {
         builder.Services.AddSingleton<INavigationService, NavigationService>();
         builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+        builder.Services.AddSingleton<IMapService, MapService>();        
     }
 }
 

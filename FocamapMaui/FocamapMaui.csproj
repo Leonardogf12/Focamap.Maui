@@ -34,11 +34,9 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<!-- App Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
-
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		
+		<!-- Splash Screen -->		
+		<MauiSplashScreen Include="Resources\Splash\splashicon.svg" BaseSize="185,185" Color="#1A1F26" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
@@ -49,6 +47,8 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	
+		<MauiSplashScreen Include="Resources\Splash\splashicon.svg" />
 	</ItemGroup>
 		
 	<ItemGroup>
@@ -99,6 +99,15 @@
 	  <None Remove="Controls\Connections\" />
 	  <None Remove="Resources\Images\exit_24.svg" />
 	  <None Remove="Resources\Images\edit_24.svg" />
+	  <None Remove="Resources\Splash\" />
+	  <None Remove="Resources\Splash\splashicon.svg" />
+	  <None Remove="Resources\AppIcon\" />
+	  <None Remove="Resources\AppIcon\appicon.svg" />
+	  <None Remove="Resources\AppIcon\appiconfg.svg" />
+	  <None Remove="Resources\Images\gps_24.svg" />
+	  <None Remove="Resources\Images\minus_24.svg" />
+	  <None Remove="Resources\Images\plus_24.svg" />
+	  <None Remove="Services\Map\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -125,6 +134,9 @@
 	  <Folder Include="Models\" />
 	  <Folder Include="Services\Authentication\" />
 	  <Folder Include="Controls\Connections\" />
+	  <Folder Include="Resources\Splash\" />
+	  <Folder Include="Resources\AppIcon\" />
+	  <Folder Include="Services\Map\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -149,9 +161,11 @@
 	  <BundleResource Include="Resources\Images\date_24.svg" />
 	  <BundleResource Include="google-services.json" />
 	  <BundleResource Include="Resources\Images\exit_24.svg" />
-	  <BundleResource Include="Resources\Images\edit_24.svg" />
+	  <BundleResource Include="Resources\Images\edit_24.svg" />	  
+	  <BundleResource Include="Resources\Images\gps_24.svg" />
+	  <BundleResource Include="Resources\Images\minus_24.svg" />
+	  <BundleResource Include="Resources\Images\plus_24.svg" />
 	</ItemGroup>
-
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
@@ -180,5 +194,9 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Maps\dark_map_style.json" />
 	  <EmbeddedResource Include="Resources\Maps\night_map_style.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <MauiIcon Include="Resources\AppIcon\appicon.svg" />
+	  <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
 	</ItemGroup>
 </Project>

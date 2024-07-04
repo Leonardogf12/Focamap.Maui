@@ -1,4 +1,5 @@
 ﻿using FocamapMaui.Controls;
+using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.Services.Authentication;
 
@@ -109,7 +110,31 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private Color _borderColorDisplayName = Colors.Transparent;
+        public Color BorderColorDisplayName
+        {
+            get => _borderColorDisplayName;
+            set
+            {
+                _borderColorDisplayName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _borderColorPassword = Colors.Transparent;
+        public Color BorderColorPassword
+        {
+            get => _borderColorPassword;
+            set
+            {
+                _borderColorPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
         private readonly IAuthenticationService _authenticationService;
+
+        public string OldNameUser = string.Empty;
 
         #endregion
 
@@ -119,24 +144,67 @@ namespace FocamapMaui.MVVM.ViewModels
 
             LoadRegionListMock();
 
-            LoadUserInformations();            
+            UpdateUserInformations();            
         }
 
         #region Private Methods
 
-        private void LoadUserInformations()
+        private async void UpdateUserInformations()
         {
-            try
+            GetNewValuesForNameInput();
+          
+            if (!string.IsNullOrEmpty(DisplayName))
             {
-                Email = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_EMAIL);
-                DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);                
+                Password = string.Empty;
+                OldNameUser = DisplayName;
                 LetterUserName = DisplayName[0].ToString();
+                return;
             }
-            catch (Exception ex)
+
+            DisplayName = OldNameUser;
+
+            await App.Current.MainPage.DisplayAlert("Ops", "Parece que ocorreu uma falha quando tentava alterar o nome de usuário. Por favor, tente novamente.", "OK");
+        }
+
+        private void GetNewValuesForNameInput()
+        {
+            Email = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_EMAIL);
+            DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
+        }
+
+        private bool ValidateNameInput(bool hasOk)
+        {
+            if (string.IsNullOrEmpty(Name) || Name.Length < 3)
             {
-                Console.WriteLine(ex.Message);
+                BorderColorDisplayName = ControlResources.GetResource<Color>("CLErrorBorderColor");
+                hasOk = false;
             }
-           
+            else
+            {
+                BorderColorDisplayName = Colors.Transparent;
+            }
+
+            return hasOk;
+        }
+
+        private bool ValidatePasswordInput(bool hasOk)
+        {
+            if (string.IsNullOrEmpty(Password) || Name.Length < 3)
+            {
+                BorderColorPassword = ControlResources.GetResource<Color>("CLErrorBorderColor");
+                hasOk = false;
+            }
+            else
+            {
+                BorderColorPassword = Colors.Transparent;
+            }
+
+            return hasOk;
+        }
+
+        private void GetUserDisplayName()
+        {
+            OldNameUser = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
         }
 
         #endregion
@@ -147,22 +215,46 @@ namespace FocamapMaui.MVVM.ViewModels
         {
             try
             {
-                await _authenticationService.UpdateUserProfile(Email, Password, Name);
-                EditUserProfile(false);
-                LoadUserInformations();
+                if (CheckIfInputsAreOk())
+                {
+                    GetUserDisplayName();
+                    
+                    var result = await _authenticationService.UpdateUserProfile(Email, Password, Name);
 
+                    if (result.Equals(StringConstants.OK))
+                    {
+                        SetsValueForIsEnabledInputs(false);
+
+                        UpdateUserInformations();
+
+                        return;
+                    }                   
+                }
+
+                await App.Current.MainPage.DisplayAlert("Atenção", "Preencha corretamente todos os campos.", "OK");                              
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }
-               
+            }               
         }
-
-        public void EditUserProfile(bool isEnabled)
+       
+        public void SetsValueForIsEnabledInputs(bool isEnabled)
         {
             IsEnabledDisplayName = isEnabled;
             IsEnabledPassword = isEnabled;          
+        }
+
+        public bool CheckIfInputsAreOk()
+        {
+            var HasOk = true;
+
+            if (!ValidateNameInput(HasOk) || !ValidatePasswordInput(HasOk))
+            {
+                HasOk = false;
+            }
+
+            return HasOk;
         }
 
         #endregion

@@ -73,7 +73,7 @@
                 _isBrowsing = false;
             }
         }
-
-	}
+        
+    }
 }
 
