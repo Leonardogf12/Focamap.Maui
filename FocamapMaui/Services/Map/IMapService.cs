@@ -1,12 +1,12 @@
-﻿using Microsoft.Maui.Controls.Maps;
+﻿using FocamapMaui.Models;
 
 namespace FocamapMaui.Services.Map
 {
     public interface IMapService
 	{
-        List<Pin> GetPinsMock();
+        List<PinDto> GetPinsMock();
 
-        List<Pin> LoadContentPinsAsync();
+        List<PinDto> LoadContentPinsAsync();
     }
 }
 

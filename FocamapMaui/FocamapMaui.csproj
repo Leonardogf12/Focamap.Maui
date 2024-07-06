@@ -108,6 +108,12 @@
 	  <None Remove="Resources\Images\minus_24.svg" />
 	  <None Remove="Resources\Images\plus_24.svg" />
 	  <None Remove="Services\Map\" />
+	  <None Remove="Resources\Images\status_base_24.svg" />
+	  <None Remove="Resources\Images\status_orange_24.svg" />
+	  <None Remove="Resources\Images\status_red_24.svg" />
+	  <None Remove="Resources\Images\status_yellow_24.svg" />
+	  <None Remove="Resources\Images\shared_24.svg" />
+	  <None Remove="Models\UI\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -137,6 +143,7 @@
 	  <Folder Include="Resources\Splash\" />
 	  <Folder Include="Resources\AppIcon\" />
 	  <Folder Include="Services\Map\" />
+	  <Folder Include="Models\UI\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -165,6 +172,11 @@
 	  <BundleResource Include="Resources\Images\gps_24.svg" />
 	  <BundleResource Include="Resources\Images\minus_24.svg" />
 	  <BundleResource Include="Resources\Images\plus_24.svg" />
+	  <BundleResource Include="Resources\Images\status_base_24.svg" />
+	  <BundleResource Include="Resources\Images\status_orange_24.svg" />
+	  <BundleResource Include="Resources\Images\status_red_24.svg" />
+	  <BundleResource Include="Resources\Images\status_yellow_24.svg" />
+	  <BundleResource Include="Resources\Images\shared_24.svg" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />

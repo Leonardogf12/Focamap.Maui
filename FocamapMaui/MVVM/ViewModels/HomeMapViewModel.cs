@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AndroidX.Lifecycle;
 using DevExpress.Maui.Controls;
-using FocamapMaui.Components.UI;
 using FocamapMaui.Controls;
+using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
@@ -31,8 +32,8 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private ObservableCollection<Pin> _pinsList;
-        public ObservableCollection<Pin> PinsList
+        private ObservableCollection<PinDto> _pinsList;
+        public ObservableCollection<PinDto> PinsList
         {
             get => _pinsList;
             set
@@ -142,6 +143,17 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private bool _mainButtonIsEnabled = true;
+        public bool MainButtonIsEnabled
+        {
+            get => _mainButtonIsEnabled;
+            set
+            {
+                _mainButtonIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }        
+
         private string _address;
         public string Address
         {
@@ -207,15 +219,66 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        private bool _isVisibleUserFloatButton;
+        public bool IsVisibleUserFloatButton
+        {
+            get => _isVisibleUserFloatButton;
+            set
+            {
+                _isVisibleUserFloatButton = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isVisibleAddOccurrenceFloatButton;
+        public bool IsVisibleAddOccurrenceFloatButton
+        {
+            get => _isVisibleAddOccurrenceFloatButton;
+            set
+            {
+                _isVisibleAddOccurrenceFloatButton = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isVisibleDetailOccurrenceFloatButton;
+        public bool IsVisibleDetailOccurrenceFloatButton
+        {
+            get => _isVisibleDetailOccurrenceFloatButton;
+            set
+            {
+                _isVisibleDetailOccurrenceFloatButton = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isVisibleExitFloatButton;
+        public bool IsVisibleExitFloatButton
+        {
+            get => _isVisibleExitFloatButton;
+            set
+            {
+                _isVisibleExitFloatButton = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isOpenMenu;
+        public bool IsOpenMenu
+        {
+            get => _isOpenMenu;
+            set
+            {
+                _isOpenMenu = value;
+                OnPropertyChanged();
+            }
+        }
         
         private readonly INavigationService _navigationService;
         private readonly IMapService _mapService;
-
-        public ICommand AddOccurrenceCommand;
-        public ICommand SeeOccurrencesHistoryCommand;
-        public ICommand UserDetailCommand;
-        public ICommand CloseDateEditCommand;
-        public ICommand ExitCommand;
+       
+        public ICommand CloseDateEditCommand;       
 
         #endregion
 
@@ -223,12 +286,7 @@ namespace FocamapMaui.MVVM.ViewModels
         {
             _navigationService = navigationService;
             _mapService = mapService;
-
-            AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
-            SeeOccurrencesHistoryCommand = new Command(OnSeeOccurrencesHistoryCommand);
-            UserDetailCommand = new Command(OnUserDetailCommand);
-            ExitCommand = new Command(OnExitCommand);
-
+                       
             LoadPinsMock();
         }
 
@@ -241,9 +299,25 @@ namespace FocamapMaui.MVVM.ViewModels
 
             Map.Pins.Clear();
 
-            foreach (var pin in PinsList)
-            {
-                Map.Pins.Add(pin);
+            foreach (var pinDto in PinsList)
+            {               
+                var pin = new Pin
+                {                    
+                    Label = pinDto.Title,
+                    Address = pinDto.Content,
+                    Type = PinType.Generic,
+                    Location = new Location(pinDto.Latitude, pinDto.Longitude)
+                };
+
+                // Associe o evento MarkerClicked do PinDto ao evento do Pin
+                pin.MarkerClicked += (s, e) =>
+                {
+                    var args = new MarkerClickedEventArgs();
+                    pinDto.RaiseMarkerClickedEvent(args);
+                    e.HideInfoWindow = args.HideInfoWindow;
+                };
+
+                Map.Pins.Add(pin);              
             }
         }
 
@@ -254,15 +328,15 @@ namespace FocamapMaui.MVVM.ViewModels
             if (name.Equals("lock_24"))
             {
                 ChangeIconOfLockUnlockButton("unlock_24");
-                ChangeIsEnabledOnGroupButtons(isEnabled: true);
+                ChangeIsEnabledOnGroupButtons(isEnabled: true);             
             }
             else
             {
                 ChangeIconOfLockUnlockButton("lock_24");
-                ChangeIsEnabledOnGroupButtons(isEnabled: false);
+                ChangeIsEnabledOnGroupButtons(isEnabled: false);              
             }
         }
-
+       
         public async Task SaveOccurrence()
         {
             try
@@ -291,25 +365,25 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private void LoadPinsMock()
         {                      
-            PinsList = new ObservableCollection<Pin>(_mapService.GetPinsMock());
+            PinsList = new ObservableCollection<PinDto>(_mapService.GetPinsMock());
         }
         
-        private void OnAddOccurrenceCommand()
+        public void OnAddOccurrenceCommand()
         {
             BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
         }
 
-        private async void OnSeeOccurrencesHistoryCommand()
+        public async void OnSeeOccurrencesHistoryCommand()
         {
             await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
         }
 
-        private async void OnUserDetailCommand(object obj)
+        public async void OnUserDetailCommand()
         {
             await _navigationService.NavigationWithParameter<UserDetailView>();
         }
 
-        private async void OnExitCommand(object obj)
+        public async void OnExitCommand()
         {
             var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
 
@@ -329,6 +403,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
         {
+            MainButtonIsEnabled = isEnabled;
             OccurrenceButtonIsEnabled = isEnabled;
             AddButtonIsEnabled = isEnabled;
             UserButtonIsEnabled = isEnabled;

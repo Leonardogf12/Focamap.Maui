@@ -1,13 +1,18 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace FocamapMaui.Controls
 {
-	public static class ControlPreferences
-	{                      
-        public static string GetKeyOfPreferences(string key) => Preferences.Get(key, "");
+    public static class ControlPreferences
+    {
+        public static string GetKeyOfPreferences(string key)
+        {
+            return Preferences.Get(key, "");
+        }
 
-        public static void AddKeyOnPreferences(string key, string value) => Preferences.Set(key, value);
+        public static void AddKeyOnPreferences(string key, string value)
+        {
+            Preferences.Set(key, value);
+        }
 
         public static void AddKeyObjectOnPreferences(string key, object contentOfObject)
         {
@@ -22,7 +27,21 @@ namespace FocamapMaui.Controls
             {
                 Preferences.Remove(key);
             }
-        }       
+        }
+
+        public static void UpdateKeyFromPreference(string key, string valueString, object contentObject = null)
+        {
+            RemoveKeyFromPreferences(key);
+
+            if (contentObject != null)
+            {
+                AddKeyObjectOnPreferences(key, contentObject);
+            }
+            else
+            {
+                AddKeyOnPreferences(key, valueString);
+            }           
+        }
     }
 }
 

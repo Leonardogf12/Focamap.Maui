@@ -15,10 +15,16 @@
     <Color x:Key="CLGray">#ACACAC</Color>
     <Color x:Key="CLErrorBorderColor">#E95D5D</Color>
     <Color x:Key="CLRoundImageLetterName">#46698A</Color>
-
-
-    
-
+    <Color x:Key="CLPopupRiskHigh">#D63C3C</Color>
+    <Color x:Key="CLPopupRiskMedium">#D67C3C</Color>
+    <Color x:Key="CLPopupRiskLow">#DBA92A</Color>
+    <Color x:Key="CLTRedBorder">#88D63C3C</Color>
+    <Color x:Key="CLTRed">#88FFC0CB</Color>
+    <Color x:Key="CLTOrangeBorder">#88D67C3C</Color>
+    <Color x:Key="CLTOrange">#88FFC0AD</Color>
+    <Color x:Key="CLTYellowBorder">#88DBA92A</Color>
+    <Color x:Key="CLTYellow">#88FFDBA9</Color>
+        
     <!-- Original Colors -->
     <Color x:Key="Primary">#512BD4</Color>
     <Color x:Key="PrimaryDark">#ac99ea</Color>

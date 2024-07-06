@@ -1,7 +1,7 @@
 ﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Controls.Resources;
 
-namespace FocamapMaui.Components
+namespace FocamapMaui.Components.UI
 {
     public class MultilineEditCustom : MultilineEdit
 	{

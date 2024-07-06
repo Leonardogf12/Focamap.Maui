@@ -25,11 +25,11 @@ namespace FocamapMaui.Services.Authentication
 
                 ControlUsers.SetLocalIdByUserLogged();
 
-                await Shell.Current.GoToAsync("//HomeMapView");
+                await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
             }
             catch (FirebaseAuthException f)
             {
-                if (f.ResponseData.Contains("INVALID_LOGIN_CREDENTIALS"))
+                if (f.ResponseData.Contains(StringConstants.INVALID_LOGIN_CREDENTIALS))
                 {
                     await App.Current.MainPage.DisplayAlert("Ops", "Email ou senha inválidos. Favor verificar.", "Ok");
                 }
@@ -106,8 +106,8 @@ namespace FocamapMaui.Services.Authentication
                 await auth.UpdateProfileAsync(newName, string.Empty);
 
                 var content = await auth.GetFreshAuthAsync();
-
-                UpdateKeysByUserOnPreferences(content);
+               
+                UpdateKeyFirebaseUserLogged(content);
                 
                 await App.Current.MainPage.DisplayAlert("Sucesso", "O nome do Usuário foi alterado com sucesso!", "Ok");
 
@@ -138,25 +138,35 @@ namespace FocamapMaui.Services.Authentication
             return new FirebaseAuthProvider(new FirebaseConfig(StringConstants.FIREBASE_AUTH_PROVIDER_KEY));
         }
 
-        private static void SaveKeysOnPreferences(FirebaseAuthLink contentByUserLogged)
+        private static void SaveKeysOnPreferences(FirebaseAuthLink content)
         {
-            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY);
-            ControlPreferences.AddKeyObjectOnPreferences(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY, contentOfObject: contentByUserLogged);
+            UpdateKeyFirebaseAuthTokenKey(content);
 
-            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, value: contentByUserLogged.User.LocalId);
+            UpdateKeyFirebaseUserLocalIdKey(content);
 
-            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOGGED);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: contentByUserLogged.User.DisplayName);
+            UpdateKeyFirebaseUserLogged(content);
 
-            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_EMAIL);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_EMAIL, value: contentByUserLogged.User.Email);
+            UpdateKeyFirebaseUserEmail(content);
         }
 
-        private static void UpdateKeysByUserOnPreferences(FirebaseAuthLink content)
+        private static void UpdateKeyFirebaseUserEmail(FirebaseAuthLink content)
         {
-            ControlPreferences.RemoveKeyFromPreferences(key: StringConstants.FIREBASE_USER_LOGGED);
-            ControlPreferences.AddKeyOnPreferences(key: StringConstants.FIREBASE_USER_LOGGED, value: content.User.DisplayName);         
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_USER_EMAIL, valueString: content.User.Email);
+        }
+
+        private static void UpdateKeyFirebaseUserLogged(FirebaseAuthLink content)
+        {
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_USER_LOGGED, valueString: content.User.DisplayName);
+        }
+
+        private static void UpdateKeyFirebaseAuthTokenKey(FirebaseAuthLink content)
+        {
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_AUTH_TOKEN_KEY, valueString: "", contentObject: content);
+        }
+
+        private static void UpdateKeyFirebaseUserLocalIdKey(FirebaseAuthLink content)
+        {
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, valueString: content.User.LocalId);
         }
     }
 }
