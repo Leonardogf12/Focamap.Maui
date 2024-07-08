@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AndroidX.Lifecycle;
 using DevExpress.Maui.Controls;
 using FocamapMaui.Controls;
 using FocamapMaui.Models;
@@ -62,7 +61,7 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 _map = value;
                 OnPropertyChanged();
-                UpdateMapPins();
+                //UpdateMapPins();
             }
         }
 
@@ -294,6 +293,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         public void UpdateMapPins()
         {
+           /*
             if (Map == null || PinsList == null)
                 return;
 
@@ -318,7 +318,8 @@ namespace FocamapMaui.MVVM.ViewModels
                 };
 
                 Map.Pins.Add(pin);              
-            }
+            }*/
+            
         }
 
         public void ChangeLockUnlokImage(object file)
@@ -359,15 +360,6 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        #endregion
-
-        #region Private Methods
-
-        private void LoadPinsMock()
-        {                      
-            PinsList = new ObservableCollection<PinDto>(_mapService.GetPinsMock());
-        }
-        
         public void OnAddOccurrenceCommand()
         {
             BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
@@ -396,6 +388,15 @@ namespace FocamapMaui.MVVM.ViewModels
             await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private void LoadPinsMock()
+        {                      
+            PinsList = new ObservableCollection<PinDto>(_mapService.GetPinsMock());
+        }
+               
         private void ChangeIconOfLockUnlockButton(string nameIcon)
         {
             LockUnlockImage = ImageSource.FromFile(nameIcon);

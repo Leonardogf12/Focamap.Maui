@@ -24,5 +24,6 @@ namespace FocamapMaui.Controls.Maps
             googleMap.SetMapStyle(new MapStyleOptions(json));
         }
     }
+   
 }
 

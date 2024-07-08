@@ -40,15 +40,12 @@
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
-		<MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
-
-		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	
-		<MauiSplashScreen Include="Resources\Splash\splashicon.svg" />
+		<MauiSplashScreen Include="Resources\Splash\splashicon.svg" />				
 	</ItemGroup>
 		
 	<ItemGroup>
@@ -114,6 +111,13 @@
 	  <None Remove="Resources\Images\status_yellow_24.svg" />
 	  <None Remove="Resources\Images\shared_24.svg" />
 	  <None Remove="Models\UI\" />
+	  <None Remove="Resources\drawable\dotnet_bot.png" />
+	  <None Remove="Resources\Images\marker_orange.png" />
+	  <None Remove="Resources\Images\marker_red.png" />
+	  <None Remove="Resources\Images\marker_yellow.png" />
+	  <None Remove="Resources\Images\marker_o31.svg" />
+	  <None Remove="Resources\Images\marker_r31.svg" />
+	  <None Remove="Resources\Images\marker_y31.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -176,7 +180,10 @@
 	  <BundleResource Include="Resources\Images\status_orange_24.svg" />
 	  <BundleResource Include="Resources\Images\status_red_24.svg" />
 	  <BundleResource Include="Resources\Images\status_yellow_24.svg" />
-	  <BundleResource Include="Resources\Images\shared_24.svg" />
+	  <BundleResource Include="Resources\Images\shared_24.svg" />	
+	  <BundleResource Include="Resources\Images\marker_o31.svg" />
+	  <BundleResource Include="Resources\Images\marker_r31.svg" />
+	  <BundleResource Include="Resources\Images\marker_y31.svg" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />

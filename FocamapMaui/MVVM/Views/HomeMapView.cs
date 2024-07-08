@@ -1,10 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using Android.Gms.Maps;
 using DevExpress.Maui.Controls;
 using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
-using FocamapMaui.Controls;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
@@ -16,6 +14,7 @@ using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
+using Circle = Microsoft.Maui.Controls.Maps.Circle;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.Views
@@ -78,33 +77,21 @@ namespace FocamapMaui.MVVM.Views
 
         private static Grid CreateMainGrid()
         {
-            var grid = new Grid
+            return new Grid
             {
                 RowDefinitions = new RowDefinitionCollection
                 {
                     new() {Height = GridLength.Star},
                     new() {Height = GridLength.Auto},
                 }
-            };
-
-            return grid;
+            };         
         }
 
         private void CreateMap(Grid grid)
         {
-            map = new Map
-            {                
-                MapType = MapType.Street,
-                IsScrollEnabled = true,
-                IsTrafficEnabled = false,
-                IsZoomEnabled = true,
-                IsShowingUser = true,                
-                BindingContext = ViewModel,
-            };           
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Location(-19.391820792436327, -40.049665587965364), Distance.FromMeters(2700))); //MOCK
-                
-            map.MapClicked += Map_MapClicked;            
-            map.PropertyChanged += Map_PropertyChanged;
+            var locationMock = new Location(-19.391820792436327, -40.049665587965364);
+
+            map = MapCustom.GetMap(MapType.Street, locationMock, Map_MapClicked, Map_PropertyChanged);
 
             CreateCircleEmentToPinMOCK();
 
@@ -182,7 +169,7 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(gpsButton, 0);
         }
         
-        private void CreateUpDownButton(Grid grid)
+        private static void CreateUpDownButton(Grid grid)
         {
             var stack = new VerticalStackLayout
             {             
@@ -441,17 +428,12 @@ namespace FocamapMaui.MVVM.Views
         {
             base.OnAppearing();
 
-            ViewModel.Map = map;
-           
-            LoadPinsMockWithEvents();
-
-            ViewModel.UpdateMapPins();
+            ViewModel.Map = map;         
         }
        
         // Handler para NAO deixar o mapa Nulo apos a construcao da pagina.
         protected override void OnHandlerChanged()
-        {
-            
+        {            
             base.OnHandlerChanged();
 
 #if IOS
@@ -462,68 +444,12 @@ namespace FocamapMaui.MVVM.Views
             if (map.Handler is MapHandler mapHandler && mapHandler.PlatformView is MapView mapView)
             {
                 mapView.GetMapAsync(new OnMapReadyCallback());
-            }
+              
+                mapView.GetMapAsync(new OnPinReadyCallback(ViewModel.PinsList, MainGrid));
+            }            
 #endif
         }
-
-        private void LoadPinsMockWithEvents()
-        {
-            CreatePinForMapComponent(ViewModel.PinsList);
-        }
-
-        private void CreatePinForMapComponent(ObservableCollection<PinDto> list)
-        {
-            var listUpdatedWithEvent = new List<PinDto>();
-
-            foreach (var pinData in list)
-            {
-                var pin = new PinDto
-                {
-                    Id = pinData.Id,
-                    Title = pinData.Title,
-                    Content = pinData.Content,                  
-                    Latitude = pinData.Latitude,
-                    Longitude = pinData.Longitude,
-                    Address = pinData.Address,
-                    FullDate = pinData.FullDate,
-                    Status = pinData.Status
-                };
-
-                AddEventHandlersOnPins(pin);
-
-                listUpdatedWithEvent.Add(pin);
-            }
-
-            ViewModel.PinsList = new ObservableCollection<PinDto>(listUpdatedWithEvent);
-        }
-
-        private void AddEventHandlersOnPins(PinDto pin)
-        {
-            pin.MarkerClicked += (s, args) =>
-            {
-                args.HideInfoWindow = true;
-                string titlePin = ((PinDto)s).Title;
-                string contentPin = ((PinDto)s).Content;
-                string statusPin = ((PinDto)s).Status;
-                string addressPin = ((PinDto)s).Address;
-                string fullDatePin = ((PinDto)s).FullDate;
-               
-                string colorName = statusPin switch
-                {
-                    StringConstants.LOW => "CLPopupRiskLow",
-                    StringConstants.AVERAGE => "CLPopupRiskMedium",
-                    _ => "CLPopupRiskHigh",
-                };
-                
-                var popup = new DxPopupPinCustom(colorHeader: colorName, title: titlePin,
-                                                content: contentPin, textStatus: statusPin,
-                                                textAddress: addressPin, textFullDate: fullDatePin);
-
-                MainGrid.AddWithSpan(popup);
-                popup.IsOpen = true;
-            };
-        }
-
+       
         #endregion
     }
 }

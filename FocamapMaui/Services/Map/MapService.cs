@@ -25,6 +25,7 @@ namespace FocamapMaui.Services.Map
             {
                 new PinDto
                 {
+                    Id = "aaa",
                      Title = "Assalto",
                      Content = "Nesta esquina tem muitos assaltos pois ali fica muitos trabalhadores no ponto de onibus, cuidado ao passar naquela rua a noite, nunca de madrugada ok.",
                      Address = "Rua Banda de Rock Linkin Park, Interlagos, Linhares ES 29900-000",
@@ -35,6 +36,7 @@ namespace FocamapMaui.Services.Map
                 },
                  new PinDto
                  {
+                     Id = "bbb",
                      Title = "Furto",
                      Content = "Nesta are tem muito relato de furto e roubo.",
                      Address = "Av. Guns N Roses, Interlagos, Linhares ES.",
@@ -45,6 +47,7 @@ namespace FocamapMaui.Services.Map
                  },
                  new PinDto
                  {
+                     Id = "ccc",
                      Title = "Morador de rua",
                      Content = "Nesta rua há muitos moradores de rua.",
                      Address = "Av. Pearl Jam, Interlagos, Linhares ES.",
@@ -55,6 +58,7 @@ namespace FocamapMaui.Services.Map
                  },
                  new PinDto
                  {
+                     Id = "ddd",
                      Title = "Usuarios de Drogras",
                      Content = "Nesta area ocorre muito a presenca de usuarios de drogas.",
                      Address = "Rua Foo Fighters 29903045, Interlagos, Linhares ES.",
