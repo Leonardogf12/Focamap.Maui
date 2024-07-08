@@ -284,9 +284,7 @@ namespace FocamapMaui.MVVM.ViewModels
         public HomeMapViewModel(INavigationService navigationService, IMapService mapService)
         {
             _navigationService = navigationService;
-            _mapService = mapService;
-                       
-            LoadPinsMock();
+            _mapService = mapService;                                  
         }
 
         #region Public Methods
@@ -392,9 +390,25 @@ namespace FocamapMaui.MVVM.ViewModels
 
         #region Private Methods
 
-        private void LoadPinsMock()
-        {                      
-            PinsList = new ObservableCollection<PinDto>(_mapService.GetPinsMock());
+        public async Task LoadPinsMock()
+        {
+            IsBusy = true;
+
+            try
+            {
+                var list = await _mapService.GetPinsMock();
+
+                PinsList = new ObservableCollection<PinDto>(list);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+            
         }
                
         private void ChangeIconOfLockUnlockButton(string nameIcon)

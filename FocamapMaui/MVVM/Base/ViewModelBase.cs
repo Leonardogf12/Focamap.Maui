@@ -5,6 +5,17 @@ namespace FocamapMaui.MVVM.Base
 {
     public class ViewModelBase : INotifyPropertyChanged
 	{
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get => _isBusy;
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged();
+            }
+        }
+
         private List<string> _listRegions;
         public List<string> ListRegions
         {

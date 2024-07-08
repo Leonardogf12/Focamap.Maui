@@ -1,10 +1,13 @@
-﻿using FocamapMaui.Controls;
+﻿using FocamapMaui.Components;
+using FocamapMaui.Controls;
 
 namespace FocamapMaui;
 
 public partial class App : Application
 {
     public static string UserLocalIdLogged;
+
+    public static PopupLoadingView popupLoading = new();
 
     public App()
 	{

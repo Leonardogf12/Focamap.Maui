@@ -76,14 +76,27 @@ namespace FocamapMaui.MVVM.ViewModels
 
         public async Task Login()
         {
-            if (CheckIfInputsAreOk())
-            {
-                await _authenticationService.LoginAsync(Email, Password);
+            IsBusy = true;
 
-                return;
+            try
+            {               
+                if (CheckIfInputsAreOk())
+                {
+                    await _authenticationService.LoginAsync(Email, Password);
+
+                    return;
+                }
+
+                await App.Current.MainPage.DisplayAlert("Ops", "Preencha corretamente todos os campos", "OK");
             }
-
-            await App.Current.MainPage.DisplayAlert("Ops", "Preencha corretamente todos os campos", "OK");
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }                        
         }
 
         public bool CheckIfInputsAreOk()

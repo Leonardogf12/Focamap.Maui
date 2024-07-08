@@ -38,7 +38,7 @@ namespace FocamapMaui.MVVM.Views
         #endregion
 
         public HomeMapView(INavigationService navigationService, IMapService mapService)
-		{
+		{           
             _navigationService = navigationService;
             _mapService = mapService;
             
@@ -47,16 +47,18 @@ namespace FocamapMaui.MVVM.Views
             SetNavigationServiceInstancaFromViewModel(_navigationService, _mapService);
 
             Content = BuildHomeMapView;
-            
-            BindingContext = ViewModel;
+
+            CreateLoadingPopupView(this, ViewModel);
+
+            BindingContext = ViewModel;          
         }
         
         #region UI
 
         public View BuildHomeMapView
-        {
+        {            
             get
-            {
+            {               
                 MainGrid = CreateMainGrid();
                 
                 CreateMap(MainGrid);
@@ -424,13 +426,17 @@ namespace FocamapMaui.MVVM.Views
             ViewModel = new HomeMapViewModel(navigationService, mapService);
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            ViewModel.Map = map;         
+            await ViewModel.LoadPinsMock();
+
+            ViewModel.Map = map;
+
+            OnHandlerChanged();
         }
-       
+
         // Handler para NAO deixar o mapa Nulo apos a construcao da pagina.
         protected override void OnHandlerChanged()
         {            
@@ -444,8 +450,12 @@ namespace FocamapMaui.MVVM.Views
             if (map.Handler is MapHandler mapHandler && mapHandler.PlatformView is MapView mapView)
             {
                 mapView.GetMapAsync(new OnMapReadyCallback());
-              
-                mapView.GetMapAsync(new OnPinReadyCallback(ViewModel.PinsList, MainGrid));
+
+                // Verifique se os pins foram carregados antes de configurar o handler
+                if (ViewModel.PinsList != null && ViewModel.PinsList.Any())
+                {
+                    mapView.GetMapAsync(new OnPinReadyCallback(ViewModel.PinsList, MainGrid));
+                }            
             }            
 #endif
         }

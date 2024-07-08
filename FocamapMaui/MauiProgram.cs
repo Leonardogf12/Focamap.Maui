@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Maui;
 using DevExpress.Maui;
-using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.MVVM.Views;
 using FocamapMaui.Services.Authentication;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace FocamapMaui;
 
@@ -18,7 +18,8 @@ public static class MauiProgram
 			.UseMauiApp<App>()
             .UseMauiCommunityToolkit()
             .UseDevExpress()
-			.UseMauiMaps()          
+			.UseMauiMaps()
+            .UseSkiaSharp()
 			.ConfigureFonts(fonts =>
 			{
                 fonts.AddFont("Montserrat-Regular.ttf", "MontserratRegular");

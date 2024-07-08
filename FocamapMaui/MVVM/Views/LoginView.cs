@@ -1,15 +1,14 @@
-﻿using FocamapMaui.Components.UI;
+﻿using DevExpress.Maui.Editors;
+using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
+using FocamapMaui.Helpers;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
-using FocamapMaui.Services.Navigation;
-using DevExpress.Maui.Editors;
-using FocamapMaui.Helpers;
 using FocamapMaui.Services.Authentication;
-using AndroidX.Lifecycle;
+using FocamapMaui.Services.Navigation;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -38,7 +37,9 @@ namespace FocamapMaui.MVVM.Views
 
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
-			Content = BuildLoginView;
+            Content = BuildLoginView;
+
+            CreateLoadingPopupView(this, ViewModel);
 
             BindingContext = ViewModel;
 		}
@@ -56,10 +57,10 @@ namespace FocamapMaui.MVVM.Views
                 CreateInputs(grid);
 
                 CreateButtons(grid);
-
+               
                 return grid;
             }            
-        }
+        }      
 
         private static Grid CreateMainGrid()
         {
@@ -170,10 +171,10 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private async void SeeMapButton_Clicked(object sender, EventArgs e)
-        {
+        {           
             var param = ParameterHelper.SetParameter("AnonymousAccess", true);
 
-            await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);
+            await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);        
         }
 
         private async void ForgotPasswordLabelTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)

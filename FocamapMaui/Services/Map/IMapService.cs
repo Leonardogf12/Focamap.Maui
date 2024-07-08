@@ -4,7 +4,7 @@ namespace FocamapMaui.Services.Map
 {
     public interface IMapService
 	{
-        List<PinDto> GetPinsMock();
+        Task<List<PinDto>> GetPinsMock();
 
         List<PinDto> LoadContentPinsAsync();
     }

@@ -118,6 +118,7 @@
 	  <None Remove="Resources\Images\marker_o31.svg" />
 	  <None Remove="Resources\Images\marker_r31.svg" />
 	  <None Remove="Resources\Images\marker_y31.svg" />
+	  <None Remove="Resources\Raw\loading.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -184,6 +185,7 @@
 	  <BundleResource Include="Resources\Images\marker_o31.svg" />
 	  <BundleResource Include="Resources\Images\marker_r31.svg" />
 	  <BundleResource Include="Resources\Images\marker_y31.svg" />
+	  <BundleResource Include="Resources\Raw\loading.json" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
@@ -200,6 +202,7 @@
 		<PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
 		<PackageReference Include="FirebaseAdmin" Version="2.4.1" />
 		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.2" />
+		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />

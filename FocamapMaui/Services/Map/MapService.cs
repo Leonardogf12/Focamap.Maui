@@ -1,14 +1,15 @@
 ﻿using FocamapMaui.Models;
-using Microsoft.Maui.Controls.Maps;
 
 namespace FocamapMaui.Services.Map
 {
     public class MapService : IMapService
 	{       
-        public List<PinDto> GetPinsMock()
+        public async Task<List<PinDto>> GetPinsMock()
         {
             try
             {
+                await Task.Delay(5000);
+
                 // Simulação de carregamento de Pins do Firebase
                 return LoadContentPinsAsync();                
             }
