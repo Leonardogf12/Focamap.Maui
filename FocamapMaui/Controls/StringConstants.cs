@@ -6,6 +6,7 @@
 
         public const string ES = "ES";
         public const string MG = "MG";
+        public const string CITY = "City";
 
         #endregion
 

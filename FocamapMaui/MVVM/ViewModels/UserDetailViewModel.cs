@@ -1,5 +1,7 @@
 ﻿using FocamapMaui.Controls;
 using FocamapMaui.Controls.Resources;
+using FocamapMaui.Helpers.Models;
+using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.Services.Authentication;
 
@@ -110,6 +112,17 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private List<City> _cities;
+        public List<City> Cities
+        {
+            get => _cities;
+            set
+            {
+                _cities = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Color _borderColorDisplayName = Colors.Transparent;
         public Color BorderColorDisplayName
         {
@@ -141,9 +154,7 @@ namespace FocamapMaui.MVVM.ViewModels
         public UserDetailViewModel(IAuthenticationService authenticationService)
 		{
             _authenticationService = authenticationService;
-
-            LoadRegionListMock();
-
+            
             UpdateUserInformations();            
         }
 
@@ -238,7 +249,12 @@ namespace FocamapMaui.MVVM.ViewModels
                 Console.WriteLine(ex.Message);
             }               
         }
-       
+
+        public void LoadCities()
+        {
+            Cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+        }
+
         public void SetsValueForIsEnabledInputs(bool isEnabled)
         {
             IsEnabledDisplayName = isEnabled;

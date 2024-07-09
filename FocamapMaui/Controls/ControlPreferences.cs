@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FocamapMaui.Models;
+using Newtonsoft.Json;
 
 namespace FocamapMaui.Controls
 {
@@ -7,6 +8,20 @@ namespace FocamapMaui.Controls
         public static string GetKeyOfPreferences(string key)
         {
             return Preferences.Get(key, "");
+        }
+
+        public static T GetKeyObjectOfPreferences<T>(string key)
+        {
+            var obj = GetKeyOfPreferences(key);
+
+            if (string.IsNullOrEmpty(obj))
+            {
+                return default;
+            }
+
+            var deserializedObject = JsonConvert.DeserializeObject<T>(obj);
+
+            return deserializedObject;
         }
 
         public static void AddKeyOnPreferences(string key, string value)

@@ -104,7 +104,7 @@ namespace FocamapMaui.MVVM.Views
             stackInputs.Children.Add(PasswordTextEdit);
 
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
-            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.ListRegions));         
+            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.Cities));         
             DropdownRegions.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledRegion), BindingMode.TwoWay);
             DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged; ;
             stackInputs.Children.Add(DropdownRegions);
@@ -152,6 +152,17 @@ namespace FocamapMaui.MVVM.Views
 
                 action();
             }
+        }
+
+        #endregion
+
+        #region Actions
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            ViewModel.LoadCities();
         }
 
         #endregion

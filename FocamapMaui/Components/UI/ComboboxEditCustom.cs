@@ -1,5 +1,6 @@
 ﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Controls.Resources;
+using FocamapMaui.Models;
 
 namespace FocamapMaui.Components.UI
 {
@@ -8,7 +9,8 @@ namespace FocamapMaui.Components.UI
         public ComboboxEditCustom(string icon = "")
         {
             StartIcon = ImageSource.FromFile(icon);
-            IsFilterEnabled = false;
+            DisplayMember = nameof(City.Name);
+            IsFilterEnabled = true;
             IsLabelFloating = false;
             HeightRequest = 55;            
             CornerRadius = 10;

@@ -1,6 +1,7 @@
 ﻿using Firebase.Auth;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Connections;
+using FocamapMaui.Models;
 
 namespace FocamapMaui.Services.Authentication
 {
@@ -41,7 +42,7 @@ namespace FocamapMaui.Services.Authentication
             }
         }
         
-        public async Task RegisterNewUserAsync(string name, string email, string password)
+        public async Task RegisterNewUserAsync(string name, string email, string password, City city)
         { 
             try
             {
@@ -60,7 +61,10 @@ namespace FocamapMaui.Services.Authentication
 
                 var content = await auth.GetFreshAuthAsync();
 
-                await App.Current.MainPage.DisplayAlert("Sucesso", "Usuário registrado com sucesso!", "Voltar");
+                //TODO - Save User and City on SqLite. Create repository.
+                SaveCityKeyOnPreferences(city); // remove after implemeted repository.
+
+                await App.Current.MainPage.DisplayAlert("Sucesso", "Usuário registrado com sucesso!", "Ok");
 
             }
             catch (Exception ex)
@@ -69,7 +73,7 @@ namespace FocamapMaui.Services.Authentication
                 await App.Current.MainPage.DisplayAlert("Ops", "Ocorreu um erro inesperado ao tentar registrar um novo usuário. Tente novamente em alguns instantes.", "Ok");
             }            
         }
-
+        
         public async Task ResetPasswordAsync(string email)
         {
             try
@@ -147,6 +151,11 @@ namespace FocamapMaui.Services.Authentication
             UpdateKeyFirebaseUserLogged(content);
 
             UpdateKeyFirebaseUserEmail(content);
+        }
+
+        private static void SaveCityKeyOnPreferences(City city)
+        {
+            ControlPreferences.AddKeyObjectOnPreferences(key: StringConstants.CITY, contentOfObject: city);
         }
 
         private static void UpdateKeyFirebaseUserEmail(FirebaseAuthLink content)

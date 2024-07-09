@@ -119,6 +119,7 @@
 	  <None Remove="Resources\Images\marker_r31.svg" />
 	  <None Remove="Resources\Images\marker_y31.svg" />
 	  <None Remove="Resources\Raw\loading.json" />
+	  <None Remove="Helpers\Models\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -149,6 +150,7 @@
 	  <Folder Include="Resources\AppIcon\" />
 	  <Folder Include="Services\Map\" />
 	  <Folder Include="Models\UI\" />
+	  <Folder Include="Helpers\Models\" />
 	</ItemGroup>
 
 	<ItemGroup>

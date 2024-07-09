@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using FocamapMaui.Helpers.Models;
+using FocamapMaui.Models;
 
 namespace FocamapMaui.MVVM.Base
 {
@@ -16,32 +18,10 @@ namespace FocamapMaui.MVVM.Base
             }
         }
 
-        private List<string> _listRegions;
-        public List<string> ListRegions
-        {
-            get => _listRegions;
-            set
-            {
-                _listRegions = value;
-                OnPropertyChanged();
-            }
-        }
-
         public ViewModelBase()
         {
         }
-
-        public void LoadRegionListMock()
-        {
-            ListRegions = new List<string>
-            {
-                "Espirito Santo",
-                "Minas Gerais",
-                "São Paulo",
-                "Rio de Janeiro"
-            };
-        }
-
+      
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string name = null)

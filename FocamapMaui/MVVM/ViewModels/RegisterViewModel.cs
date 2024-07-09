@@ -1,4 +1,6 @@
 ﻿using FocamapMaui.Controls.Resources;
+using FocamapMaui.Helpers.Models;
+using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.Services.Authentication;
 
@@ -52,13 +54,24 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
        
-        private string _selectedRegion;
-        public string SelectedRegion
+        private City _selectedCity;
+        public City SelectedCity
         {
-            get => _selectedRegion;
+            get => _selectedCity;
             set
             {
-                _selectedRegion = value;
+                _selectedCity = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private List<City> _cities;
+        public List<City> Cities
+        {
+            get => _cities;
+            set
+            {
+                _cities = value;
                 OnPropertyChanged();
             }
         }
@@ -125,20 +138,23 @@ namespace FocamapMaui.MVVM.ViewModels
         public RegisterViewModel(IAuthenticationService authenticationService)
 		{
             _authenticationService = authenticationService;
-
-            LoadRegionListMock();
 		}
 
         public async Task RegisterNewUser()
         {
             if (CheckIfInputsAreOk())
             {
-                await _authenticationService.RegisterNewUserAsync(Name, Email, Password);
+                await _authenticationService.RegisterNewUserAsync(Name, Email, Password, SelectedCity);
 
                 return;
             }
 
             await App.Current.MainPage.DisplayAlert("Atenção", "Preencha corretamente todos os campos.", "OK");            
+        }
+
+        public void LoadCities()
+        {
+            Cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
         }
 
         public bool CheckIfInputsAreOk()
@@ -219,7 +235,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private bool ValidateRegionInput(bool hasOk)
         {
-            if (string.IsNullOrEmpty(SelectedRegion))
+            if (SelectedCity == null)
             {
                 BorderColorRegionInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
                 hasOk = false;

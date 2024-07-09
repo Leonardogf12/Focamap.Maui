@@ -3,6 +3,7 @@ using Android.Gms.Maps;
 using DevExpress.Maui.Controls;
 using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
+using FocamapMaui.Controls;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
@@ -91,9 +92,9 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateMap(Grid grid)
         {
-            var locationMock = new Location(-19.391820792436327, -40.049665587965364);
+            var location = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
 
-            map = MapCustom.GetMap(MapType.Street, locationMock, Map_MapClicked, Map_PropertyChanged);
+            map = MapCustom.GetMap(MapType.Street, new Location(location.Latitude, location.Longitude), Map_MapClicked, Map_PropertyChanged);
 
             CreateCircleEmentToPinMOCK();
 
@@ -430,14 +431,34 @@ namespace FocamapMaui.MVVM.Views
         {
             base.OnAppearing();
 
-            await ViewModel.LoadPinsMock();
+            (BindingContext as ViewModelBase).IsBusy = false;
 
+            await ViewModel.LoadPinsMock();
+            
             ViewModel.Map = map;
 
             OnHandlerChanged();
         }
 
-        // Handler para NAO deixar o mapa Nulo apos a construcao da pagina.
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            // Ensures the popup closes
+            if (App.popupLoading != null)
+            {
+                MainThread.BeginInvokeOnMainThread(async () =>
+                {
+                    await App.popupLoading.CloseAsync();
+                    App.popupLoading = null;
+                });
+            }
+
+            // Set False for Property IsBusy
+            (BindingContext as ViewModelBase).IsBusy = false;
+        }
+
+        // Handler to NOT leave the map Null after building the page.
         protected override void OnHandlerChanged()
         {            
             base.OnHandlerChanged();
@@ -451,7 +472,7 @@ namespace FocamapMaui.MVVM.Views
             {
                 mapView.GetMapAsync(new OnMapReadyCallback());
 
-                // Verifique se os pins foram carregados antes de configurar o handler
+                //If to Check that pins are loaded before configuring the handler
                 if (ViewModel.PinsList != null && ViewModel.PinsList.Any())
                 {
                     mapView.GetMapAsync(new OnPinReadyCallback(ViewModel.PinsList, MainGrid));
