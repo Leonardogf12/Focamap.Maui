@@ -1,8 +1,9 @@
 ﻿using DevExpress.Maui.Controls;
+using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Resources;
 
-namespace FocamapMaui.Components.UI
+namespace FocamapMaui.Components.Views
 {
     public class BottomSheetAddOccurrenceCustom : BottomSheet
     {
@@ -19,8 +20,8 @@ namespace FocamapMaui.Components.UI
         #endregion
 
         public BottomSheetAddOccurrenceCustom(EventHandler eventHandler)
-		{
-			BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
+		{           
+            BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
             GrabberColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
             Content = BuildBottomSheet(eventHandler);
 		}

@@ -4,7 +4,7 @@
 	{
         public static void SetLocalIdByUserLogged()
         {
-            App.UserLocalIdLogged = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
+            App.FirebaseUserLocalIdKey = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
         }
 
         public static async void CheckUserHasLogged()

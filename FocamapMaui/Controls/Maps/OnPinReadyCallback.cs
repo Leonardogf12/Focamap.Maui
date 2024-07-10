@@ -3,6 +3,7 @@ using Android.Gms.Maps;
 using Android.Gms.Maps.Model;
 using Android.Graphics;
 using FocamapMaui.Components.UI;
+using FocamapMaui.Helpers;
 using FocamapMaui.Models;
 
 namespace FocamapMaui.Controls.Maps
@@ -46,8 +47,8 @@ namespace FocamapMaui.Controls.Maps
         {            
             string icon = pin.Status switch
             {
-                StringConstants.LOW => "marker_y31",
-                StringConstants.AVERAGE => "marker_o31",
+                (int)PinStatus.Baixo => "marker_y31",
+                (int)PinStatus.Medio => "marker_o31",
                 _ => "marker_r31",
             };
 
@@ -77,27 +78,31 @@ namespace FocamapMaui.Controls.Maps
                 {
                     //This ensures that the default window will not be displayed
                     args.Handled = true;
+                   
+                    PinDto newPin = CreateModelToDxPopupPinCustom(pin);
 
-                    string titlePin = pin.Title;
-                    string contentPin = pin.Content;
-                    string statusPin = pin.Status;
-                    string addressPin = pin.Address;
-                    string fullDatePin = pin.FullDate;
+                    string colorPopupHeader = PinStatusHelper.GetColorName(pin.Status);
 
-                    string colorPopupHeader = statusPin switch
-                    {
-                        StringConstants.LOW => "CLPopupRiskLow",
-                        StringConstants.AVERAGE => "CLPopupRiskMedium",
-                        _ => "CLPopupRiskHigh",
-                    };
-
-                    var popup = new DxPopupPinCustom(colorHeader: colorPopupHeader, title: titlePin,
-                                                   content: contentPin, textStatus: statusPin,
-                                                   textAddress: addressPin, textFullDate: fullDatePin);
+                    var popup = new DxPopupPinCustom(colorHeader: colorPopupHeader, pin: newPin);
 
                     mainGrid.AddWithSpan(popup);
+
                     popup.IsOpen = true;
                 }
+            };
+        }
+      
+        private static PinDto CreateModelToDxPopupPinCustom(PinDto pin)
+        {
+            return new()
+            {
+                Title = pin.Title,
+                Content = pin.Content,
+                Status = pin.Status,
+                Address = pin.Address,
+                FullDate = pin.FullDate,
+                Latitude = pin.Latitude,
+                Longitude = pin.Longitude
             };
         }
     }

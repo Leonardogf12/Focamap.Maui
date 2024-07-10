@@ -49,7 +49,6 @@
 	</ItemGroup>
 		
 	<ItemGroup>
-	  <None Remove="Data\" />
 	  <None Remove="MVVM\" />
 	  <None Remove="MVVM\Models\" />
 	  <None Remove="MVVM\Views\" />
@@ -120,10 +119,10 @@
 	  <None Remove="Resources\Images\marker_y31.svg" />
 	  <None Remove="Resources\Raw\loading.json" />
 	  <None Remove="Helpers\Models\" />
+	  <None Remove="Components\Views\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Data\" />
 	  <Folder Include="MVVM\" />
 	  <Folder Include="MVVM\Models\" />
 	  <Folder Include="MVVM\Views\" />
@@ -151,6 +150,7 @@
 	  <Folder Include="Services\Map\" />
 	  <Folder Include="Models\UI\" />
 	  <Folder Include="Helpers\Models\" />
+	  <Folder Include="Components\Views\" />
 	</ItemGroup>
 
 	<ItemGroup>

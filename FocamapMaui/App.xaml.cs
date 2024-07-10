@@ -5,7 +5,7 @@ namespace FocamapMaui;
 
 public partial class App : Application
 {
-    public static string UserLocalIdLogged;
+    public static string FirebaseUserLocalIdKey;
 
     public static PopupLoadingView popupLoading = new();
 
@@ -15,7 +15,9 @@ public partial class App : Application
 
 		MainPage = new AppShell();
 
+        ControlUsers.SetLocalIdByUserLogged();
+
         ControlUsers.CheckUserHasLogged();
-    }
+    }    
 }
 

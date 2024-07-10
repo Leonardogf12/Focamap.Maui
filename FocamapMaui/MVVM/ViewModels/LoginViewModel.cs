@@ -1,6 +1,9 @@
-﻿using System.Windows.Input;
+﻿using FocamapMaui.Controls;
 using FocamapMaui.Controls.Resources;
+using FocamapMaui.Helpers.Models;
+using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
+using FocamapMaui.Repositories;
 using FocamapMaui.Services.Authentication;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -8,9 +11,7 @@ namespace FocamapMaui.MVVM.ViewModels
     public class LoginViewModel : ViewModelBase
 	{
         #region Properties
-
-        private readonly IAuthenticationService _authenticationService;
-
+        
         private string _email = string.Empty;
         public string Email
         {
@@ -65,15 +66,49 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
+        private readonly IAuthenticationService _authenticationService;
+
+        private readonly UserRepository _userRepository;
 
         #endregion
 
         public LoginViewModel(IAuthenticationService authenticationService)
-		{
-            _authenticationService = authenticationService;           
+        {
+            _authenticationService = authenticationService;
+            _userRepository = new();
         }
 
+        #region Private Methods
+
+        private async void SetKeysOfPreferencesFromUser()
+        {
+            var city = await GetCityOfUserLogged();
+
+            UpdateKeyCity(city);
+        }
+
+        private async Task<City> GetCityOfUserLogged()
+        {
+            var userLogged = await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
+
+            var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+
+            return cities.Where(x => x.Name.Equals(userLogged.City) && x.State.Equals(userLogged.State)).FirstOrDefault();
+        }
+
+        private static void UpdateKeyCity(City city)
+        {
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.CITY);
+            ControlPreferences.AddKeyObjectOnPreferences(StringConstants.CITY, contentOfObject: city);
+        }
+
+        private static Color GetBorderColorErrorToInput() => ControlResources.GetResource<Color>("CLErrorBorderColor");
+
+        #endregion
+
+        #region Public Methods
+        
         public async Task Login()
         {
             IsBusy = true;
@@ -83,6 +118,8 @@ namespace FocamapMaui.MVVM.ViewModels
                 if (CheckIfInputsAreOk())
                 {
                     await _authenticationService.LoginAsync(Email, Password);
+
+                    SetKeysOfPreferencesFromUser();
 
                     return;
                 }
@@ -95,10 +132,10 @@ namespace FocamapMaui.MVVM.ViewModels
             }
             finally
             {
-                IsBusy = false;
+                //IsBusy = false;
             }                        
         }
-
+      
         public bool CheckIfInputsAreOk()
         {
             var HasOk = true;
@@ -126,7 +163,7 @@ namespace FocamapMaui.MVVM.ViewModels
             return HasOk;
         }
 
-        private static Color GetBorderColorErrorToInput() => ControlResources.GetResource<Color>("CLErrorBorderColor");
+        #endregion
     }
 }
 

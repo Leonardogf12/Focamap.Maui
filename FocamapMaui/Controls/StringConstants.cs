@@ -2,6 +2,12 @@
 {
     public static class StringConstants
 	{
+        #region DB
+
+        public const string DB_PATH = "/data/user/0/com.companyname.focamapmaui/files/dbfocamap.db3";
+
+        #endregion
+
         #region REGIONS
 
         public const string ES = "ES";
@@ -40,7 +46,8 @@
 
         public const string LOW = "Baixo";
         public const string AVERAGE = "Medio";
-
+        public const string HIGH = "Alto";
+        
         #endregion
     }
 }

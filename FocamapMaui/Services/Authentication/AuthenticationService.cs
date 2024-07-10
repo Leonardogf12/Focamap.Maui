@@ -2,11 +2,20 @@
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Connections;
 using FocamapMaui.Models;
+using FocamapMaui.MVVM.Models;
+using FocamapMaui.Repositories;
 
 namespace FocamapMaui.Services.Authentication
 {
     public class AuthenticationService : IAuthenticationService
-    {		
+    {
+        private readonly UserRepository _userRepository;
+
+        public AuthenticationService()
+        {
+            _userRepository = new();
+        }
+
         public async Task LoginAsync(string email, string password)
         {
             try
@@ -61,8 +70,9 @@ namespace FocamapMaui.Services.Authentication
 
                 var content = await auth.GetFreshAuthAsync();
 
-                //TODO - Save User and City on SqLite. Create repository.
-                SaveCityKeyOnPreferences(city); // remove after implemeted repository.
+                //TODO - Save User and City on SqLite. Create repository.             
+                //SaveCityKeyOnPreferences(city); // remove after implemeted repository.
+                await SaveUserOnDevice(name, email, city, content);
 
                 await App.Current.MainPage.DisplayAlert("Sucesso", "Usuário registrado com sucesso!", "Ok");
 
@@ -72,8 +82,8 @@ namespace FocamapMaui.Services.Authentication
                 Console.WriteLine(ex.StackTrace);
                 await App.Current.MainPage.DisplayAlert("Ops", "Ocorreu um erro inesperado ao tentar registrar um novo usuário. Tente novamente em alguns instantes.", "Ok");
             }            
-        }
-        
+        }        
+
         public async Task ResetPasswordAsync(string email)
         {
             try
@@ -136,11 +146,39 @@ namespace FocamapMaui.Services.Authentication
                 return StringConstants.EXCEPTION;
             }
         }
+
+        #region Others
         
         private static FirebaseAuthProvider GetFirebaseAuthProvider()
         {
             return new FirebaseAuthProvider(new FirebaseConfig(StringConstants.FIREBASE_AUTH_PROVIDER_KEY));
         }
+
+        private async Task SaveUserOnDevice(string name, string email, City city, FirebaseAuthLink firebase)
+        {
+            try
+            {
+                var user = new UserModel
+                {
+                    LocalIdFirebase = firebase.User.LocalId,
+                    Name = name,
+                    Email = email,
+                    State = city.State,
+                    City = city.Name
+                };
+
+                if (await _userRepository.SaveAsync(user) > 0)
+                    Console.WriteLine("Novo registro em UserModel incluído com sucesso");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        #endregion
+
+        #region Preferences
 
         private static void SaveKeysOnPreferences(FirebaseAuthLink content)
         {
@@ -177,6 +215,8 @@ namespace FocamapMaui.Services.Authentication
         {
             ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_USER_LOCAL_ID_KEY, valueString: content.User.LocalId);
         }
+
+        #endregion
     }
 }
 

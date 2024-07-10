@@ -23,6 +23,7 @@ namespace FocamapMaui.MVVM.Views
         public ComboboxEditCustom DropdownRegions = new();
 
         public TextEditCustom UserTextEdit;
+
         public PasswordEditCustom PasswordTextEdit;
 
         #endregion

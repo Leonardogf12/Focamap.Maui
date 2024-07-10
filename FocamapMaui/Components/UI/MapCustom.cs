@@ -6,8 +6,8 @@ using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.Components.UI
 {
-    public static class MapCustom
-    {      
+    public class MapCustom
+    {                
         public static Map GetMap(MapType mapType, Location location, EventHandler<MapClickedEventArgs> eventMapClicked, PropertyChangedEventHandler propertyChangedMap)
         {
             var map = new Map

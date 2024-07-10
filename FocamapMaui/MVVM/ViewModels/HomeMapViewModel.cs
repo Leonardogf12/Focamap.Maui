@@ -1,14 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using AndroidX.Lifecycle;
 using DevExpress.Maui.Controls;
 using FocamapMaui.Controls;
+using FocamapMaui.Helpers.Models;
 using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
+using FocamapMaui.Repositories;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
-using Microsoft.Maui.Controls.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -60,12 +62,11 @@ namespace FocamapMaui.MVVM.ViewModels
             set
             {
                 _map = value;
-                OnPropertyChanged();
-                //UpdateMapPins();
+                OnPropertyChanged();             
             }
         }
-
-        private BottomSheetState _bottomSheetAddOccurrenceState;
+       
+        private BottomSheetState _bottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         public BottomSheetState BottomSheetAddOccurrenceState
         {
             get => _bottomSheetAddOccurrenceState;
@@ -98,24 +99,24 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private bool _occurrenceButtonIsEnabled = true;
-        public bool OccurrenceButtonIsEnabled
+        private bool _detailOccurrenceButtonIsEnabled = true;
+        public bool DetailOccurrenceButtonIsEnabled
         {
-            get => _occurrenceButtonIsEnabled;
+            get => _detailOccurrenceButtonIsEnabled;
             set
             {
-                _occurrenceButtonIsEnabled = value;
+                _detailOccurrenceButtonIsEnabled = value;
                 OnPropertyChanged();
             }
         }
 
-        private bool _addButtonIsEnabled = true;
-        public bool AddButtonIsEnabled
+        private bool _addOccurrenceButtonIsEnabled = true;
+        public bool AddOccurrenceButtonIsEnabled
         {
-            get => _addButtonIsEnabled;
+            get => _addOccurrenceButtonIsEnabled;
             set
             {
-                _addButtonIsEnabled = value;
+                _addOccurrenceButtonIsEnabled = value;
                 OnPropertyChanged();
             }
         }
@@ -208,17 +209,6 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private bool _isOpenPopupPinMap;
-        public bool IsOpenPopupPinMap
-        {
-            get => _isOpenPopupPinMap;
-            set
-            {
-                _isOpenPopupPinMap = value;
-                OnPropertyChanged();
-            }
-        }
-
         private bool _isVisibleUserFloatButton;
         public bool IsVisibleUserFloatButton
         {
@@ -273,51 +263,142 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+     
         private readonly INavigationService _navigationService;
         private readonly IMapService _mapService;
        
-        public ICommand CloseDateEditCommand;       
+        private readonly UserRepository _userRepository;
+
+        public ICommand UserDetailCommand;
+        public ICommand ExitCommand;
+        public ICommand AddOccurrenceCommand;
+        public ICommand DetailOccurrenceCommand;
 
         #endregion
 
         public HomeMapViewModel(INavigationService navigationService, IMapService mapService)
         {
             _navigationService = navigationService;
-            _mapService = mapService;                                  
+            _mapService = mapService;
+           
+            _userRepository = new();
+
+            UserDetailCommand = new Command(OnUserDetailCommand);
+            ExitCommand = new Command(OnExitCommand);
+            AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
+            DetailOccurrenceCommand = new Command(OnDetailOccurrenceCommand);
         }
+
+        #region Private Methods
+
+        private void OnAddOccurrenceCommand()
+        {
+            BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
+        }
+
+        private async void OnDetailOccurrenceCommand()
+        {
+            await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
+
+            CloseMunuRoundButtons();
+        }
+        
+        private async void OnUserDetailCommand()
+        {
+            await _navigationService.NavigationWithParameter<UserDetailView>();
+
+            CloseMunuRoundButtons();
+        }
+
+        private async void OnExitCommand()
+        {
+            var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
+
+            if (!result) return;
+
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
+
+            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
+        }
+
+        private void ChangeIconOfLockUnlockButton(string nameIcon)
+        {
+            LockUnlockImage = ImageSource.FromFile(nameIcon);
+        }
+
+        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
+        {
+            MainButtonIsEnabled = isEnabled;
+            DetailOccurrenceButtonIsEnabled = isEnabled;
+            AddOccurrenceButtonIsEnabled = isEnabled;
+            UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+
+        private void CheckAnonymousAccess(bool isEnabled)
+        {
+            ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
+
+            LockUnlockButtonIsEnabled = isEnabled;
+            DetailOccurrenceButtonIsEnabled = isEnabled;
+            AddOccurrenceButtonIsEnabled = isEnabled;
+            UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+
+        private void CloseMunuRoundButtons()
+        {
+           IsVisibleDetailOccurrenceFloatButton = false;
+           IsVisibleAddOccurrenceFloatButton = false;
+           IsVisibleUserFloatButton = false;
+           IsVisibleExitFloatButton = false;
+           IsOpenMenu = false;
+        }
+
+        #endregion
 
         #region Public Methods
 
-        public void UpdateMapPins()
+        public async Task LoadPinsMock()
         {
-           /*
-            if (Map == null || PinsList == null)
-                return;
+            IsBusy = true;
 
-            Map.Pins.Clear();
+            try
+            {
+                var list = await _mapService.GetPinsMock();
 
-            foreach (var pinDto in PinsList)
-            {               
-                var pin = new Pin
-                {                    
-                    Label = pinDto.Title,
-                    Address = pinDto.Content,
-                    Type = PinType.Generic,
-                    Location = new Location(pinDto.Latitude, pinDto.Longitude)
-                };
+                PinsList = new ObservableCollection<PinDto>(list);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
 
-                // Associe o evento MarkerClicked do PinDto ao evento do Pin
-                pin.MarkerClicked += (s, e) =>
-                {
-                    var args = new MarkerClickedEventArgs();
-                    pinDto.RaiseMarkerClickedEvent(args);
-                    e.HideInfoWindow = args.HideInfoWindow;
-                };
+        }
 
-                Map.Pins.Add(pin);              
-            }*/
-            
+        public async Task<Location> GetLocationOfUserLogged()
+        {
+            try
+            {
+                var userLogged = await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
+
+                var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+
+                var city = cities.Where(x => x.Name.Equals(userLogged.City) && x.State.Equals(userLogged.State)).FirstOrDefault();
+
+                return new Location(city.Latitude, city.Longitude);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new Location();
+            }
         }
 
         public void ChangeLockUnlokImage(object file)
@@ -357,86 +438,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 Console.WriteLine(ex.Message);
             }
         }
-
-        public void OnAddOccurrenceCommand()
-        {
-            BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
-        }
-
-        public async void OnSeeOccurrencesHistoryCommand()
-        {
-            await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
-        }
-
-        public async void OnUserDetailCommand()
-        {
-            await _navigationService.NavigationWithParameter<UserDetailView>();
-        }
-
-        public async void OnExitCommand()
-        {
-            var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
-
-            if (!result) return;
-
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
-
-            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        public async Task LoadPinsMock()
-        {
-            IsBusy = true;
-
-            try
-            {
-                var list = await _mapService.GetPinsMock();
-
-                PinsList = new ObservableCollection<PinDto>(list);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-            
-        }
                
-        private void ChangeIconOfLockUnlockButton(string nameIcon)
-        {
-            LockUnlockImage = ImageSource.FromFile(nameIcon);
-        }
-
-        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
-        {
-            MainButtonIsEnabled = isEnabled;
-            OccurrenceButtonIsEnabled = isEnabled;
-            AddButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
-        }
-       
-        private void CheckAnonymousAccess(bool isEnabled)
-        {
-            ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
-
-            LockUnlockButtonIsEnabled = isEnabled;
-            OccurrenceButtonIsEnabled = isEnabled;
-            AddButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
-        }
-
-        #endregion               
+        #endregion        
     }
 }
-

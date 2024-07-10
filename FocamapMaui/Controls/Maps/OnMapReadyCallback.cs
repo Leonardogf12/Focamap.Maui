@@ -9,7 +9,7 @@ namespace FocamapMaui.Controls.Maps
         //Método criado para Localizar e Definir o arquivo de estilo de Mapa ao...
         //objeto Map criado na HomeMapView cujo a renderizacao ocorre fora de sincronia.
         public void OnMapReady(GoogleMap googleMap)
-        {
+        {            
             var assembly = Assembly.GetExecutingAssembly();
        
             using var stream = assembly.GetManifestResourceStream("FocamapMaui.Resources.Maps.night_map_style.json");

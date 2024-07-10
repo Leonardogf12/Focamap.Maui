@@ -1,16 +1,21 @@
-﻿namespace FocamapMaui.Components.UI
+﻿using System.Windows.Input;
+
+namespace FocamapMaui.Components.UI
 {
     public class MenuFloatButtons : AbsoluteLayout
 	{
 		public Button MainButton;
         public Button UserButton;
         public Button AddOccurrenceButton;
-        public Button OccurrenceDetailButton;
+        public Button DetailOccurrenceButton;
         public Button ExitButton;
 
-        public MenuFloatButtons(string iconMainButton, EventHandler eventMainButton, EventHandler eventExitButton,
-                                EventHandler eventUserButton, EventHandler eventAddOccurrenceButton,
-                                EventHandler eventDetailOccurrenceButton)
+        public MenuFloatButtons(string iconMainButton,
+                                EventHandler eventMainButton,
+                                ICommand commandExitButton,
+                                ICommand commandUserButton,
+                                ICommand commandAddOccurrenceButton,
+                                ICommand commandDetailOccurrenceButton)
         {
             Margin = new Thickness(10, 0, 0, 10);
             VerticalOptions = LayoutOptions.End;
@@ -21,7 +26,11 @@
             MainButton = CreateMainButton(iconMainButton, eventMainButton);
             mainGrid.AddWithSpan(MainButton, 1);
           
-            var detailButton = CreateDetailButtons(eventExitButton, eventUserButton, eventAddOccurrenceButton, eventDetailOccurrenceButton);
+            var detailButton = CreateDetailButtons(commandExitButton,
+                                                   commandUserButton,
+                                                   commandAddOccurrenceButton,
+                                                   commandDetailOccurrenceButton);
+
             mainGrid.AddWithSpan(detailButton, 0);
 
             Children.Add(mainGrid);
@@ -45,25 +54,28 @@
 
         private static Button CreateMainButton(string iconMainButton, EventHandler eventMainButton)
         {
-            var roundMainButton = RoundButton.GetRoundButton(iconMainButton, eventMainButton);            
+            var roundMainButton = RoundButton.GetRoundButton(iconName: iconMainButton, eventHandler: eventMainButton);            
 
             return roundMainButton;
         }
         
-        private Grid CreateDetailButtons(EventHandler eventExitBtn, EventHandler eventUserBtn, EventHandler eventAddBtn, EventHandler eventDetailBtn)
+        private Grid CreateDetailButtons(ICommand commandExitBtn,
+                                         ICommand commandUserBtn,
+                                         ICommand commandAddBtn,
+                                         ICommand commandDetailBtn)
         {
             var gridDetailButtons = CreateDetailsButtonGrid();
 
-            OccurrenceDetailButton = RoundButton.GetRoundButton("occurrence_24", eventDetailBtn);
-            gridDetailButtons.AddWithSpan(OccurrenceDetailButton);
+            DetailOccurrenceButton = RoundButton.GetRoundButton(iconName: "occurrence_24", eventHandler: null, command: commandDetailBtn);
+            gridDetailButtons.AddWithSpan(DetailOccurrenceButton);
 
-            AddOccurrenceButton = RoundButton.GetRoundButton("add_24", eventAddBtn);
+            AddOccurrenceButton = RoundButton.GetRoundButton(iconName: "add_24", eventHandler: null, command: commandAddBtn);
             gridDetailButtons.AddWithSpan(AddOccurrenceButton, 1);
 
-            UserButton = RoundButton.GetRoundButton("user_24", eventUserBtn);
+            UserButton = RoundButton.GetRoundButton(iconName: "user_24", eventHandler: null, command: commandUserBtn);
             gridDetailButtons.AddWithSpan(UserButton, 2);
 
-            ExitButton = RoundButton.GetRoundButton("exit_24", eventExitBtn);
+            ExitButton = RoundButton.GetRoundButton(iconName: "exit_24", eventHandler: null, command: commandExitBtn);
             gridDetailButtons.AddWithSpan(ExitButton, 3);
                                              
             return gridDetailButtons;
@@ -85,4 +97,3 @@
         }
     }
 }
-

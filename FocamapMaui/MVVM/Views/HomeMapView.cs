@@ -3,11 +3,10 @@ using Android.Gms.Maps;
 using DevExpress.Maui.Controls;
 using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
-using FocamapMaui.Controls;
+using FocamapMaui.Components.Views;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
-using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Map;
@@ -15,7 +14,6 @@ using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
-using Circle = Microsoft.Maui.Controls.Maps.Circle;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.Views
@@ -27,57 +25,66 @@ namespace FocamapMaui.MVVM.Views
         private readonly INavigationService _navigationService;
 
         private readonly IMapService _mapService;
+       
+        private HomeMapViewModel _viewModel;
 
-        public HomeMapViewModel ViewModel;
+        private Map _map = new();
 
-        public Map map = new();
+        private Grid _mainGrid;
 
-        public Grid MainGrid;
+        private MenuFloatButtons _menuFloatButton;
 
-        public MenuFloatButtons MenuFloatButton;
-
+        private Location _locationOfUserLogged;
+     
         #endregion
 
         public HomeMapView(INavigationService navigationService, IMapService mapService)
 		{           
             _navigationService = navigationService;
             _mapService = mapService;
-            
-            BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
 
+            SetBackgroundColorToView();
+            
             SetNavigationServiceInstancaFromViewModel(_navigationService, _mapService);
 
-            Content = BuildHomeMapView;
+            SetsTemporaryContentToView();
 
-            CreateLoadingPopupView(this, ViewModel);
+            CreateLoadingPopupView(this, _viewModel);
 
-            BindingContext = ViewModel;          
+            BindingContext = _viewModel;          
         }
         
         #region UI
+
+        private static Grid CreateTemporaryContent() => new();
+
+        private void SetBackgroundColorToView()
+        {
+            BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
+        }
 
         public View BuildHomeMapView
         {            
             get
             {               
-                MainGrid = CreateMainGrid();
+                _mainGrid = CreateMainGrid();
                 
-                CreateMap(MainGrid);
+                CreateMap(_mainGrid);
 
-                CreateLockUnlockButton(MainGrid);
+                CreateLockUnlockButton(_mainGrid);
 
-                CreateMapGpsButton(MainGrid);
+                CreateMapGpsButton(_mainGrid);
 
-                CreateUpDownButton(MainGrid);
+                CreateUpDownButton(_mainGrid);
 
-                CreateGroupButtons(MainGrid);
+                CreateGroupButtons(_mainGrid);
 
-                CreateBottomSheetAddOccurrence(MainGrid);
-                
-                return MainGrid;
+                CreateBottomSheetAddOccurrence(_mainGrid);              
+
+                return _mainGrid;
             }
         }
-
+       
         private static Grid CreateMainGrid()
         {
             return new Grid
@@ -91,49 +98,12 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private void CreateMap(Grid grid)
-        {
-            var location = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
+        {           
+           _map = MapCustom.GetMap(MapType.Street, _locationOfUserLogged, Map_MapClicked, Map_PropertyChanged);
 
-            map = MapCustom.GetMap(MapType.Street, new Location(location.Latitude, location.Longitude), Map_MapClicked, Map_PropertyChanged);
-
-            CreateCircleEmentToPinMOCK();
-
-            grid.AddWithSpan(map);
+            grid.AddWithSpan(_map);
         }
-
-        private void CreateCircleEmentToPinMOCK()
-        {
-            Circle circleMed = new()
-            {
-                Center = new Location(-19.394837, -40.049279),
-                Radius = new Distance(50),
-                StrokeColor = ControlResources.GetResource<Color>("CLTOrangeBorder"),
-                StrokeWidth = 8,
-                FillColor = ControlResources.GetResource<Color>("CLTOrange"),
-            };
-            map.MapElements.Add(circleMed);
-
-            Circle circleLow = new()
-            {
-                Center = new Location(-19.395747, -40.037993),
-                Radius = new Distance(50),
-                StrokeColor = ControlResources.GetResource<Color>("CLTYellowBorder"),
-                StrokeWidth = 8,
-                FillColor = ControlResources.GetResource<Color>("CLTYellow"),
-            };
-            map.MapElements.Add(circleLow);
-
-            Circle circleHi = new()
-            {
-                Center = new Location(-19.400564, -40.045224),
-                Radius = new Distance(50),
-                StrokeColor = ControlResources.GetResource<Color>("CLTRedBorder"),
-                StrokeWidth = 8,
-                FillColor = ControlResources.GetResource<Color>("CLTRed"),
-            };
-            map.MapElements.Add(circleHi);
-        }
-
+               
         private void CreateLockUnlockButton(Grid grid)
         {
             var stackGroup = new StackLayout
@@ -146,8 +116,8 @@ namespace FocamapMaui.MVVM.Views
             };
 
             var lockUnlockButton = RoundButton.GetRoundButton(iconName: "lock_24", eventHandler: LockUnlockButton_Clicked);
-            lockUnlockButton.SetBinding(Button.ImageSourceProperty, nameof(ViewModel.LockUnlockImage), BindingMode.TwoWay);
-            lockUnlockButton.SetBinding(IsEnabledProperty, nameof(ViewModel.LockUnlockButtonIsEnabled), BindingMode.TwoWay);
+            lockUnlockButton.SetBinding(Button.ImageSourceProperty, nameof(_viewModel.LockUnlockImage), BindingMode.TwoWay);
+            lockUnlockButton.SetBinding(IsEnabledProperty, nameof(_viewModel.LockUnlockButtonIsEnabled), BindingMode.TwoWay);
             stackGroup.Children.Add(lockUnlockButton);
           
             grid.AddWithSpan(stackGroup, 0);
@@ -174,7 +144,7 @@ namespace FocamapMaui.MVVM.Views
         
         private static void CreateUpDownButton(Grid grid)
         {
-            var stack = new VerticalStackLayout
+            var stackUpDowButtons = new VerticalStackLayout
             {             
                 VerticalOptions = LayoutOptions.End,
                 HorizontalOptions = LayoutOptions.End,
@@ -190,10 +160,10 @@ namespace FocamapMaui.MVVM.Views
                 WidthRequest = 45,
                 FontSize = 30,                              
             };
-            
-            stack.Children.Add(upZoom);
 
-            var down = new Button
+            stackUpDowButtons.Children.Add(upZoom);
+
+            var downZoom = new Button
             {
                 ImageSource = ImageSource.FromFile("minus_24"),
                 BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),
@@ -202,149 +172,70 @@ namespace FocamapMaui.MVVM.Views
                 WidthRequest = 45,
                 FontSize = 30,
             };
-            stack.Children.Add(down);
+            stackUpDowButtons.Children.Add(downZoom);
 
-            grid.AddWithSpan(stack, 0);
+            grid.AddWithSpan(stackUpDowButtons, 0);
         }
         
         private void CreateGroupButtons(Grid grid)
         {
-            MenuFloatButton = new MenuFloatButtons(iconMainButton: "menu_24", eventExitButton: ExitButton_ClickedEvent,
-                                                  eventMainButton: MainButton_ClickedEvent, eventUserButton: UserButton_ClickedEvent,
-                                                  eventAddOccurrenceButton: AddOccurrenceButton_ClickedEvent, eventDetailOccurrenceButton: DetailOccurrenceButton_ClickedEvent);
-            MenuFloatButton.MainButton.SetBinding(IsEnabledProperty, nameof(ViewModel.MainButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton = new MenuFloatButtons(iconMainButton: "menu_24",                                                    
+                                                    eventMainButton: MainButton_ClickedEvent,
+                                                    commandExitButton: _viewModel.ExitCommand,
+                                                    commandUserButton: _viewModel.UserDetailCommand,
+                                                    commandAddOccurrenceButton: _viewModel.AddOccurrenceCommand,
+                                                    commandDetailOccurrenceButton: _viewModel.DetailOccurrenceCommand);
 
-            MenuFloatButton.UserButton.SetBinding(IsVisibleProperty, nameof(ViewModel.IsVisibleUserFloatButton), BindingMode.TwoWay);
-            MenuFloatButton.UserButton.SetBinding(IsEnabledProperty, nameof(ViewModel.UserButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton.MainButton.SetBinding(IsEnabledProperty, nameof(_viewModel.MainButtonIsEnabled), BindingMode.TwoWay);
 
-            MenuFloatButton.AddOccurrenceButton.SetBinding(IsVisibleProperty, nameof(ViewModel.IsVisibleAddOccurrenceFloatButton), BindingMode.TwoWay);
-            MenuFloatButton.AddOccurrenceButton.SetBinding(IsEnabledProperty, nameof(ViewModel.AddButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton.ExitButton.SetBinding(IsVisibleProperty, nameof(_viewModel.IsVisibleExitFloatButton), BindingMode.TwoWay);
+            _menuFloatButton.ExitButton.SetBinding(IsEnabledProperty, nameof(_viewModel.ExitButtonIsEnabled), BindingMode.TwoWay);
 
-            MenuFloatButton.OccurrenceDetailButton.SetBinding(IsVisibleProperty, nameof(ViewModel.IsVisibleDetailOccurrenceFloatButton), BindingMode.TwoWay);
-            MenuFloatButton.SetBinding(IsEnabledProperty, nameof(ViewModel.OccurrenceButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton.UserButton.SetBinding(IsVisibleProperty, nameof(_viewModel.IsVisibleUserFloatButton), BindingMode.TwoWay);
+            _menuFloatButton.UserButton.SetBinding(IsEnabledProperty, nameof(_viewModel.UserButtonIsEnabled), BindingMode.TwoWay);
 
-            MenuFloatButton.ExitButton.SetBinding(IsVisibleProperty, nameof(ViewModel.IsVisibleExitFloatButton), BindingMode.TwoWay);
-            MenuFloatButton.ExitButton.SetBinding(IsEnabledProperty, nameof(ViewModel.ExitButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton.AddOccurrenceButton.SetBinding(IsVisibleProperty, nameof(_viewModel.IsVisibleAddOccurrenceFloatButton), BindingMode.TwoWay);
+            _menuFloatButton.AddOccurrenceButton.SetBinding(IsEnabledProperty, nameof(_viewModel.AddOccurrenceButtonIsEnabled), BindingMode.TwoWay);
 
-            grid.AddWithSpan(MenuFloatButton, 0);
+            _menuFloatButton.DetailOccurrenceButton.SetBinding(IsVisibleProperty, nameof(_viewModel.IsVisibleDetailOccurrenceFloatButton), BindingMode.TwoWay);
+            _menuFloatButton.DetailOccurrenceButton.SetBinding(IsEnabledProperty, nameof(_viewModel.DetailOccurrenceButtonIsEnabled), BindingMode.TwoWay);
+           
+            grid.AddWithSpan(_menuFloatButton, 0);
         }
 
         private void CreateBottomSheetAddOccurrence(Grid grid)
         {
-            var bottomSheet = new BottomSheetAddOccurrenceCustom(eventHandler: SaveButton_Clicked);
-            bottomSheet.SetBinding(BottomSheet.StateProperty, nameof(ViewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
-            bottomSheet.TextEditAddress.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Address));
-            bottomSheet.DateEditDate.SetBinding(DateEdit.DateProperty, nameof(ViewModel.Date));
-            bottomSheet.HourEditHour.SetBinding(TimeEdit.TimeSpanProperty, nameof(ViewModel.Hour));
-            bottomSheet.MultilineEditResume.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Resume));
+            var bottomSheetAddOccurrence = new BottomSheetAddOccurrenceCustom(eventHandler: AddOccurrenceButton_Clicked);
+            bottomSheetAddOccurrence.SetBinding(BottomSheet.StateProperty, nameof(_viewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.TextEditAddress.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Address));
+            bottomSheetAddOccurrence.DateEditDate.SetBinding(DateEdit.DateProperty, nameof(_viewModel.Date));
+            bottomSheetAddOccurrence.HourEditHour.SetBinding(TimeEdit.TimeSpanProperty, nameof(_viewModel.Hour));
+            bottomSheetAddOccurrence.MultilineEditResume.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Resume));
             
-            grid.AddWithSpan(bottomSheet, 0);
+            grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
         
-        private PinDto FindPinNearClick(Location position)
-        {
-            // Define a distância máxima para considerar que o clique foi em cima de um pin
-            double toleranceInMeters = 0.05; //50 Metros
-
-            // Percorre todos os pins no ViewModel
-            foreach (var pin in ViewModel.PinsList)
-            {
-                var location = new Location(pin.Latitude, pin.Longitude);
-
-                // Calcula a distância entre o clique (position) e o pin atual
-                double distance = Location.CalculateDistance(location, position, DistanceUnits.Kilometers);
-
-                // Se a distância for menor que a tolerância, retorna o pin
-                if (distance <= toleranceInMeters)
-                {
-                    return pin;
-                }
-            }
-
-            // Retorna null se nenhum pin estiver próximo ao clique
-            return null;
-        }
-
         #endregion
 
         #region Events
       
         private void MainButton_ClickedEvent(object sender, EventArgs e)
         {
-            if (!ViewModel.IsOpenMenu)
+            if (!_viewModel.IsOpenMenu)
             {
                 SetTrueValueToIsVisiblePropertyForFloatButtons(x: 0, y: -15);
-                ViewModel.IsOpenMenu = true;
+                _viewModel.IsOpenMenu = true;
             }
             else
             {
                 SetFalseValueToIsVisiblePropertyForFloatButtons();
-                ViewModel.IsOpenMenu = false;
+                _viewModel.IsOpenMenu = false;
             }           
-        }
-
-        private async void SetTrueValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 20)
-        {
-            ViewModel.IsVisibleExitFloatButton = true;
-            await MenuFloatButton.ExitButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.ExitButton.TranslateTo(x, y, lenght);
-
-            ViewModel.IsVisibleUserFloatButton = true;
-            await MenuFloatButton.UserButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.UserButton.TranslateTo(x, y, lenght);
-
-            ViewModel.IsVisibleAddOccurrenceFloatButton = true;
-            await MenuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
-
-            ViewModel.IsVisibleDetailOccurrenceFloatButton = true;
-            await MenuFloatButton.OccurrenceDetailButton.TranslateTo(x, y, lenght);   
-            await MenuFloatButton.OccurrenceDetailButton.TranslateTo(x, y, lenght);                                                         
-        }
-
-        private async void SetFalseValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 100)
-        {
-            ViewModel.IsVisibleDetailOccurrenceFloatButton = false;
-            ViewModel.IsVisibleAddOccurrenceFloatButton = false;
-            ViewModel.IsVisibleUserFloatButton = false;
-            ViewModel.IsVisibleExitFloatButton = false;
-
-            await MenuFloatButton.ExitButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.ExitButton.TranslateTo(x, y, lenght);
-
-            await MenuFloatButton.UserButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.UserButton.TranslateTo(x, y, lenght);
-
-            await MenuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
-
-            await MenuFloatButton.OccurrenceDetailButton.TranslateTo(x, y, lenght);
-            await MenuFloatButton.OccurrenceDetailButton.TranslateTo(x, y, lenght);                                        
-        }
-
-        private void UserButton_ClickedEvent(object sender, EventArgs e)
-        {
-            ViewModel.OnUserDetailCommand();
-        }
-
-        private void AddOccurrenceButton_ClickedEvent(object sender, EventArgs e)
-        {
-            ViewModel.OnAddOccurrenceCommand();
-        }
-
-        private void DetailOccurrenceButton_ClickedEvent(object sender, EventArgs e)
-        {
-            ViewModel.OnSeeOccurrencesHistoryCommand();
-        }
-
-        private void ExitButton_ClickedEvent(object sender, EventArgs e)
-        {
-            ViewModel.OnExitCommand();
-        }
+        }      
 
         private void GpsButton_Clicked(object sender, EventArgs e)
         {
-            ViewModel.IsShowingUser = true;
+            _viewModel.IsShowingUser = true;
         }
 
         private void LockUnlockButton_Clicked(object sender, EventArgs e)
@@ -355,7 +246,7 @@ namespace FocamapMaui.MVVM.Views
 
                 var name = nameImageSource.Target;
 
-                ViewModel.ChangeLockUnlokImage(name);
+                _viewModel.ChangeLockUnlokImage(name);
             }            
         }
 
@@ -365,86 +256,95 @@ namespace FocamapMaui.MVVM.Views
             {
                 await ClickAnimation.FadeAnimation(element);
 
-                ViewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
+                _viewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
             }            
         }
 
-        private async void SaveButton_Clicked(object sender, EventArgs e)
-        {
-            await ViewModel.SaveOccurrence();
-        }
-
+        private async void AddOccurrenceButton_Clicked(object sender, EventArgs e) => await _viewModel.SaveOccurrence();
+        
         private void Map_MapClicked(object sender, MapClickedEventArgs e)
         {
             // EVENTO É DISPARADO QUANDO O USUARIO TOCA NO MAPA.
-
-            /* 
-             * TODO - Comentado para testes
-             * 
-             
-            // Verifica se o clique está próximo a um pin existente
-            var pinToRemove = FindPinNearClick(e.Location);
-
-            if (pinToRemove != null)
-            {
-                // Remove o pin da lista de pins no ViewModel
-                ViewModel.PinsList?.Remove(pinToRemove);
-
-                // Atualiza os pins no mapa
-                ViewModel.UpdateMapPins();
-
-                return;
-            }
-
-            // Insere pin de teste.
-            ViewModel.PinsList.Add(new Pin()
-            {
-                Label = "Pin Teste",
-                Address = "Este pin é inserido toda vez que se clica no mapa.",
-                Type = PinType.Place,
-                Location = new Location(e.Location.Latitude, e.Location.Longitude)
-            });
-
-            ViewModel.UpdateMapPins();
-            
-            */
         }
 
         private void Map_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(map.VisibleRegion))
+            if (e.PropertyName == nameof(_map.VisibleRegion))
             {
-                //IDENTIFICA QUANDO O USUARIO MUDA SE MOVIMENTACAO NO MAPA.       
+                //IDENTIFICA QUANDO O USUARIO MUDA POSICAO - MOVIMENTACAO NO MAPA.       
             }
         }
        
         #endregion
 
         #region Actions
-
-        private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService, IMapService mapService)
-        {
-            ViewModel = new HomeMapViewModel(navigationService, mapService);
-        }
-
+        
         protected override async void OnAppearing()
         {
             base.OnAppearing();
 
-            (BindingContext as ViewModelBase).IsBusy = false;
+            SetFalseToIsBusyViewModelBase();
 
-            await ViewModel.LoadPinsMock();
-            
-            ViewModel.Map = map;
+            await LoadPinsOfFirebase();
 
-            OnHandlerChanged();
+            await LoadUserLocationAsync();
+
+            SetsTheFullContentToView();
+
+            ApplyModificationsToTheMap();            
         }
 
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
 
-            // Ensures the popup closes
+            EnsurePopupCloses();
+
+            SetsTemporaryContentToView();            
+        }
+
+        private void SetsTemporaryContentToView()
+        {
+            Content = CreateTemporaryContent();
+        }
+
+        private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService, IMapService mapService)
+        {
+            _viewModel = new HomeMapViewModel(navigationService, mapService);
+        }
+
+        private void SetFalseToIsBusyViewModelBase()
+        {
+            //Set False because the modified Map handler does not recognize.
+            (BindingContext as ViewModelBase).IsBusy = false;
+        }
+
+        private async Task LoadPinsOfFirebase() => await _viewModel.LoadPinsMock();
+       
+        private async Task LoadUserLocationAsync()
+        {
+            try
+            {
+                _locationOfUserLogged = await _viewModel.GetLocationOfUserLogged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                _locationOfUserLogged = new Location();
+            }
+        }
+
+        private void SetsTheFullContentToView()
+        {
+            Content = BuildHomeMapView;
+
+            _viewModel.Map = _map;
+        }
+
+        private void ApplyModificationsToTheMap() => OnHandlerChanged();
+       
+        private void EnsurePopupCloses()
+        {
             if (App.popupLoading != null)
             {
                 MainThread.BeginInvokeOnMainThread(async () =>
@@ -454,13 +354,52 @@ namespace FocamapMaui.MVVM.Views
                 });
             }
 
-            // Set False for Property IsBusy
-            (BindingContext as ViewModelBase).IsBusy = false;
+            SetFalseToIsBusyViewModelBase();
         }
 
-        // Handler to NOT leave the map Null after building the page.
+        private async void SetTrueValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 20)
+        {
+            _viewModel.IsVisibleExitFloatButton = true;
+            await _menuFloatButton.ExitButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.ExitButton.TranslateTo(x, y, lenght);
+
+            _viewModel.IsVisibleUserFloatButton = true;
+            await _menuFloatButton.UserButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.UserButton.TranslateTo(x, y, lenght);
+
+            _viewModel.IsVisibleAddOccurrenceFloatButton = true;
+            await _menuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
+
+            _viewModel.IsVisibleDetailOccurrenceFloatButton = true;
+            await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
+        }
+
+        private async void SetFalseValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 100)
+        {
+            _viewModel.IsVisibleDetailOccurrenceFloatButton = false;
+            _viewModel.IsVisibleAddOccurrenceFloatButton = false;
+            _viewModel.IsVisibleUserFloatButton = false;
+            _viewModel.IsVisibleExitFloatButton = false;
+
+            await _menuFloatButton.ExitButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.ExitButton.TranslateTo(x, y, lenght);
+
+            await _menuFloatButton.UserButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.UserButton.TranslateTo(x, y, lenght);
+
+            await _menuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.AddOccurrenceButton.TranslateTo(x, y, lenght);
+
+            await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
+            await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
+        }
+
         protected override void OnHandlerChanged()
-        {            
+        {
+            // Handler to NOT leave the map Null after building the page.
+
             base.OnHandlerChanged();
 
 #if IOS
@@ -468,20 +407,19 @@ namespace FocamapMaui.MVVM.Views
 
 #elif ANDROID
 
-            if (map.Handler is MapHandler mapHandler && mapHandler.PlatformView is MapView mapView)
+            if (_map.Handler is MapHandler mapHandler && mapHandler.PlatformView is MapView mapView)
             {
                 mapView.GetMapAsync(new OnMapReadyCallback());
 
                 //If to Check that pins are loaded before configuring the handler
-                if (ViewModel.PinsList != null && ViewModel.PinsList.Any())
+                if (_viewModel.PinsList != null && _viewModel.PinsList.Any())
                 {
-                    mapView.GetMapAsync(new OnPinReadyCallback(ViewModel.PinsList, MainGrid));
-                }            
-            }            
+                    mapView.GetMapAsync(new OnPinReadyCallback(_viewModel.PinsList, _mainGrid));
+                }
+            }
 #endif
         }
-       
+
         #endregion
     }
 }
-
