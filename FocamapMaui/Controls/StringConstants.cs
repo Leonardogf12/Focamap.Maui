@@ -23,7 +23,8 @@
         public const string FIREBASE_USER_LOGGED = "FirebaseUserLogged";
         public const string FIREBASE_USER_LOCAL_ID_KEY = "FirebaseUserLocalIdKey";
         public const string FIREBASE_AUTH_PROVIDER_KEY = "AIzaSyBmEIGJpn6VnoMIXxgQTgFxvybI9xPO_gE";
-
+        public const string FIREBASE_REALTIME_DATABASE = "https://focamapmaui-23c5c-default-rtdb.firebaseio.com";
+       
         #endregion
 
         #region ROUTES

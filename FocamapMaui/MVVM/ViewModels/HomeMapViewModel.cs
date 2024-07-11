@@ -1,14 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
-using AndroidX.Lifecycle;
 using DevExpress.Maui.Controls;
+using Firebase.Database;
 using FocamapMaui.Controls;
+using FocamapMaui.Controls.Resources;
 using FocamapMaui.Helpers.Models;
 using FocamapMaui.Models;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
 using FocamapMaui.Repositories;
+using FocamapMaui.Services.Firebase;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
 using Map = Microsoft.Maui.Controls.Maps.Map;
@@ -20,6 +22,28 @@ namespace FocamapMaui.MVVM.ViewModels
     {
         #region Properties
 
+        private Map _map;
+        public Map Map
+        {
+            get => _map;
+            set
+            {
+                _map = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<PinDto> _pinsList = new();
+        public ObservableCollection<PinDto> PinsList
+        {
+            get => _pinsList;
+            set
+            {
+                _pinsList = value;
+                OnPropertyChanged();
+            }
+        }
+        
         private bool _anonymousAccess;
         public bool AnonymousAccess
         {
@@ -30,61 +54,6 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
 
                 CheckAnonymousAccess(!AnonymousAccess);
-            }
-        }
-
-        private ObservableCollection<PinDto> _pinsList;
-        public ObservableCollection<PinDto> PinsList
-        {
-            get => _pinsList;
-            set
-            {
-                _pinsList = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Grid _mainView;
-        public Grid MainView
-        {
-            get => _mainView;
-            set
-            {
-                _mainView = value;
-                OnPropertyChanged();              
-            }
-        }
-
-        private Map _map;
-        public Map Map
-        {
-            get => _map;
-            set
-            {
-                _map = value;
-                OnPropertyChanged();             
-            }
-        }
-       
-        private BottomSheetState _bottomSheetAddOccurrenceState = BottomSheetState.Hidden;
-        public BottomSheetState BottomSheetAddOccurrenceState
-        {
-            get => _bottomSheetAddOccurrenceState;
-            set
-            {
-                _bottomSheetAddOccurrenceState = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private ImageSource _lockUnlockImage = ImageSource.FromFile("unlock_24");
-        public ImageSource LockUnlockImage
-        {
-            get => _lockUnlockImage;
-            set
-            {
-                _lockUnlockImage = value;
-                OnPropertyChanged();
             }
         }
 
@@ -150,50 +119,6 @@ namespace FocamapMaui.MVVM.ViewModels
             set
             {
                 _mainButtonIsEnabled = value;
-                OnPropertyChanged();
-            }
-        }        
-
-        private string _address;
-        public string Address
-        {
-            get => _address;
-            set
-            {
-                _address = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private DateTime _date = DateTime.Now;
-        public DateTime Date
-        {
-            get => _date;
-            set
-            {
-                _date = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private TimeSpan _hour;
-        public TimeSpan Hour
-        {
-            get => _hour;
-            set
-            {
-                _hour = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private string _resume;
-        public string Resume
-        {
-            get => _resume;
-            set
-            {
-                _resume = value;
                 OnPropertyChanged();
             }
         }
@@ -263,54 +188,280 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-     
+
+        private bool _lowChipIsEnabled = true;
+        public bool LowChipIsEnabled
+        {
+            get => _lowChipIsEnabled;
+            set
+            {
+                _lowChipIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _averageChipIsEnabled = true;
+        public bool AverageChipIsEnabled
+        {
+            get => _averageChipIsEnabled;
+            set
+            {
+                _averageChipIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _highChipIsEnabled = true;
+        public bool HighChipIsEnabled
+        {
+            get => _highChipIsEnabled;
+            set
+            {
+                _highChipIsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Grid _mainView;
+        public Grid MainView
+        {
+            get => _mainView;
+            set
+            {
+                _mainView = value;
+                OnPropertyChanged();              
+            }
+        }
+             
+        private BottomSheetState _bottomSheetAddOccurrenceState = BottomSheetState.Hidden;
+        public BottomSheetState BottomSheetAddOccurrenceState
+        {
+            get => _bottomSheetAddOccurrenceState;
+            set
+            {
+                _bottomSheetAddOccurrenceState = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private ImageSource _lockUnlockImage = ImageSource.FromFile("unlock_24");
+        public ImageSource LockUnlockImage
+        {
+            get => _lockUnlockImage;
+            set
+            {
+                _lockUnlockImage = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        private DateTime _dateOccurrence = DateTime.Now;
+        public DateTime DateOccurrence
+        {
+            get => _dateOccurrence;
+            set
+            {
+                _dateOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private TimeSpan _hourOccurrence;
+        public TimeSpan HourOccurrence
+        {
+            get => _hourOccurrence;
+            set
+            {
+                _hourOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _titleOccurrence;
+        public string TitleOccurrence
+        {
+            get => _titleOccurrence;
+            set
+            {
+                _titleOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _addressOccurrence;
+        public string AddressOccurrence
+        {
+            get => _addressOccurrence;
+            set
+            {
+                _addressOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _resumeOccurrence;
+        public string ResumeOccurrence
+        {
+            get => _resumeOccurrence;
+            set
+            {
+                _resumeOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+       
+        private Color _lowChipTextColor = Colors.Gray;
+        public Color LowChipTextColor
+        {
+            get => _lowChipTextColor;
+            set
+            {
+                _lowChipTextColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _lowChipBorderColor = Colors.Gray;
+        public Color LowChipBorderColor
+        {
+            get => _lowChipBorderColor;
+            set
+            {
+                _lowChipBorderColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _lowChipBackgroundColor = Colors.Transparent;
+        public Color LowChipBackgroundColor
+        {
+            get => _lowChipBackgroundColor;
+            set
+            {
+                _lowChipBackgroundColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _averageChipTextColor = Colors.Gray;
+        public Color AverageChipTextColor
+        {
+            get => _averageChipTextColor;
+            set
+            {
+                _averageChipTextColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _averageChipBorderColor = Colors.Gray;
+        public Color AverageChipBorderColor
+        {
+            get => _averageChipBorderColor;
+            set
+            {
+                _averageChipBorderColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _averageChipBackgroundColor = Colors.Transparent;
+        public Color AverageChipBackgroundColor
+        {
+            get => _averageChipBackgroundColor;
+            set
+            {
+                _averageChipBackgroundColor = value;
+                OnPropertyChanged();
+            }
+        }
+       
+        private Color _highChipTextColor = Colors.Gray;
+        public Color HighChipTextColor
+        {
+            get => _highChipTextColor;
+            set
+            {
+                _highChipTextColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _highChipBorderColor = Colors.Gray;
+        public Color HighChipBorderColor
+        {
+            get => _highChipBorderColor;
+            set
+            {
+                _highChipBorderColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _highChipBackgroundColor = Colors.Transparent;
+        public Color HighChipBackgroundColor
+        {
+            get => _highChipBackgroundColor;
+            set
+            {
+                _highChipBackgroundColor = value;
+                OnPropertyChanged();
+            }
+        }
+        
         private readonly INavigationService _navigationService;
         private readonly IMapService _mapService;
+        private readonly IRealtimeDatabaseService _realtimeDatabaseService;
        
         private readonly UserRepository _userRepository;
 
-        public ICommand UserDetailCommand;
-        public ICommand ExitCommand;
-        public ICommand AddOccurrenceCommand;
-        public ICommand DetailOccurrenceCommand;
+        public FirebaseClient client = new(StringConstants.FIREBASE_REALTIME_DATABASE);
+
+        public ICommand GoToViewUserDetailCommand;
+        public ICommand ExitViewCommand;
+        public ICommand OpenBottomSheetAddOccurrenceCommand;
+        public ICommand GoToViewDetailOccurrenceCommand;
 
         #endregion
 
-        public HomeMapViewModel(INavigationService navigationService, IMapService mapService)
+        public HomeMapViewModel(INavigationService navigationService,
+                                IMapService mapService,
+                                IRealtimeDatabaseService realtimeDatabaseService)
         {
             _navigationService = navigationService;
             _mapService = mapService;
-           
+            _realtimeDatabaseService = realtimeDatabaseService;
+
             _userRepository = new();
 
-            UserDetailCommand = new Command(OnUserDetailCommand);
-            ExitCommand = new Command(OnExitCommand);
-            AddOccurrenceCommand = new Command(OnAddOccurrenceCommand);
-            DetailOccurrenceCommand = new Command(OnDetailOccurrenceCommand);
+            GoToViewUserDetailCommand = new Command(OnGoToViewUserDetailCommand);
+            ExitViewCommand = new Command(OnExitViewCommand);
+            OpenBottomSheetAddOccurrenceCommand = new Command(OnOpenBottomSheetAddOccurrenceCommand);
+            GoToViewDetailOccurrenceCommand = new Command(OnGoToViewDetailOccurrenceCommand);
         }
 
         #region Private Methods
 
-        private void OnAddOccurrenceCommand()
+        private void OnOpenBottomSheetAddOccurrenceCommand()
         {
-            BottomSheetAddOccurrenceState = BottomSheetState.HalfExpanded;
+            BottomSheetAddOccurrenceState = BottomSheetState.FullExpanded;
         }
 
-        private async void OnDetailOccurrenceCommand()
+        private async void OnGoToViewDetailOccurrenceCommand()
         {
             await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
 
             CloseMunuRoundButtons();
         }
         
-        private async void OnUserDetailCommand()
+        private async void OnGoToViewUserDetailCommand()
         {
             await _navigationService.NavigationWithParameter<UserDetailView>();
 
             CloseMunuRoundButtons();
         }
 
-        private async void OnExitCommand()
+        private async void OnExitViewCommand()
         {
             var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
 
@@ -357,19 +508,106 @@ namespace FocamapMaui.MVVM.ViewModels
            IsOpenMenu = false;
         }
 
+        private OccurrenceModel CreateOccurrenceModel()
+        {
+            var location = new LocationOccurrence
+            {              
+                Latitude = -19.402479367746047,
+                Longitude = -40.067728651209485
+            };
+
+            return new()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Title = TitleOccurrence,
+                Address = AddressOccurrence,
+                Date = DateOccurrence.ToShortDateString(),
+                Hour = HourOccurrence.ToString(@"hh\:mm"),
+                Resume = ResumeOccurrence,
+                Status = 1,
+                Location = location
+            };
+        }
+
+        private void UpdateListPins(List<OccurrenceModel> list)
+        {
+            PinsList.Clear();
+          
+            PinsList = new ObservableCollection<PinDto>(CreateListOfPinDtos(list));
+        }
+
+        private static List<PinDto> CreateListOfPinDtos(List<OccurrenceModel> occurrenceModels)
+        {
+            List<PinDto> pins = new();
+
+            occurrenceModels.ForEach(x => {
+
+                var pin = new PinDto
+                {
+                    Id = x.Id,
+                    Title = x.Title,
+                    Address = x.Address,
+                    Content = x.Resume,
+                    FullDate = $"{x.Date} ás {x.Hour}",
+                    Status = x.Status,
+                    Latitude = x.Location.Latitude,
+                    Longitude = x.Location.Longitude
+                };
+
+                pins.Add(pin);
+            });
+
+            return pins;
+        }
+
+        private void SetChangeOnLowChip()
+        {
+            SetChangeDefaultStyleOnChips();
+
+            LowChipTextColor = ControlResources.GetResource<Color>("CLWhite");
+            LowChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
+            LowChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+        }
+
+        private void SetChangeOnAverageChip()
+        {
+            SetChangeDefaultStyleOnChips();
+
+            AverageChipTextColor = ControlResources.GetResource<Color>("CLWhite");
+            AverageChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
+            AverageChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+        }
+
+        private void SetChangeOnHighChip()
+        {
+            SetChangeDefaultStyleOnChips();
+
+            HighChipTextColor = ControlResources.GetResource<Color>("CLWhite");
+            HighChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
+            HighChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+        }
+
         #endregion
 
         #region Public Methods
 
-        public async Task LoadPinsMock()
+        public async Task LoadPins()
         {
             IsBusy = true;
 
             try
-            {
-                var list = await _mapService.GetPinsMock();
+            {                
+                var list = await _realtimeDatabaseService.GetAllAsync<OccurrenceModel>(nameof(OccurrenceModel));
 
-                PinsList = new ObservableCollection<PinDto>(list);
+                if (list.Count == 0)
+                {
+                    PinsList.Clear();
+                    return;
+                }
+
+                UpdateListPins(list);
+
+                await Task.CompletedTask;
             }
             catch (Exception ex)
             {
@@ -379,9 +617,8 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 IsBusy = false;
             }
-
         }
-
+        
         public async Task<Location> GetLocationOfUserLogged()
         {
             try
@@ -419,26 +656,73 @@ namespace FocamapMaui.MVVM.ViewModels
        
         public async Task SaveOccurrence()
         {
+            IsBusy = true;
+
             try
             {
-                var newOccurrence = new OccurrenceModel
-                {
-                    Address = Address,
-                    Date = Date,
-                    Hour = Hour,
-                    Resume = Resume
-                };
+                await _realtimeDatabaseService.SaveAsync(nameof(OccurrenceModel), CreateOccurrenceModel());
+                
+                ClearInputsOfBottomSheetAddOccurrence();
 
-                var teste = newOccurrence;
+                await LoadPins();
 
-                await Task.CompletedTask;
+                await App.Current.MainPage.DisplayAlert("Ocorrência",
+                    "Sua ocorrência foi enviada com sucesso. Agora é com a gente; vamos analisar sua solicitação e, posteriormente, disponibilizá-la ao mapa.", "Ok");
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops",
+                    "Houve um problema com sua solicitação de ocorrência. Por favor, tente novamente em alguns instantes.", "Ok");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
-               
-        #endregion        
+        
+        public void SetChangeOnSelectedChip(string chip)
+        { 
+            switch (chip)
+            {
+                case StringConstants.LOW:
+                    SetChangeOnLowChip();
+                    break;
+                case StringConstants.AVERAGE:
+                    SetChangeOnAverageChip();
+                    break;
+                default:
+                    SetChangeOnHighChip();
+                    break;
+            }
+        }
+       
+        public void SetChangeDefaultStyleOnChips()
+        {
+            LowChipTextColor = ControlResources.GetResource<Color>("CLGray");
+            LowChipBorderColor = ControlResources.GetResource<Color>("CLGray");
+            LowChipBackgroundColor = Colors.Transparent;
+
+            AverageChipTextColor = ControlResources.GetResource<Color>("CLGray");
+            AverageChipBorderColor = ControlResources.GetResource<Color>("CLGray");
+            AverageChipBackgroundColor = Colors.Transparent;
+
+            HighChipTextColor = ControlResources.GetResource<Color>("CLGray");
+            HighChipBorderColor = ControlResources.GetResource<Color>("CLGray");
+            HighChipBackgroundColor = Colors.Transparent;
+        }
+
+        public void ClearInputsOfBottomSheetAddOccurrence()
+        {
+            TitleOccurrence = string.Empty;
+            AddressOccurrence = string.Empty;
+            DateOccurrence = DateTime.Now;
+            HourOccurrence = new TimeSpan();
+            ResumeOccurrence = string.Empty;
+            SetChangeDefaultStyleOnChips();
+        }
+
+        #endregion
     }
 }

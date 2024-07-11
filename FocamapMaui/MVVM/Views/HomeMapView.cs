@@ -9,11 +9,13 @@ using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
+using FocamapMaui.Services.Firebase;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
+using DevExpress.Maui.Core;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.Views
@@ -25,7 +27,9 @@ namespace FocamapMaui.MVVM.Views
         private readonly INavigationService _navigationService;
 
         private readonly IMapService _mapService;
-       
+
+        private readonly IRealtimeDatabaseService _realtimeDatabaseService;
+
         private HomeMapViewModel _viewModel;
 
         private Map _map = new();
@@ -38,14 +42,19 @@ namespace FocamapMaui.MVVM.Views
      
         #endregion
 
-        public HomeMapView(INavigationService navigationService, IMapService mapService)
+        public HomeMapView(INavigationService navigationService,
+                           IMapService mapService,
+                           IRealtimeDatabaseService realtimeDatabaseService)
 		{           
             _navigationService = navigationService;
             _mapService = mapService;
+            _realtimeDatabaseService = realtimeDatabaseService;
 
             SetBackgroundColorToView();
             
-            SetNavigationServiceInstancaFromViewModel(_navigationService, _mapService);
+            SetNavigationServiceInstancaFromViewModel(_navigationService,
+                                                      _mapService,
+                                                      _realtimeDatabaseService);
 
             SetsTemporaryContentToView();
 
@@ -181,10 +190,10 @@ namespace FocamapMaui.MVVM.Views
         {
             _menuFloatButton = new MenuFloatButtons(iconMainButton: "menu_24",                                                    
                                                     eventMainButton: MainButton_ClickedEvent,
-                                                    commandExitButton: _viewModel.ExitCommand,
-                                                    commandUserButton: _viewModel.UserDetailCommand,
-                                                    commandAddOccurrenceButton: _viewModel.AddOccurrenceCommand,
-                                                    commandDetailOccurrenceButton: _viewModel.DetailOccurrenceCommand);
+                                                    commandExitButton: _viewModel.ExitViewCommand,
+                                                    commandUserButton: _viewModel.GoToViewUserDetailCommand,
+                                                    commandAddOccurrenceButton: _viewModel.OpenBottomSheetAddOccurrenceCommand,
+                                                    commandDetailOccurrenceButton: _viewModel.GoToViewDetailOccurrenceCommand);
 
             _menuFloatButton.MainButton.SetBinding(IsEnabledProperty, nameof(_viewModel.MainButtonIsEnabled), BindingMode.TwoWay);
 
@@ -206,19 +215,39 @@ namespace FocamapMaui.MVVM.Views
         private void CreateBottomSheetAddOccurrence(Grid grid)
         {
             var bottomSheetAddOccurrence = new BottomSheetAddOccurrenceCustom(eventHandler: AddOccurrenceButton_Clicked);
+            bottomSheetAddOccurrence.StateChanged += BottomSheetAddOccurrence_StateChanged;
             bottomSheetAddOccurrence.SetBinding(BottomSheet.StateProperty, nameof(_viewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
-            bottomSheetAddOccurrence.TextEditAddress.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Address));
-            bottomSheetAddOccurrence.DateEditDate.SetBinding(DateEdit.DateProperty, nameof(_viewModel.Date));
-            bottomSheetAddOccurrence.HourEditHour.SetBinding(TimeEdit.TimeSpanProperty, nameof(_viewModel.Hour));
-            bottomSheetAddOccurrence.MultilineEditResume.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Resume));
-            
+            bottomSheetAddOccurrence.TextEditTitle.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.TitleOccurrence));
+            bottomSheetAddOccurrence.TextEditAddress.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.AddressOccurrence));
+            bottomSheetAddOccurrence.DateEditDate.SetBinding(DateEdit.DateProperty, nameof(_viewModel.DateOccurrence));
+            bottomSheetAddOccurrence.HourEditHour.SetBinding(TimeEdit.TimeSpanProperty, nameof(_viewModel.HourOccurrence));
+            bottomSheetAddOccurrence.MultilineEditResume.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.ResumeOccurrence));
+
+            bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.Clicked += LowChipButton_Clicked;
+            bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.SetBinding(Button.TextColorProperty, nameof(_viewModel.LowChipTextColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.SetBinding(Button.BorderColorProperty, nameof(_viewModel.LowChipBorderColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.SetBinding(BackgroundColorProperty, nameof(_viewModel.LowChipBackgroundColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.SetBinding(IsEnabledProperty, nameof(_viewModel.LowChipIsEnabled), BindingMode.TwoWay);
+
+            bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.Clicked += AverageChipButton_Clicked; 
+            bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.SetBinding(Button.TextColorProperty, nameof(_viewModel.AverageChipTextColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.SetBinding(Button.BorderColorProperty, nameof(_viewModel.AverageChipBorderColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.SetBinding(BackgroundColorProperty, nameof(_viewModel.AverageChipBackgroundColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.SetBinding(IsEnabledProperty, nameof(_viewModel.AverageChipIsEnabled), BindingMode.TwoWay);
+
+            bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.Clicked += HighChipButton_Clicked;
+            bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.SetBinding(Button.TextColorProperty, nameof(_viewModel.HighChipTextColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.SetBinding(Button.BorderColorProperty, nameof(_viewModel.HighChipBorderColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.SetBinding(BackgroundColorProperty, nameof(_viewModel.HighChipBackgroundColor), BindingMode.TwoWay);
+            bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.SetBinding(IsEnabledProperty, nameof(_viewModel.HighChipIsEnabled), BindingMode.TwoWay);
+
             grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
-        
+       
         #endregion
 
         #region Events
-      
+
         private void MainButton_ClickedEvent(object sender, EventArgs e)
         {
             if (!_viewModel.IsOpenMenu)
@@ -261,7 +290,15 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private async void AddOccurrenceButton_Clicked(object sender, EventArgs e) => await _viewModel.SaveOccurrence();
-        
+
+        private void BottomSheetAddOccurrence_StateChanged(object sender, ValueChangedEventArgs<BottomSheetState> e)
+        {
+            if (e.NewValue.Equals(BottomSheetState.Hidden))
+            {
+                _viewModel.ClearInputsOfBottomSheetAddOccurrence();
+            }
+        }
+
         private void Map_MapClicked(object sender, MapClickedEventArgs e)
         {
             // EVENTO É DISPARADO QUANDO O USUARIO TOCA NO MAPA.
@@ -274,11 +311,35 @@ namespace FocamapMaui.MVVM.Views
                 //IDENTIFICA QUANDO O USUARIO MUDA POSICAO - MOVIMENTACAO NO MAPA.       
             }
         }
-       
+
+        private void LowChipButton_Clicked(object sender, EventArgs e)
+        {
+            if (sender is Button element)
+            {
+                _viewModel.SetChangeOnSelectedChip(element.Text);
+            }
+        }
+
+        private void AverageChipButton_Clicked(object sender, EventArgs e)
+        {
+            if (sender is Button element)
+            {
+                _viewModel.SetChangeOnSelectedChip(element.Text);
+            }
+        }
+
+        private void HighChipButton_Clicked(object sender, EventArgs e)
+        {
+            if (sender is Button element)
+            {
+                _viewModel.SetChangeOnSelectedChip(element.Text);
+            }
+        }
+
         #endregion
 
         #region Actions
-        
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -291,7 +352,9 @@ namespace FocamapMaui.MVVM.Views
 
             SetsTheFullContentToView();
 
-            ApplyModificationsToTheMap();            
+            ApplyModificationsToTheMap();
+
+            SetFalseToIsBusyViewModelBase();
         }
 
         protected override void OnDisappearing()
@@ -308,9 +371,11 @@ namespace FocamapMaui.MVVM.Views
             Content = CreateTemporaryContent();
         }
 
-        private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService, IMapService mapService)
+        private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService,
+                                                               IMapService mapService,
+                                                               IRealtimeDatabaseService realtimeDatabaseService)
         {
-            _viewModel = new HomeMapViewModel(navigationService, mapService);
+            _viewModel = new HomeMapViewModel(navigationService, mapService, realtimeDatabaseService);
         }
 
         private void SetFalseToIsBusyViewModelBase()
@@ -319,7 +384,7 @@ namespace FocamapMaui.MVVM.Views
             (BindingContext as ViewModelBase).IsBusy = false;
         }
 
-        private async Task LoadPinsOfFirebase() => await _viewModel.LoadPinsMock();
+        private async Task LoadPinsOfFirebase() => await _viewModel.LoadPins();
        
         private async Task LoadUserLocationAsync()
         {

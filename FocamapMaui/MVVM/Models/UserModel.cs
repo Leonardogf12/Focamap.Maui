@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using FocamapMaui.Models;
-
-namespace FocamapMaui.MVVM.Models
+﻿namespace FocamapMaui.MVVM.Models
 {
     public class UserModel
 	{
@@ -18,4 +15,3 @@ namespace FocamapMaui.MVVM.Models
 		public string State { get; set; }
 	}
 }
-
