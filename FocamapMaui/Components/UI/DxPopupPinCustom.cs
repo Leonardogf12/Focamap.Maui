@@ -1,10 +1,8 @@
 ﻿using DevExpress.Maui.Controls;
-using FocamapMaui.Controls;
 using FocamapMaui.Controls.Extensions.Events;
-using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.Helpers;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 
 namespace FocamapMaui.Components.UI
 {
@@ -198,4 +196,3 @@ namespace FocamapMaui.Components.UI
         }
     }
 }
-

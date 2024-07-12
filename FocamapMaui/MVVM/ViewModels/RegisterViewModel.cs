@@ -1,6 +1,6 @@
 ﻿using FocamapMaui.Controls.Resources;
 using FocamapMaui.Helpers.Models;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.Services.Authentication;
 
@@ -249,4 +249,3 @@ namespace FocamapMaui.MVVM.ViewModels
         }
     }
 }
-

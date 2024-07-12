@@ -4,7 +4,7 @@ using Android.Gms.Maps.Model;
 using Android.Graphics;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Helpers;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 
 namespace FocamapMaui.Controls.Maps
 {
@@ -107,5 +107,3 @@ namespace FocamapMaui.Controls.Maps
         }
     }
 }
-
-

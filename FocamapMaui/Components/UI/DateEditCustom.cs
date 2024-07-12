@@ -13,7 +13,7 @@ namespace FocamapMaui.Components.UI
             DisplayFormat = "dd/MM/yyyy";
             UseNativePicker = useNativePicker;
             MaxDate = DateTime.Now.AddYears(1);
-            MinDate = DateTime.Now.AddMonths(1);
+            MinDate = DateTime.Now.AddMonths(-1);
             IconIndent = 10;
             HeightRequest = 55;
             CornerRadius = 10;

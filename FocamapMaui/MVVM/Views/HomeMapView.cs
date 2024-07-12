@@ -17,6 +17,8 @@ using Microsoft.Maui.Maps;
 using Microsoft.Maui.Maps.Handlers;
 using DevExpress.Maui.Core;
 using Map = Microsoft.Maui.Controls.Maps.Map;
+using Newtonsoft.Json;
+using FocamapMaui.Controls;
 
 namespace FocamapMaui.MVVM.Views
 {
@@ -25,10 +27,10 @@ namespace FocamapMaui.MVVM.Views
         #region Properties
 
         private readonly INavigationService _navigationService;
+        
+        private readonly IRealtimeDatabaseService _realtimeDatabaseService;
 
         private readonly IMapService _mapService;
-
-        private readonly IRealtimeDatabaseService _realtimeDatabaseService;
 
         private HomeMapViewModel _viewModel;
 
@@ -43,18 +45,16 @@ namespace FocamapMaui.MVVM.Views
         #endregion
 
         public HomeMapView(INavigationService navigationService,
-                           IMapService mapService,
-                           IRealtimeDatabaseService realtimeDatabaseService)
+                           IRealtimeDatabaseService realtimeDatabaseService,
+                           IMapService mapService)
 		{           
-            _navigationService = navigationService;
-            _mapService = mapService;
+            _navigationService = navigationService;            
             _realtimeDatabaseService = realtimeDatabaseService;
+            _mapService = mapService;
 
             SetBackgroundColorToView();
             
-            SetNavigationServiceInstancaFromViewModel(_navigationService,
-                                                      _mapService,
-                                                      _realtimeDatabaseService);
+            SetNavigationServiceInstancaFromViewModel(_navigationService, _realtimeDatabaseService, _mapService);
 
             SetsTemporaryContentToView();
 
@@ -88,7 +88,7 @@ namespace FocamapMaui.MVVM.Views
 
                 CreateGroupButtons(_mainGrid);
 
-                CreateBottomSheetAddOccurrence(_mainGrid);              
+                CreateBottomSheetAddOccurrence(_mainGrid);
 
                 return _mainGrid;
             }
@@ -108,7 +108,10 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateMap(Grid grid)
         {           
-           _map = MapCustom.GetMap(MapType.Street, _locationOfUserLogged, Map_MapClicked, Map_PropertyChanged);
+           _map = MapCustom.GetMap(mapType: MapType.Street,
+                                   location: _locationOfUserLogged,
+                                   eventMapClicked: Map_MapClicked,
+                                   propertyChangedMap: Map_PropertyChanged);
 
             grid.AddWithSpan(_map);
         }
@@ -243,7 +246,7 @@ namespace FocamapMaui.MVVM.Views
 
             grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
-       
+      
         #endregion
 
         #region Events
@@ -299,11 +302,12 @@ namespace FocamapMaui.MVVM.Views
             }
         }
 
-        private void Map_MapClicked(object sender, MapClickedEventArgs e)
-        {
-            // EVENTO É DISPARADO QUANDO O USUARIO TOCA NO MAPA.
+        private async void Map_MapClicked(object sender, MapClickedEventArgs e)
+        {         
+            var location = e.Location;
+            await _viewModel.GetReverseGeocoding(location);
         }
-
+        
         private void Map_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(_map.VisibleRegion))
@@ -372,10 +376,10 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService,
-                                                               IMapService mapService,
-                                                               IRealtimeDatabaseService realtimeDatabaseService)
+                                                               IRealtimeDatabaseService realtimeDatabaseService,
+                                                               IMapService mapService)
         {
-            _viewModel = new HomeMapViewModel(navigationService, mapService, realtimeDatabaseService);
+            _viewModel = new HomeMapViewModel(navigationService, realtimeDatabaseService, mapService);
         }
 
         private void SetFalseToIsBusyViewModelBase()
@@ -487,4 +491,6 @@ namespace FocamapMaui.MVVM.Views
 
         #endregion
     }
+
+   
 }

@@ -122,6 +122,7 @@
 	  <None Remove="Components\Views\" />
 	  <None Remove="Services\Firebase\" />
 	  <None Remove="Resources\Images\title_24.svg" />
+	  <None Remove="Models\Map\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -154,6 +155,7 @@
 	  <Folder Include="Helpers\Models\" />
 	  <Folder Include="Components\Views\" />
 	  <Folder Include="Services\Firebase\" />
+	  <Folder Include="Models\Map\" />
 	</ItemGroup>
 
 	<ItemGroup>

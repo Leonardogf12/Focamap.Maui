@@ -1,4 +1,4 @@
-﻿using FocamapMaui.Models;
+﻿using FocamapMaui.Models.Map;
 
 namespace FocamapMaui.Services.Authentication
 {
@@ -13,4 +13,3 @@ namespace FocamapMaui.Services.Authentication
         Task<string> UpdateUserProfile(string email, string password, string newName);
     }
 }
-

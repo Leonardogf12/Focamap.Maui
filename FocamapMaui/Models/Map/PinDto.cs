@@ -1,4 +1,4 @@
-﻿namespace FocamapMaui.Models
+﻿namespace FocamapMaui.Models.Map
 {
     public class PinDto
 	{
@@ -19,4 +19,3 @@
         public double Longitude { get; set; }
     }   
 }
-

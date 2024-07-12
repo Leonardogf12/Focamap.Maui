@@ -52,9 +52,8 @@ public static class MauiProgram
     private static void RegisterDependencyForInterfaces(MauiAppBuilder builder)
     {
         builder.Services.AddSingleton<INavigationService, NavigationService>();
-        builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
-        builder.Services.AddSingleton<IMapService, MapService>();
+        builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();      
         builder.Services.AddSingleton<IRealtimeDatabaseService, RealtimeDatabaseService>();
+        builder.Services.AddSingleton<IMapService, MapService>();
     }
 }
-

@@ -24,7 +24,13 @@
         public const string FIREBASE_USER_LOCAL_ID_KEY = "FirebaseUserLocalIdKey";
         public const string FIREBASE_AUTH_PROVIDER_KEY = "AIzaSyBmEIGJpn6VnoMIXxgQTgFxvybI9xPO_gE";
         public const string FIREBASE_REALTIME_DATABASE = "https://focamapmaui-23c5c-default-rtdb.firebaseio.com";
-       
+
+        #endregion
+
+        #region GOOGLE CLOUD
+
+        public const string GEOCODING_API_KEY = "AIzaSyDOyRpa1QqG6btASTZ_z64MyxjsxTqOXO0";
+
         #endregion
 
         #region ROUTES

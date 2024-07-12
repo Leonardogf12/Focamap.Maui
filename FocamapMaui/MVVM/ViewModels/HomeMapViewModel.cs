@@ -3,9 +3,10 @@ using System.Windows.Input;
 using DevExpress.Maui.Controls;
 using Firebase.Database;
 using FocamapMaui.Controls;
+using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
 using FocamapMaui.Helpers.Models;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
@@ -13,6 +14,7 @@ using FocamapMaui.Repositories;
 using FocamapMaui.Services.Firebase;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
+using Microsoft.Maui.Controls.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -222,6 +224,39 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private bool _lowChipIsSelectedToAdd;
+        public bool LowChipIsSelectedToAdd
+        {
+            get => _lowChipIsSelectedToAdd;
+            set
+            {
+                _lowChipIsSelectedToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _averageChipIsSelectedToAdd;
+        public bool AverageChipIsSelectedToAdd
+        {
+            get => _averageChipIsSelectedToAdd;
+            set
+            {
+                _averageChipIsSelectedToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _highChipIsSelectedToAdd;
+        public bool HighChipIsSelectedToAdd
+        {
+            get => _highChipIsSelectedToAdd;
+            set
+            {
+                _highChipIsSelectedToAdd = value;
+                OnPropertyChanged();
+            }
+        }
+
         private Grid _mainView;
         public Grid MainView
         {
@@ -408,11 +443,23 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        private LocationOccurrence _locationOccurrence;
+        public LocationOccurrence LocationOccurrence
+        {
+            get => _locationOccurrence;
+            set
+            {
+                _locationOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
         
-        private readonly INavigationService _navigationService;
-        private readonly IMapService _mapService;
+        private readonly INavigationService _navigationService;      
         private readonly IRealtimeDatabaseService _realtimeDatabaseService;
-       
+        private readonly IMapService _mapService;
+
+
         private readonly UserRepository _userRepository;
 
         public FirebaseClient client = new(StringConstants.FIREBASE_REALTIME_DATABASE);
@@ -424,13 +471,11 @@ namespace FocamapMaui.MVVM.ViewModels
 
         #endregion
 
-        public HomeMapViewModel(INavigationService navigationService,
-                                IMapService mapService,
-                                IRealtimeDatabaseService realtimeDatabaseService)
+        public HomeMapViewModel(INavigationService navigationService, IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
         {
-            _navigationService = navigationService;
-            _mapService = mapService;
+            _navigationService = navigationService;           
             _realtimeDatabaseService = realtimeDatabaseService;
+            _mapService = mapService;
 
             _userRepository = new();
 
@@ -473,49 +518,9 @@ namespace FocamapMaui.MVVM.ViewModels
 
             await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
-
-        private void ChangeIconOfLockUnlockButton(string nameIcon)
-        {
-            LockUnlockImage = ImageSource.FromFile(nameIcon);
-        }
-
-        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
-        {
-            MainButtonIsEnabled = isEnabled;
-            DetailOccurrenceButtonIsEnabled = isEnabled;
-            AddOccurrenceButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
-        }
-
-        private void CheckAnonymousAccess(bool isEnabled)
-        {
-            ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
-
-            LockUnlockButtonIsEnabled = isEnabled;
-            DetailOccurrenceButtonIsEnabled = isEnabled;
-            AddOccurrenceButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
-        }
-
-        private void CloseMunuRoundButtons()
-        {
-           IsVisibleDetailOccurrenceFloatButton = false;
-           IsVisibleAddOccurrenceFloatButton = false;
-           IsVisibleUserFloatButton = false;
-           IsVisibleExitFloatButton = false;
-           IsOpenMenu = false;
-        }
-
+        
         private OccurrenceModel CreateOccurrenceModel()
-        {
-            var location = new LocationOccurrence
-            {              
-                Latitude = -19.402479367746047,
-                Longitude = -40.067728651209485
-            };
-
+        {           
             return new()
             {
                 Id = Guid.NewGuid().ToString(),
@@ -524,11 +529,11 @@ namespace FocamapMaui.MVVM.ViewModels
                 Date = DateOccurrence.ToShortDateString(),
                 Hour = HourOccurrence.ToString(@"hh\:mm"),
                 Resume = ResumeOccurrence,
-                Status = 1,
-                Location = location
+                Status = LowChipIsSelectedToAdd ? (int)PinStatus.Baixo : AverageChipIsSelectedToAdd ? (int)PinStatus.Medio : (int)PinStatus.Alto,
+                Location = LocationOccurrence
             };
         }
-
+      
         private void UpdateListPins(List<OccurrenceModel> list)
         {
             PinsList.Clear();
@@ -560,31 +565,81 @@ namespace FocamapMaui.MVVM.ViewModels
             return pins;
         }
 
+        private void ChangeIconOfLockUnlockButton(string nameIcon)
+        {
+            LockUnlockImage = ImageSource.FromFile(nameIcon);
+        }
+
+        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
+        {
+            MainButtonIsEnabled = isEnabled;
+            DetailOccurrenceButtonIsEnabled = isEnabled;
+            AddOccurrenceButtonIsEnabled = isEnabled;
+            UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+
+        private void CheckAnonymousAccess(bool isEnabled)
+        {
+            ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
+
+            LockUnlockButtonIsEnabled = isEnabled;
+            DetailOccurrenceButtonIsEnabled = isEnabled;
+            AddOccurrenceButtonIsEnabled = isEnabled;
+            UserButtonIsEnabled = isEnabled;
+            ExitButtonIsEnabled = isEnabled;
+        }
+
+        private void CloseMunuRoundButtons()
+        {
+            IsVisibleDetailOccurrenceFloatButton = false;
+            IsVisibleAddOccurrenceFloatButton = false;
+            IsVisibleUserFloatButton = false;
+            IsVisibleExitFloatButton = false;
+            IsOpenMenu = false;
+        }
+
+        private void SetFalseToStatusOfSelectionChipsButtos()
+        {
+            LowChipIsSelectedToAdd = false;
+            AverageChipIsSelectedToAdd = false;
+            HighChipIsSelectedToAdd = false;
+        }
+
         private void SetChangeOnLowChip()
         {
+            SetFalseToStatusOfSelectionChipsButtos();
             SetChangeDefaultStyleOnChips();
 
             LowChipTextColor = ControlResources.GetResource<Color>("CLWhite");
             LowChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
             LowChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
-        }
 
+            LowChipIsSelectedToAdd = true;
+        }
+        
         private void SetChangeOnAverageChip()
         {
+            SetFalseToStatusOfSelectionChipsButtos();
             SetChangeDefaultStyleOnChips();
 
             AverageChipTextColor = ControlResources.GetResource<Color>("CLWhite");
             AverageChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
             AverageChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+
+            AverageChipIsSelectedToAdd = true;
         }
 
         private void SetChangeOnHighChip()
         {
+            SetFalseToStatusOfSelectionChipsButtos();
             SetChangeDefaultStyleOnChips();
 
             HighChipTextColor = ControlResources.GetResource<Color>("CLWhite");
             HighChipBorderColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
             HighChipBackgroundColor = ControlResources.GetResource<Color>("CLSecondary");
+
+            HighChipIsSelectedToAdd = true;
         }
 
         #endregion
@@ -618,7 +673,24 @@ namespace FocamapMaui.MVVM.ViewModels
                 IsBusy = false;
             }
         }
-        
+
+        private void UpdateListPinsOfMap()
+        {
+            Map.Pins.Clear();
+
+            foreach (var pinDto in PinsList)
+            {
+                var pin = new Pin
+                {
+                    Label = pinDto.Title,
+                    Address = pinDto.Content,                   
+                    Location = new Location(pinDto.Latitude, pinDto.Longitude)
+                };
+
+                Map.Pins.Add(pin);                
+            }            
+        }
+
         public async Task<Location> GetLocationOfUserLogged()
         {
             try
@@ -721,6 +793,35 @@ namespace FocamapMaui.MVVM.ViewModels
             HourOccurrence = new TimeSpan();
             ResumeOccurrence = string.Empty;
             SetChangeDefaultStyleOnChips();
+        }
+
+        public async Task GetReverseGeocoding(Location location)
+        {
+            IsBusy = true;
+
+            try
+            {
+                var address = await _mapService.GetAddressFromLocationAsync(location);
+
+                if(!string.IsNullOrEmpty(address))
+                {
+                    AddressOccurrence = address;
+                    LocationOccurrence = new LocationOccurrence
+                    {
+                        Latitude = location.Latitude,
+                        Longitude = location.Longitude
+                    };
+                }                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops","Parece que não foi possivel obter o local selecionado. Verifique sua conexão e tente novamente.","Ok");
+            }
+            finally
+            {
+                IsBusy = false;
+            }            
         }
 
         #endregion

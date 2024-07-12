@@ -1,7 +1,7 @@
 ﻿using Firebase.Auth;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Connections;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.Repositories;
 
@@ -219,4 +219,3 @@ namespace FocamapMaui.Services.Authentication
         #endregion
     }
 }
-

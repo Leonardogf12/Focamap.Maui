@@ -1,4 +1,4 @@
-﻿using FocamapMaui.Models;
+﻿using FocamapMaui.Models.Map;
 
 namespace FocamapMaui.MVVM.Models
 {

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 using Microsoft.Maui.Controls.Maps;
 using Microsoft.Maui.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
@@ -70,4 +70,3 @@ namespace FocamapMaui.Components.UI
         }
     }
 }
-

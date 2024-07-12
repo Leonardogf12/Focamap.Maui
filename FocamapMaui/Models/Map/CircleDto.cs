@@ -1,6 +1,6 @@
 ﻿using Microsoft.Maui.Maps;
 
-namespace FocamapMaui.Models
+namespace FocamapMaui.Models.Map
 {
     public class CircleDto
 	{
@@ -11,4 +11,3 @@ namespace FocamapMaui.Models
         public Color FillColor { get; set; }
     }
 }
-

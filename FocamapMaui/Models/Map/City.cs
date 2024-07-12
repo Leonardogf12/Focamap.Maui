@@ -1,4 +1,4 @@
-﻿namespace FocamapMaui.Models
+﻿namespace FocamapMaui.Models.Map
 {
     public class City
     {
@@ -8,4 +8,3 @@
         public double Longitude { get; set; }
     }
 }
-

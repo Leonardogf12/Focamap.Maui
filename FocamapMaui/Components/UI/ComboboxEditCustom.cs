@@ -1,6 +1,6 @@
 ﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Controls.Resources;
-using FocamapMaui.Models;
+using FocamapMaui.Models.Map;
 
 namespace FocamapMaui.Components.UI
 {
@@ -36,4 +36,3 @@ namespace FocamapMaui.Components.UI
         }
     }
 }
-
