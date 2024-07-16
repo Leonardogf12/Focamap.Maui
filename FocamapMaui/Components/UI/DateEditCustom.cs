@@ -15,13 +15,14 @@ namespace FocamapMaui.Components.UI
             MaxDate = DateTime.Now.AddYears(1);
             MinDate = DateTime.Now.AddMonths(-1);
             IconIndent = 10;
-            HeightRequest = 55;
+            HeightRequest = 55;            
             CornerRadius = 10;
             BorderThickness = 1;
             FocusedBorderThickness = 1;
             IsDateIconVisible = false;
             IsLabelFloating = false;
-            LabelText = null;                    
+            LabelText = null;
+            HorizontalOptions = LayoutOptions.Fill;
             IconVerticalAlignment = LayoutAlignment.Center;
             TextVerticalAlignment = TextAlignment.Center;
             BorderColor = Colors.Transparent;
@@ -48,17 +49,5 @@ namespace FocamapMaui.Components.UI
                 SelectedEllipseBackgroundColor = ControlResources.GetResource<Color>("CLPrimaryOrange"),
             };          
         }
-
-        private static View CreateTemplateButton(ICommand command)
-        {           
-            var okButton = new Button
-            {
-                Text = "OK",
-            };
-            okButton.Command = command;
-
-            return okButton;            
-        }
     }
 }
-

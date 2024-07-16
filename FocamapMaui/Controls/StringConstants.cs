@@ -54,7 +54,8 @@
         public const string LOW = "Baixo";
         public const string AVERAGE = "Medio";
         public const string HIGH = "Alto";
-        
+
+        public const string ANONYMOUS_ACCESS = "AnonymousAccess";
         #endregion
     }
 }

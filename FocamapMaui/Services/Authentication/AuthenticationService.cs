@@ -16,15 +16,19 @@ namespace FocamapMaui.Services.Authentication
             _userRepository = new();
         }
 
-        public async Task LoginAsync(string email, string password)
+        public async Task<bool> LoginAsync(string email, string password)
         {
+            bool allOk = true;
+
             try
             {
                 if (!ToastFailConnection.CheckIfConnectionIsSuccessful())
                 {
                     ToastFailConnection.ShowToastMessageFailConnection();
 
-                    return;
+                    allOk = false;
+
+                    return allOk;
                 }
 
                 var authProvider = GetFirebaseAuthProvider();
@@ -35,19 +39,26 @@ namespace FocamapMaui.Services.Authentication
 
                 ControlUsers.SetLocalIdByUserLogged();
 
-                await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
+                return allOk;
+                //await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
             }
             catch (FirebaseAuthException f)
             {
                 if (f.ResponseData.Contains(StringConstants.INVALID_LOGIN_CREDENTIALS))
                 {
-                    await App.Current.MainPage.DisplayAlert("Ops", "Email ou senha inválidos. Favor verificar.", "Ok");
+                    await App.Current.MainPage.DisplayAlert("Ops", "Email ou senha inválidos. Favor verificar.", "Ok");                   
                 }
+
+                allOk = false;
+                return allOk;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
                 await App.Current.MainPage.DisplayAlert("Ops", "Ocorreu um erro inesperado ao tentar realizar login. Tente novamente em alguns instantes.", "Ok");
+
+                allOk = false;
+                return allOk;
             }
         }
         

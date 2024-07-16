@@ -14,12 +14,11 @@ using FocamapMaui.Repositories;
 using FocamapMaui.Services.Firebase;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
-using Microsoft.Maui.Controls.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.ViewModels
 {
-    [QueryProperty(nameof(AnonymousAccess), "AnonymousAccess")]
+    [QueryProperty(nameof(AnonymousAccess), StringConstants.ANONYMOUS_ACCESS)]
     public class HomeMapViewModel : ViewModelBase
     {
         #region Properties
@@ -257,6 +256,17 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private bool _isSelectingAddressOnMap;
+        public bool IsSelectingAddressOnMap
+        {
+            get => _isSelectingAddressOnMap;
+            set
+            {
+                _isSelectingAddressOnMap = value;
+                OnPropertyChanged();
+            }
+        }        
+
         private Grid _mainView;
         public Grid MainView
         {
@@ -471,7 +481,8 @@ namespace FocamapMaui.MVVM.ViewModels
 
         #endregion
 
-        public HomeMapViewModel(INavigationService navigationService, IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
+        public HomeMapViewModel(INavigationService navigationService,
+                                IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
         {
             _navigationService = navigationService;           
             _realtimeDatabaseService = realtimeDatabaseService;
@@ -486,12 +497,7 @@ namespace FocamapMaui.MVVM.ViewModels
         }
 
         #region Private Methods
-
-        private void OnOpenBottomSheetAddOccurrenceCommand()
-        {
-            BottomSheetAddOccurrenceState = BottomSheetState.FullExpanded;
-        }
-
+       
         private async void OnGoToViewDetailOccurrenceCommand()
         {
             await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
@@ -512,13 +518,18 @@ namespace FocamapMaui.MVVM.ViewModels
 
             if (!result) return;
 
+            RemoveUserKeysAndFromPreferences();
+           
+            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
+        }
+
+        private static void RemoveUserKeysAndFromPreferences()
+        {
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
-
-            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
-        
+
         private OccurrenceModel CreateOccurrenceModel()
         {           
             return new()
@@ -642,6 +653,11 @@ namespace FocamapMaui.MVVM.ViewModels
             HighChipIsSelectedToAdd = true;
         }
 
+        private void SetVaueForProperty_IsSelectingAddressOnMap(bool value)
+        {
+            IsSelectingAddressOnMap = value;
+        }
+
         #endregion
 
         #region Public Methods
@@ -673,24 +689,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 IsBusy = false;
             }
         }
-
-        private void UpdateListPinsOfMap()
-        {
-            Map.Pins.Clear();
-
-            foreach (var pinDto in PinsList)
-            {
-                var pin = new Pin
-                {
-                    Label = pinDto.Title,
-                    Address = pinDto.Content,                   
-                    Location = new Location(pinDto.Latitude, pinDto.Longitude)
-                };
-
-                Map.Pins.Add(pin);                
-            }            
-        }
-
+        
         public async Task<Location> GetLocationOfUserLogged()
         {
             try
@@ -741,6 +740,9 @@ namespace FocamapMaui.MVVM.ViewModels
                 await App.Current.MainPage.DisplayAlert("Ocorrência",
                     "Sua ocorrência foi enviada com sucesso. Agora é com a gente; vamos analisar sua solicitação e, posteriormente, disponibilizá-la ao mapa.", "Ok");
 
+                SetVaueForProperty_IsSelectingAddressOnMap(false);
+
+                CloseBottomSheetAddOccurrence();
             }
             catch (Exception ex)
             {
@@ -792,6 +794,7 @@ namespace FocamapMaui.MVVM.ViewModels
             DateOccurrence = DateTime.Now;
             HourOccurrence = new TimeSpan();
             ResumeOccurrence = string.Empty;
+
             SetChangeDefaultStyleOnChips();
         }
 
@@ -805,12 +808,25 @@ namespace FocamapMaui.MVVM.ViewModels
 
                 if(!string.IsNullOrEmpty(address))
                 {
-                    AddressOccurrence = address;
-                    LocationOccurrence = new LocationOccurrence
+                    if (!CheckIfRegionIsAllowed(address))
                     {
-                        Latitude = location.Latitude,
-                        Longitude = location.Longitude
-                    };
+                        await App.Current.MainPage.DisplayAlert("Ops", $"Selecione somente locais de sua cidade.", "Ok");
+                        return;
+                    }
+
+                    var result = await App.Current.MainPage.DisplayAlert("Local", $"Confirmar local selecionado?: {address}", "Sim", "Cancelar");
+
+                    if (result)
+                    {
+                        AddressOccurrence = address;
+                        LocationOccurrence = new LocationOccurrence
+                        {
+                            Latitude = location.Latitude,
+                            Longitude = location.Longitude
+                        };
+
+                        SetVaueForProperty_IsSelectingAddressOnMap(false);
+                    }                   
                 }                
             }
             catch (Exception ex)
@@ -822,6 +838,23 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 IsBusy = false;
             }            
+        }
+
+        private static bool CheckIfRegionIsAllowed(string address)
+        {
+           var city = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
+
+            return address.Contains(city.Name) && address.Contains(city.State);
+        }
+
+        public void OnOpenBottomSheetAddOccurrenceCommand()
+        {
+            BottomSheetAddOccurrenceState = BottomSheetState.FullExpanded;
+        }
+
+        private void CloseBottomSheetAddOccurrence()
+        {
+            BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         }
 
         #endregion

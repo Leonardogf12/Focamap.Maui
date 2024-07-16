@@ -85,12 +85,12 @@ namespace FocamapMaui.MVVM.Views
         {
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
-            var emailInput = new TextEditCustom(icon: "email_24", placeholder: "Email");
+            var emailInput = new TextEditCustom(startIcon: "email_24", endIcon: null, placeholder: "Email");
             emailInput.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email), BindingMode.TwoWay);            
             emailInput.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledEmail), BindingMode.TwoWay);            
             stackInputs.Children.Add(emailInput);
 
-            UserTextEdit = new TextEditCustom(icon: "user_24", placeholder: "Usuário");
+            UserTextEdit = new TextEditCustom(startIcon: "user_24", endIcon: null, placeholder: "Usuário");
             UserTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.DisplayName), BindingMode.TwoWay);
             UserTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorDisplayName), BindingMode.TwoWay);
             UserTextEdit.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledDisplayName), BindingMode.TwoWay);

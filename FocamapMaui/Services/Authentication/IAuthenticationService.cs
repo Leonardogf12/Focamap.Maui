@@ -4,7 +4,7 @@ namespace FocamapMaui.Services.Authentication
 {
     public interface IAuthenticationService
 	{
-		Task LoginAsync(string email, string password);
+		Task<bool> LoginAsync(string email, string password);
 
 		Task ResetPasswordAsync(string email);
 

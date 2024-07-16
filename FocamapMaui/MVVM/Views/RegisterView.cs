@@ -90,13 +90,13 @@ namespace FocamapMaui.MVVM.Views
         {
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
-            NameTextEdit = new TextEditCustom(icon: "user_24", placeholder: "Nome");
+            NameTextEdit = new TextEditCustom(startIcon: "user_24", endIcon: null, placeholder: "Nome");
             NameTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Name));
             NameTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorNameInput));
             NameTextEdit.TextChanged += NameTextEdit_TextChanged;
             stackInputs.Children.Add(NameTextEdit);
 
-            EmailTextEdit = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
+            EmailTextEdit = new TextEditCustom(startIcon: "user_24", endIcon: null, placeholder: "Email", keyboard: Keyboard.Email);
             EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput));
             EmailTextEdit.TextChanged += EmailTextEdit_TextChanged;

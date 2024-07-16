@@ -10,14 +10,13 @@ public partial class App : Application
     public static PopupLoadingView popupLoading = new();
 
     public App()
-	{
+	{        
 		InitializeComponent();
 
-		MainPage = new AppShell();
+        MainPage = new AppShell();
 
         ControlUsers.SetLocalIdByUserLogged();
 
         ControlUsers.CheckUserHasLogged();
-    }    
+    }
 }
-

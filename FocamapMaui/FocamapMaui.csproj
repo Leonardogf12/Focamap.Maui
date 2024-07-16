@@ -123,6 +123,8 @@
 	  <None Remove="Services\Firebase\" />
 	  <None Remove="Resources\Images\title_24.svg" />
 	  <None Remove="Models\Map\" />
+	  <None Remove="Resources\Images\btnmap_24.svg" />
+	  <None Remove="Resources\Images\button_map_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -194,6 +196,9 @@
 	  <BundleResource Include="Resources\Images\marker_y31.svg" />
 	  <BundleResource Include="Resources\Raw\loading.json" />
 	  <BundleResource Include="Resources\Images\title_24.svg" />
+	  <BundleResource Include="Resources\Images\btnmap_24.svg" />
+	  <BundleResource Include="Resources\Images\btnmap_24.svg" />
+	  <BundleResource Include="Resources\Images\button_map_24.svg" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />

@@ -1,6 +1,7 @@
 ﻿using DevExpress.Maui.Editors;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
+using FocamapMaui.Controls;
 using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
@@ -92,7 +93,7 @@ namespace FocamapMaui.MVVM.Views
         {            
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20, useMargin: true);
 
-            EmailTextEdit = new TextEditCustom(icon: "email_24", placeholder: "Email", keyboard: Keyboard.Email);
+            EmailTextEdit = new TextEditCustom(startIcon: "email_24", endIcon: null, placeholder: "Email", keyboard: Keyboard.Email);
             EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput), BindingMode.TwoWay);
             //EmailTextEdit.TextChanged += EmailInput_TextChanged;
@@ -172,7 +173,7 @@ namespace FocamapMaui.MVVM.Views
 
         private async void SeeMapButton_Clicked(object sender, EventArgs e)
         {           
-            var param = ParameterHelper.SetParameter("AnonymousAccess", true);
+            var param = ParameterHelper.SetParameter(StringConstants.ANONYMOUS_ACCESS, true);
 
             await _navigationService.NavigationWithParameter<HomeMapView>(parameter: param);        
         }
@@ -198,7 +199,5 @@ namespace FocamapMaui.MVVM.Views
         }
 
         #endregion
-
     }
 }
-

@@ -117,22 +117,22 @@ namespace FocamapMaui.MVVM.ViewModels
             {               
                 if (CheckIfInputsAreOk())
                 {
-                    await _authenticationService.LoginAsync(Email, Password);
+                    var logged = await _authenticationService.LoginAsync(Email, Password);
 
-                    SetKeysOfPreferencesFromUser();
-
-                    return;
+                    if (logged)
+                    {
+                        SetKeysOfPreferencesFromUser();
+                        await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
+                    }
                 }
-
-                await App.Current.MainPage.DisplayAlert("Ops", "Preencha corretamente todos os campos", "OK");
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Ops", "Preencha corretamente todos os campos", "OK");
+                }               
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }
-            finally
-            {
-                //IsBusy = false;
             }                        
         }
       

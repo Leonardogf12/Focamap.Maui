@@ -101,7 +101,7 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateInputs(Grid grid)
         {
-            EmailTextEdit = new TextEditCustom(icon: "email_24", placeholder: "Email da conta", keyboard: Keyboard.Email);
+            EmailTextEdit = new TextEditCustom(startIcon: "email_24", endIcon: null, placeholder: "Email da conta", keyboard: Keyboard.Email);
             EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
             EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput), BindingMode.TwoWay);
             
