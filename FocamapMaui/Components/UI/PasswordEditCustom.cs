@@ -7,7 +7,7 @@ namespace FocamapMaui.Components.UI
 	{
         public PasswordEditCustom(string icon = "", string placeholder = "")
         {
-            StartIcon = ImageSource.FromFile(icon);
+            StartIcon = ControlResources.GetImage(icon);
             PlaceholderText = placeholder;          
             IsLabelFloating = false;
             LabelText = null;

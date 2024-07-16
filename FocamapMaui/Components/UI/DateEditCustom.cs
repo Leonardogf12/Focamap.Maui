@@ -8,7 +8,7 @@ namespace FocamapMaui.Components.UI
 	{       
         public DateEditCustom(string icon = "", string placeholder = "", bool useNativePicker = false)
         {
-            StartIcon = ImageSource.FromFile(icon);
+            StartIcon = ControlResources.GetImage(icon);
             PlaceholderText = placeholder;
             DisplayFormat = "dd/MM/yyyy";
             UseNativePicker = useNativePicker;

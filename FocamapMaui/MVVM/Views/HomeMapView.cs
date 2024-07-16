@@ -143,7 +143,7 @@ namespace FocamapMaui.MVVM.Views
                 Margin = new Thickness(0, 5, 5, 0),                    
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.End,
-                ImageSource = ImageSource.FromFile("gps_24"),
+                ImageSource = ControlResources.GetImage("gps_24"),
                 FontSize = 30
             };
             gpsButton.Clicked += GpsButton_Clicked;
@@ -162,7 +162,7 @@ namespace FocamapMaui.MVVM.Views
 
             var upZoom = new Button
             {
-                ImageSource = ImageSource.FromFile("plus_24"),
+                ImageSource = ControlResources.GetImage("plus_24"),
                 BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),
                 CornerRadius = 0,
                 HeightRequest = 45,
@@ -174,7 +174,7 @@ namespace FocamapMaui.MVVM.Views
 
             var downZoom = new Button
             {
-                ImageSource = ImageSource.FromFile("minus_24"),
+                ImageSource = ControlResources.GetImage("minus_24"),
                 BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),
                 CornerRadius = 0,
                 HeightRequest = 45,
@@ -188,14 +188,14 @@ namespace FocamapMaui.MVVM.Views
         
         private void CreateGroupButtons(Grid grid)
         {
-            _menuFloatButton = new MenuFloatButtons(iconMainButton: "menu_24",                                                    
-                                                    eventMainButton: MainButton_ClickedEvent,
+            _menuFloatButton = new MenuFloatButtons(eventMainButton: MainButton_ClickedEvent,
                                                     commandExitButton: _viewModel.ExitViewCommand,
                                                     commandUserButton: _viewModel.GoToViewUserDetailCommand,
                                                     commandAddOccurrenceButton: _viewModel.OpenBottomSheetAddOccurrenceCommand,
                                                     commandDetailOccurrenceButton: _viewModel.GoToViewDetailOccurrenceCommand);
 
             _menuFloatButton.MainButton.SetBinding(IsEnabledProperty, nameof(_viewModel.MainButtonIsEnabled), BindingMode.TwoWay);
+            _menuFloatButton.MainButton.SetBinding(Button.ImageSourceProperty, nameof(_viewModel.ImageSourceMainButton), BindingMode.TwoWay);
 
             _menuFloatButton.ExitButton.SetBinding(IsVisibleProperty, nameof(_viewModel.IsVisibleExitFloatButton), BindingMode.TwoWay);
             _menuFloatButton.ExitButton.SetBinding(IsEnabledProperty, nameof(_viewModel.ExitButtonIsEnabled), BindingMode.TwoWay);
@@ -250,26 +250,31 @@ namespace FocamapMaui.MVVM.Views
 
             grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
-
         
         #endregion
 
         #region Events
 
-        private void MainButton_ClickedEvent(object sender, EventArgs e)
+        private async void MainButton_ClickedEvent(object sender, EventArgs e)
         {
             if (!_viewModel.IsOpenMenu)
             {
-                SetTrueValueToIsVisiblePropertyForFloatButtons(x: 0, y: -15);
+                SetTrueValueToIsVisiblePropertyOfFloatButtons(x: 0, y: -15);
+                
+                await ExecuteMainButtonAnimation(90, "close_24");
+
                 _viewModel.IsOpenMenu = true;
             }
             else
             {
-                SetFalseValueToIsVisiblePropertyForFloatButtons();
-                _viewModel.IsOpenMenu = false;
-            }           
-        }      
+                SetFalseValueToIsVisiblePropertyOfFloatButtons();
+                
+                await ExecuteMainButtonAnimation(0, "menu_24");
 
+                _viewModel.IsOpenMenu = false;
+            }
+        }
+        
         private void GpsButton_Clicked(object sender, EventArgs e)
         {
             _viewModel.IsShowingUser = true;
@@ -446,7 +451,7 @@ namespace FocamapMaui.MVVM.Views
             SetFalseToIsBusyViewModelBase();
         }
 
-        private async void SetTrueValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 20)
+        private async void SetTrueValueToIsVisiblePropertyOfFloatButtons(double x = 0, double y = 0, uint lenght = 20)
         {
             _viewModel.IsVisibleExitFloatButton = true;
             await _menuFloatButton.ExitButton.TranslateTo(x, y, lenght);
@@ -465,7 +470,7 @@ namespace FocamapMaui.MVVM.Views
             await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
         }
 
-        private async void SetFalseValueToIsVisiblePropertyForFloatButtons(double x = 0, double y = 0, uint lenght = 100)
+        private async void SetFalseValueToIsVisiblePropertyOfFloatButtons(double x = 0, double y = 0, uint lenght = 100)
         {
             _viewModel.IsVisibleDetailOccurrenceFloatButton = false;
             _viewModel.IsVisibleAddOccurrenceFloatButton = false;
@@ -483,6 +488,12 @@ namespace FocamapMaui.MVVM.Views
 
             await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
             await _menuFloatButton.DetailOccurrenceButton.TranslateTo(x, y, lenght);
+        }
+
+        private async Task ExecuteMainButtonAnimation(double rotation, string iconeName)
+        {
+            _viewModel.ImageSourceMainButton = ControlResources.GetImage(iconeName);
+            await _menuFloatButton.MainButton.RotateTo(rotation, 100);
         }
 
         protected override void OnHandlerChanged()

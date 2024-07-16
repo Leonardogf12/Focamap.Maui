@@ -8,7 +8,7 @@ namespace FocamapMaui.Components.UI
     {
         public ComboboxEditCustom(string icon = "")
         {
-            StartIcon = ImageSource.FromFile(icon);
+            StartIcon = ControlResources.GetImage(icon);
             DisplayMember = nameof(City.Name);
             IsFilterEnabled = true;
             IsLabelFloating = false;

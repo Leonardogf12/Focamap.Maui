@@ -289,7 +289,7 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private ImageSource _lockUnlockImage = ImageSource.FromFile("unlock_24");
+        private ImageSource _lockUnlockImage = ControlResources.GetImage("unlock_24");
         public ImageSource LockUnlockImage
         {
             get => _lockUnlockImage;
@@ -299,7 +299,18 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
+        private ImageSource _imageSourceMainButton = ControlResources.GetImage("menu_24");
+        public ImageSource ImageSourceMainButton
+        {
+            get => _imageSourceMainButton;
+            set
+            {
+                _imageSourceMainButton = value;
+                OnPropertyChanged();
+            }
+        }
+
         private DateTime _dateOccurrence = DateTime.Now;
         public DateTime DateOccurrence
         {
@@ -578,7 +589,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private void ChangeIconOfLockUnlockButton(string nameIcon)
         {
-            LockUnlockImage = ImageSource.FromFile(nameIcon);
+            LockUnlockImage = ControlResources.GetImage(nameIcon);
         }
 
         private void ChangeIsEnabledOnGroupButtons(bool isEnabled)

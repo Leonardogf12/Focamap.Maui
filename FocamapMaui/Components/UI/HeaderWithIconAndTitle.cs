@@ -1,5 +1,6 @@
 ﻿using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Extensions.Events;
+using FocamapMaui.Controls.Resources;
 
 namespace FocamapMaui.Components.UI
 {
@@ -19,7 +20,7 @@ namespace FocamapMaui.Components.UI
 
             var icon = new Image
             {
-                Source = ImageSource.FromFile(iconName),
+                Source = ControlResources.GetImage(iconName),
                 HeightRequest = 24,
                 HorizontalOptions = LayoutOptions.Start,
                 Margin = new Thickness(10, 0, 0, 0),

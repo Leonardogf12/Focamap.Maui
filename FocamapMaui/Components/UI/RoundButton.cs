@@ -9,7 +9,7 @@ namespace FocamapMaui.Components.UI
 		{
             var roundButton = new Button
             {
-                ImageSource = ImageSource.FromFile(iconName),              
+                ImageSource = ControlResources.GetImage(iconName),              
                 BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),                
                 HeightRequest = 60,
                 WidthRequest = 60,

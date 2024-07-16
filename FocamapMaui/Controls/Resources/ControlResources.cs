@@ -11,6 +11,13 @@
 
 			return default;
 		}
-	}
+
+        public static ImageSource GetImage(string name)
+        {
+            ImageSource imageSource = ImageSource.FromFile(name);
+
+            return imageSource;
+        }
+    }
 }
 

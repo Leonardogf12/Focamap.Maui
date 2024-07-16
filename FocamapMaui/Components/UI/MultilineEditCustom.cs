@@ -7,7 +7,7 @@ namespace FocamapMaui.Components.UI
 	{
         public MultilineEditCustom(string icon = "", string placeholder = "", int minimumHeightRequest = 50, int maximumHeigthRequest = 200, int maxCharacterCount = 200, int maxLineCount = 7)
         {
-            StartIcon = ImageSource.FromFile(icon);
+            StartIcon = ControlResources.GetImage(icon);
             MaxCharacterCountOverflowMode = OverflowMode.LimitInput;
             MaxCharacterCount = maxCharacterCount;
             MaxLineCount = maxLineCount;

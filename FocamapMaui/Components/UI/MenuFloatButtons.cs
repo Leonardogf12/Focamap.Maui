@@ -10,8 +10,7 @@ namespace FocamapMaui.Components.UI
         public Button DetailOccurrenceButton;
         public Button ExitButton;
 
-        public MenuFloatButtons(string iconMainButton,
-                                EventHandler eventMainButton,
+        public MenuFloatButtons(EventHandler eventMainButton,
                                 ICommand commandExitButton,
                                 ICommand commandUserButton,
                                 ICommand commandAddOccurrenceButton,
@@ -23,7 +22,7 @@ namespace FocamapMaui.Components.UI
             
             var mainGrid = CreateMainGrid();
 
-            MainButton = CreateMainButton(iconMainButton, eventMainButton);
+            MainButton = CreateMainButton(eventMainButton);
             mainGrid.AddWithSpan(MainButton, 1);
           
             var detailButton = CreateDetailButtons(commandExitButton,
@@ -52,9 +51,10 @@ namespace FocamapMaui.Components.UI
             };
         }
 
-        private static Button CreateMainButton(string iconMainButton, EventHandler eventMainButton)
+        private static Button CreateMainButton(EventHandler eventMainButton)
         {
-            var roundMainButton = RoundButton.GetRoundButton(iconName: iconMainButton, eventHandler: eventMainButton);            
+            var roundMainButton = RoundButton.GetRoundButton(iconName: "", eventHandler: eventMainButton);
+            roundMainButton.FontSize = 24;
 
             return roundMainButton;
         }

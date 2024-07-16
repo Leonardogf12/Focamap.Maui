@@ -113,7 +113,7 @@ namespace FocamapMaui.Components.UI
             var sharedImage = new Image
             {
                 Margin = new Thickness(10, 30, 10, 3),
-                Source = ImageSource.FromFile("shared_24"),
+                Source = ControlResources.GetImage("shared_24"),
                 HeightRequest = 25,
             };
             sharedImage.AddTapGesture(EventTapShared_Tapped);
@@ -150,7 +150,7 @@ namespace FocamapMaui.Components.UI
             var icon = new Image
             {
                 HeightRequest = 20,
-                Source = ImageSource.FromFile(iconName),
+                Source = ControlResources.GetImage(iconName),
             };
 
             grid.AddWithSpan(icon);

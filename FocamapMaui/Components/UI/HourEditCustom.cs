@@ -7,7 +7,7 @@ namespace FocamapMaui.Components.UI
 	{
         public HourEditCustom(string icon = "", string placeholder = "")
         {            
-            StartIcon = ImageSource.FromFile(icon);
+            StartIcon = ControlResources.GetImage(icon);
             PlaceholderText = placeholder;
             IsTimeIconVisible = false;
             IsLabelFloating = false;

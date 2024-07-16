@@ -81,7 +81,7 @@ namespace FocamapMaui.MVVM.Views
         {            
             var logo = new Image
             {
-                Source = ImageSource.FromFile("logo.png"),
+                Source = ControlResources.GetImage("logo.png"),
                 Margin = new Thickness(30,30,30,50),
                 HorizontalOptions = LayoutOptions.Center
             };

@@ -37,7 +37,7 @@ namespace FocamapMaui.Components.UI
         {
             var icon = new Image
             {
-                Source = ImageSource.FromFile(iconName),
+                Source = ControlResources.GetImage(iconName),
                 HeightRequest = 24,
                 HorizontalOptions = LayoutOptions.Start,
                 Margin = new Thickness(10, 0, 0, 0),
@@ -78,7 +78,7 @@ namespace FocamapMaui.Components.UI
                                  
             var iconEdit = new Image
             {
-                Source = ImageSource.FromFile("edit_24"),
+                Source = ControlResources.GetImage("edit_24"),
                 HeightRequest = 24,
                 HorizontalOptions = LayoutOptions.End,
                 Margin = new Thickness(0, -30, 0, 0),

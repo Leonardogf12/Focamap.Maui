@@ -7,8 +7,8 @@ namespace FocamapMaui.Components.UI
 	{
         public TextEditCustom(string startIcon = "", string endIcon = null, string placeholder = "", Keyboard keyboard = null, char maskPlaceholder = new(), string mask = null)
         {       
-            StartIcon = ImageSource.FromFile(startIcon);
-            EndIcon = !string.IsNullOrEmpty(endIcon) ? ImageSource.FromFile(endIcon) : "";
+            StartIcon = ControlResources.GetImage(startIcon);
+            EndIcon = !string.IsNullOrEmpty(endIcon) ? ControlResources.GetImage(endIcon) : "";
             IsEndIconVisible = !string.IsNullOrEmpty(endIcon);
             MaskPlaceholderChar = maskPlaceholder;
             Mask = mask;
