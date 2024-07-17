@@ -49,8 +49,8 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateHeader(Grid grid)
         {
-            var header = new HeaderWithIconAndTitle(iconName: "back_24",
-                            textTitle: "Ocorrências", iconEventHandler: BackButtonTapGestureRecognizer_Tapped);
+            var header = new HeaderWithIconAndTitle(iconName: "arrow_back_24",
+                            textTitle: "Ocorrências", iconEventHandler: GoBackButton_Clicked);
 
             grid.AddWithSpan(header);
         }
@@ -67,7 +67,7 @@ namespace FocamapMaui.MVVM.Views
             grid.AddWithSpan(text, 1,0,3,1);
         }
 
-        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await _navigationService.GoBack();       
+        private async void GoBackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();
     }
 }
 

@@ -39,14 +39,18 @@ namespace FocamapMaui.Services.Authentication
 
                 ControlUsers.SetLocalIdByUserLogged();
 
-                return allOk;
-                //await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
+                return allOk;              
             }
             catch (FirebaseAuthException f)
             {
                 if (f.ResponseData.Contains(StringConstants.INVALID_LOGIN_CREDENTIALS))
                 {
                     await App.Current.MainPage.DisplayAlert("Ops", "Email ou senha inválidos. Favor verificar.", "Ok");                   
+                }
+
+                if (f.ResponseData.Contains("400"))
+                {
+                    await App.Current.MainPage.DisplayAlert("Ops", "Não foi possível realizar login neste momento. Favor, tente novamente em alguns instantes.", "Ok");
                 }
 
                 allOk = false;
@@ -80,9 +84,7 @@ namespace FocamapMaui.Services.Authentication
                 await auth.UpdateProfileAsync(name, string.Empty);
 
                 var content = await auth.GetFreshAuthAsync();
-
-                //TODO - Save User and City on SqLite. Create repository.             
-                //SaveCityKeyOnPreferences(city); // remove after implemeted repository.
+            
                 await SaveUserOnDevice(name, email, city, content);
 
                 await App.Current.MainPage.DisplayAlert("Sucesso", "Usuário registrado com sucesso!", "Ok");
@@ -162,7 +164,9 @@ namespace FocamapMaui.Services.Authentication
         
         private static FirebaseAuthProvider GetFirebaseAuthProvider()
         {
-            return new FirebaseAuthProvider(new FirebaseConfig(StringConstants.FIREBASE_AUTH_PROVIDER_KEY));
+            var authProviderKey = ControlFiles.GetValueFromFilePropertyJson("firebase-config.json", StringConstants.FIREBASE, StringConstants.FIREBASE_AUTH_PROVIDER_KEY);
+
+            return new FirebaseAuthProvider(new FirebaseConfig(authProviderKey));
         }
 
         private async Task SaveUserOnDevice(string name, string email, City city, FirebaseAuthLink firebase)
@@ -200,11 +204,6 @@ namespace FocamapMaui.Services.Authentication
             UpdateKeyFirebaseUserLogged(content);
 
             UpdateKeyFirebaseUserEmail(content);
-        }
-
-        private static void SaveCityKeyOnPreferences(City city)
-        {
-            ControlPreferences.AddKeyObjectOnPreferences(key: StringConstants.CITY, contentOfObject: city);
         }
 
         private static void UpdateKeyFirebaseUserEmail(FirebaseAuthLink content)

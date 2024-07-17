@@ -27,6 +27,25 @@ namespace FocamapMaui.Components.UI.Basics
                 VerticalOptions = LayoutOptions.Center
             };
         }
+
+        public static Button GetGoBackButton(string iconName, EventHandler iconGoBackEventHandler)
+        {
+            var button = new Button
+            {
+                ImageSource = ControlResources.GetImage(iconName),
+                HeightRequest = 50,
+                WidthRequest = 50,
+                CornerRadius = 50,
+                Padding = 1,
+                FontSize = 35,
+                BackgroundColor = Colors.Transparent,
+                HorizontalOptions = LayoutOptions.Start,
+                Margin = new Thickness(5, 0, 0, 0),
+            };
+            button.Clicked += iconGoBackEventHandler;
+
+            return button;
+        }
     }
 }
 

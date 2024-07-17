@@ -1,7 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using DevExpress.Maui.Controls;
-using Firebase.Database;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
@@ -44,7 +43,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
+
         private bool _anonymousAccess;
         public bool AnonymousAccess
         {
@@ -265,7 +264,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 _isSelectingAddressOnMap = value;
                 OnPropertyChanged();
             }
-        }        
+        }
 
         private Grid _mainView;
         public Grid MainView
@@ -274,10 +273,10 @@ namespace FocamapMaui.MVVM.ViewModels
             set
             {
                 _mainView = value;
-                OnPropertyChanged();              
+                OnPropertyChanged();
             }
         }
-             
+
         private BottomSheetState _bottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         public BottomSheetState BottomSheetAddOccurrenceState
         {
@@ -365,7 +364,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-       
+
         private Color _lowChipTextColor = Colors.Gray;
         public Color LowChipTextColor
         {
@@ -431,7 +430,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-       
+
         private Color _highChipTextColor = Colors.Gray;
         public Color HighChipTextColor
         {
@@ -475,40 +474,79 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-        
-        private readonly INavigationService _navigationService;      
+
+        private readonly INavigationService _navigationService;
         private readonly IRealtimeDatabaseService _realtimeDatabaseService;
         private readonly IMapService _mapService;
 
-
         private readonly UserRepository _userRepository;
-
-        public FirebaseClient client = new(StringConstants.FIREBASE_REALTIME_DATABASE);
-
+        
         public ICommand GoToViewUserDetailCommand;
-        public ICommand ExitViewCommand;
-        public ICommand OpenBottomSheetAddOccurrenceCommand;
+        public ICommand ExitViewCommand;    
         public ICommand GoToViewDetailOccurrenceCommand;
+        public ICommand OpenBottomSheetAddOccurrenceCommand;        
+        public ICommand SaveOccurrenceCommand;
+        public ICommand TextEditAddressEndIconCommand;
+        public ICommand GpsButtonCommand;
 
         #endregion
 
         public HomeMapViewModel(INavigationService navigationService,
                                 IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
         {
-            _navigationService = navigationService;           
+            _navigationService = navigationService;
             _realtimeDatabaseService = realtimeDatabaseService;
             _mapService = mapService;
 
             _userRepository = new();
 
+            CommandManagment();
+        }
+
+        #region Private Methods
+
+        private void CommandManagment()
+        {
             GoToViewUserDetailCommand = new Command(OnGoToViewUserDetailCommand);
             ExitViewCommand = new Command(OnExitViewCommand);
             OpenBottomSheetAddOccurrenceCommand = new Command(OnOpenBottomSheetAddOccurrenceCommand);
             GoToViewDetailOccurrenceCommand = new Command(OnGoToViewDetailOccurrenceCommand);
+            SaveOccurrenceCommand = new Command(async () => await OnSaveOccurrenceCommand());
+            TextEditAddressEndIconCommand = new Command(OnTextEditAddressEndIconCommand);
+            GpsButtonCommand = new Command(OnGpsButtonCommand);
+        }
+       
+        private async Task OnSaveOccurrenceCommand()
+        {
+            IsBusy = true;
+
+            try
+            {
+                await _realtimeDatabaseService.SaveAsync(nameof(OccurrenceModel), await CreateOccurrenceModel());
+
+                ClearInputsOfBottomSheetAddOccurrence();
+
+                await LoadPins();
+
+                await App.Current.MainPage.DisplayAlert("Ocorrência",
+                    "Sua ocorrência foi enviada com sucesso. Agora é com a gente; vamos analisar sua solicitação e, posteriormente, disponibilizá-la ao mapa.", "Ok");
+
+                SetVaueForProperty_IsSelectingAddressOnMap(false);
+
+                CloseBottomSheetAddOccurrence();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops",
+                    "Houve um problema com sua solicitação de ocorrência. Por favor, tente novamente em alguns instantes.", "Ok");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
-        #region Private Methods
-       
         private async void OnGoToViewDetailOccurrenceCommand()
         {
             await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
@@ -530,18 +568,24 @@ namespace FocamapMaui.MVVM.ViewModels
             if (!result) return;
 
             RemoveUserKeysAndFromPreferences();
+
+            CloseMunuRoundButtons();            
            
             await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
         }
 
-        private static void RemoveUserKeysAndFromPreferences()
+        private void OnTextEditAddressEndIconCommand()
         {
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
+            IsSelectingAddressOnMap = true;
+            BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         }
 
-        private OccurrenceModel CreateOccurrenceModel()
+        private void OnGpsButtonCommand()
+        {
+            IsShowingUser = true;
+        }
+
+        private async Task<OccurrenceModel> CreateOccurrenceModel()
         {           
             return new()
             {
@@ -552,9 +596,15 @@ namespace FocamapMaui.MVVM.ViewModels
                 Hour = HourOccurrence.ToString(@"hh\:mm"),
                 Resume = ResumeOccurrence,
                 Status = LowChipIsSelectedToAdd ? (int)PinStatus.Baixo : AverageChipIsSelectedToAdd ? (int)PinStatus.Medio : (int)PinStatus.Alto,
-                Location = LocationOccurrence
+                Location = LocationOccurrence,
+                User = await GetUserLogged(),
             };
         }
+
+        private async Task<UserModel> GetUserLogged()
+        {
+            return await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
+        } 
       
         private void UpdateListPins(List<OccurrenceModel> list)
         {
@@ -611,16 +661,7 @@ namespace FocamapMaui.MVVM.ViewModels
             UserButtonIsEnabled = isEnabled;
             ExitButtonIsEnabled = isEnabled;
         }
-
-        private void CloseMunuRoundButtons()
-        {
-            IsVisibleDetailOccurrenceFloatButton = false;
-            IsVisibleAddOccurrenceFloatButton = false;
-            IsVisibleUserFloatButton = false;
-            IsVisibleExitFloatButton = false;
-            IsOpenMenu = false;
-        }
-
+        
         private void SetFalseToStatusOfSelectionChipsButtos()
         {
             LowChipIsSelectedToAdd = false;
@@ -669,17 +710,33 @@ namespace FocamapMaui.MVVM.ViewModels
             IsSelectingAddressOnMap = value;
         }
 
+        private static void RemoveUserKeysAndFromPreferences()
+        {
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.CITY);
+        }
+        
         #endregion
 
         #region Public Methods
+
+        public void OnOpenBottomSheetAddOccurrenceCommand()
+        {
+            BottomSheetAddOccurrenceState = BottomSheetState.FullExpanded;
+        }
 
         public async Task LoadPins()
         {
             IsBusy = true;
 
             try
-            {                
-                var list = await _realtimeDatabaseService.GetAllAsync<OccurrenceModel>(nameof(OccurrenceModel));
+            {               
+                var userLogged = await GetUserLogged();
+
+                var list = await _realtimeDatabaseService.GetByRegion<OccurrenceModel>(firstChild: nameof(OccurrenceModel),
+                            firstOrderBy: "Location/City", firstEqualTo: userLogged.City);
 
                 if (list.Count == 0)
                 {
@@ -700,12 +757,12 @@ namespace FocamapMaui.MVVM.ViewModels
                 IsBusy = false;
             }
         }
-        
+       
         public async Task<Location> GetLocationOfUserLogged()
         {
             try
             {
-                var userLogged = await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
+                var userLogged = await GetUserLogged();
 
                 var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
 
@@ -717,6 +774,53 @@ namespace FocamapMaui.MVVM.ViewModels
             {
                 Console.WriteLine(ex.Message);
                 return new Location();
+            }
+        }
+
+        public async Task GetReverseGeocoding(Location location)
+        {
+            IsBusy = true;
+
+            try
+            {
+                var address = await _mapService.GetAddressFromLocationAsync(location);
+
+                if (!string.IsNullOrEmpty(address))
+                {
+                    if (!CheckIfRegionIsAllowed(address))
+                    {
+                        await App.Current.MainPage.DisplayAlert("Ops", $"Selecione somente locais de sua cidade.", "Ok");
+                        return;
+                    }
+
+                    var result = await App.Current.MainPage.DisplayAlert("Local", $"Confirmar local selecionado?: {address}", "Sim", "Cancelar");
+
+                    if (result)
+                    {
+                        AddressOccurrence = address;
+
+                        var city = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
+
+                        LocationOccurrence = new LocationOccurrence
+                        {
+                            State = city.State,
+                            City = city.Name,
+                            Latitude = location.Latitude,
+                            Longitude = location.Longitude
+                        };
+
+                        SetVaueForProperty_IsSelectingAddressOnMap(false);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops", "Parece que não foi possivel obter o local selecionado. Verifique sua conexão e tente novamente.", "Ok");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -735,38 +839,7 @@ namespace FocamapMaui.MVVM.ViewModels
                 ChangeIsEnabledOnGroupButtons(isEnabled: false);              
             }
         }
-       
-        public async Task SaveOccurrence()
-        {
-            IsBusy = true;
-
-            try
-            {
-                await _realtimeDatabaseService.SaveAsync(nameof(OccurrenceModel), CreateOccurrenceModel());
-                
-                ClearInputsOfBottomSheetAddOccurrence();
-
-                await LoadPins();
-
-                await App.Current.MainPage.DisplayAlert("Ocorrência",
-                    "Sua ocorrência foi enviada com sucesso. Agora é com a gente; vamos analisar sua solicitação e, posteriormente, disponibilizá-la ao mapa.", "Ok");
-
-                SetVaueForProperty_IsSelectingAddressOnMap(false);
-
-                CloseBottomSheetAddOccurrence();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                await App.Current.MainPage.DisplayAlert("Ops",
-                    "Houve um problema com sua solicitação de ocorrência. Por favor, tente novamente em alguns instantes.", "Ok");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-        
+                       
         public void SetChangeOnSelectedChip(string chip)
         { 
             switch (chip)
@@ -808,64 +881,27 @@ namespace FocamapMaui.MVVM.ViewModels
 
             SetChangeDefaultStyleOnChips();
         }
-
-        public async Task GetReverseGeocoding(Location location)
-        {
-            IsBusy = true;
-
-            try
-            {
-                var address = await _mapService.GetAddressFromLocationAsync(location);
-
-                if(!string.IsNullOrEmpty(address))
-                {
-                    if (!CheckIfRegionIsAllowed(address))
-                    {
-                        await App.Current.MainPage.DisplayAlert("Ops", $"Selecione somente locais de sua cidade.", "Ok");
-                        return;
-                    }
-
-                    var result = await App.Current.MainPage.DisplayAlert("Local", $"Confirmar local selecionado?: {address}", "Sim", "Cancelar");
-
-                    if (result)
-                    {
-                        AddressOccurrence = address;
-                        LocationOccurrence = new LocationOccurrence
-                        {
-                            Latitude = location.Latitude,
-                            Longitude = location.Longitude
-                        };
-
-                        SetVaueForProperty_IsSelectingAddressOnMap(false);
-                    }                   
-                }                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                await App.Current.MainPage.DisplayAlert("Ops","Parece que não foi possivel obter o local selecionado. Verifique sua conexão e tente novamente.","Ok");
-            }
-            finally
-            {
-                IsBusy = false;
-            }            
-        }
-
+       
         private static bool CheckIfRegionIsAllowed(string address)
         {
            var city = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
 
             return address.Contains(city.Name) && address.Contains(city.State);
         }
-
-        public void OnOpenBottomSheetAddOccurrenceCommand()
-        {
-            BottomSheetAddOccurrenceState = BottomSheetState.FullExpanded;
-        }
-
+        
         private void CloseBottomSheetAddOccurrence()
         {
             BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
+        }
+
+        public void CloseMunuRoundButtons()
+        {
+            IsVisibleDetailOccurrenceFloatButton = false;
+            IsVisibleAddOccurrenceFloatButton = false;
+            IsVisibleUserFloatButton = false;
+            IsVisibleExitFloatButton = false;
+            ImageSourceMainButton = ControlResources.GetImage("menu_24");
+            IsOpenMenu = false;
         }
 
         #endregion

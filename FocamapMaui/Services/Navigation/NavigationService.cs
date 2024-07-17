@@ -72,8 +72,6 @@
             {
                 _isBrowsing = false;
             }
-        }
-        
+        }        
     }
 }
-

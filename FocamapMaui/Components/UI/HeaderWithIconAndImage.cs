@@ -1,4 +1,5 @@
-﻿using FocamapMaui.Controls.Extensions.Events;
+﻿using FocamapMaui.Components.UI.Basics;
+using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Resources;
 
 namespace FocamapMaui.Components.UI
@@ -7,7 +8,7 @@ namespace FocamapMaui.Components.UI
     {
         public Label LabelNameUser;
 
-        public HeaderWithIconAndImage(string iconName, EventHandler<TappedEventArgs> iconGoBackEventHandler, EventHandler<TappedEventArgs> imageNameEventHandler)
+        public HeaderWithIconAndImage(string iconName, EventHandler iconGoBackEventHandler, EventHandler<TappedEventArgs> imageNameEventHandler)
 		{
             var grid = CreateMainGrid();
 
@@ -33,18 +34,12 @@ namespace FocamapMaui.Components.UI
             };
         }
 
-        private static void CreateGoBackIcon(Grid grid, string iconName, EventHandler<TappedEventArgs> iconGoBackEventHandler)
+        private static void CreateGoBackIcon(Grid grid, string iconName, EventHandler iconGoBackEventHandler)
         {
-            var icon = new Image
-            {
-                Source = ControlResources.GetImage(iconName),
-                HeightRequest = 24,
-                HorizontalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 0, 0, 0),
-            };
-            icon.AddTapGesture(iconGoBackEventHandler);
+            var buttonGoBack = CommomBasic.GetGoBackButton(iconName, iconGoBackEventHandler);
+            buttonGoBack.FontSize = 50;
 
-            grid.AddWithSpan(icon);
+            grid.AddWithSpan(buttonGoBack);
         }
 
         private void CreateImageLetterWithEditAction(Grid grid, EventHandler<TappedEventArgs> iconEditEvent)

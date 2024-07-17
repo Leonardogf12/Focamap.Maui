@@ -1,12 +1,10 @@
 ﻿using FocamapMaui.Components.UI.Basics;
-using FocamapMaui.Controls.Extensions.Events;
-using FocamapMaui.Controls.Resources;
 
 namespace FocamapMaui.Components.UI
 {
     public class HeaderWithIconAndTitle : Grid
 	{
-		public HeaderWithIconAndTitle(string iconName, string textTitle, EventHandler<TappedEventArgs> iconEventHandler )
+		public HeaderWithIconAndTitle(string iconName, string textTitle, EventHandler iconEventHandler )
 		{
             var gridHeader = new Grid
             {
@@ -18,15 +16,9 @@ namespace FocamapMaui.Components.UI
                 },
             };
 
-            var icon = new Image
-            {
-                Source = ControlResources.GetImage(iconName),
-                HeightRequest = 24,
-                HorizontalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 0, 0, 0),
-            };
-            icon.AddTapGesture(iconEventHandler);
-            gridHeader.AddWithSpan(icon, 0, 0);
+            var button = CommomBasic.GetGoBackButton(iconName, iconEventHandler);
+
+            gridHeader.AddWithSpan(button, 0, 0);
 
             var title = CommomBasic.GetLabelTitleBasic(title: textTitle);
             gridHeader.AddWithSpan(title, 0, 1);
@@ -38,4 +30,3 @@ namespace FocamapMaui.Components.UI
         }
 	}
 }
-

@@ -14,17 +14,22 @@ namespace FocamapMaui
         private void InitializeComponentPerCodeBehind()
         {
             FlyoutBehavior = FlyoutBehavior.Disabled;
+            
+            Items.Add(GetShellItem<LoginView>());
+            Items.Add(GetShellItem<HomeMapView>());
+        }
 
-            Items.Add(new ShellContent
+        private static ShellContent GetShellItem<T>() where T : ContentPage
+        {                      
+            var name = typeof(T).Name;
+
+            var rote = new ShellContent
             {
-                ContentTemplate = new DataTemplate(typeof(LoginView)),
-                Route = "LoginView"
-            });
-            Items.Add(new ShellContent
-            {
-                ContentTemplate = new DataTemplate(typeof(HomeMapView)),
-                Route = "HomeMapView"
-            });
+                ContentTemplate = new DataTemplate(typeof(T)),
+                Route = name
+            };
+
+            return rote;
         }
 
         private void RouteRegistration()

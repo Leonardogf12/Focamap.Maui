@@ -4,8 +4,9 @@
 	{
         #region DB
 
-        public const string DB_PATH = "/data/user/0/com.companyname.focamapmaui/files/dbfocamap.db3";
-
+        public const string APP_CONFIG = "AppConfig";
+        public const string DB_PATH = "DbPath";
+        
         #endregion
 
         #region REGIONS
@@ -18,18 +19,21 @@
 
         #region FIREBASE
 
+        public const string FIREBASE = "Firebase";
+        public const string AUTH_SECRET = "AuthSecret";
         public const string FIREBASE_AUTH_TOKEN_KEY = "FirebaseAuthToken";
         public const string FIREBASE_USER_EMAIL = "FirebaseUserEmail";
         public const string FIREBASE_USER_LOGGED = "FirebaseUserLogged";
         public const string FIREBASE_USER_LOCAL_ID_KEY = "FirebaseUserLocalIdKey";
-        public const string FIREBASE_AUTH_PROVIDER_KEY = "AIzaSyBmEIGJpn6VnoMIXxgQTgFxvybI9xPO_gE";
-        public const string FIREBASE_REALTIME_DATABASE = "https://focamapmaui-23c5c-default-rtdb.firebaseio.com";
+        public const string FIREBASE_REALTIME_DATABASE = "FirebaseRealtimeDatabase";
+        public const string FIREBASE_AUTH_PROVIDER_KEY = "FirebaseAuthProviderKey";
 
         #endregion
 
         #region GOOGLE CLOUD
 
-        public const string GEOCODING_API_KEY = "AIzaSyDOyRpa1QqG6btASTZ_z64MyxjsxTqOXO0";
+        public const string GOOGLE_CLOUD = "GoogleCloud";
+        public const string GEOCODING_API_KEY = "GeocodingApiKey";
 
         #endregion
 
@@ -56,6 +60,9 @@
         public const string HIGH = "Alto";
 
         public const string ANONYMOUS_ACCESS = "AnonymousAccess";
+
+        public const string FILE_PATH_GLOBAL = "FocamapMaui.Resources.HelpFiles.";
+        
         #endregion
     }
 }

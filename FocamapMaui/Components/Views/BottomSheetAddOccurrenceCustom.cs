@@ -1,4 +1,5 @@
-﻿using DevExpress.Maui.Controls;
+﻿using System.Windows.Input;
+using DevExpress.Maui.Controls;
 using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Resources;
@@ -23,16 +24,16 @@ namespace FocamapMaui.Components.Views
 
         #endregion
 
-        public BottomSheetAddOccurrenceCustom(EventHandler eventHandler)
+        public BottomSheetAddOccurrenceCustom(ICommand commandButtonSave)
 		{           
             BackgroundColor = ControlResources.GetResource<Color>("CLPrimary");
             GrabberColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
-            Content = BuildBottomSheet(eventHandler);
+            Content = BuildBottomSheet(commandButtonSave);
 		}
 
         #region UI
 
-        private Grid BuildBottomSheet(EventHandler eventHandler)
+        private Grid BuildBottomSheet(ICommand command)
         {
             var grid = CreateMainGrid();
 
@@ -40,7 +41,7 @@ namespace FocamapMaui.Components.Views
 
             CreateInputsGroup(grid);
 
-            CreateSaveButton(grid, eventHandler);
+            CreateSaveButton(grid, command);
 
             return grid;
         }
@@ -108,10 +109,12 @@ namespace FocamapMaui.Components.Views
             grid.AddWithSpan(stackVerticalInputs, 1);
         }
 
-        private static void CreateSaveButton(Grid grid, EventHandler eventHandler)
+        private static void CreateSaveButton(Grid grid, ICommand command)
         {
-            var SaveButton = new PrimaryButtonCustom(text: "Salvar", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite");
-            SaveButton.Clicked += eventHandler;
+            var SaveButton = new PrimaryButtonCustom(text: "Salvar", textColor: "CLPrimary", backgroundColor: "CLPrimaryWhite")
+            {
+                Command = command
+            };
 
             grid.AddWithSpan(SaveButton, 4);
         }

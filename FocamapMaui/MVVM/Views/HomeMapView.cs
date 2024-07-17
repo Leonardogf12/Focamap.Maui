@@ -133,20 +133,20 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private void CreateMapGpsButton(Grid grid)
-        {           
-            var gpsButton= new Button
+        {
+            Button gpsButton = new()
             {
                 BackgroundColor = ControlResources.GetResource<Color>("CLPrimary"),
                 CornerRadius = 5,
                 HeightRequest = 48,
                 WidthRequest = 48,
-                Margin = new Thickness(0, 5, 5, 0),                    
+                Margin = new Thickness(0, 5, 5, 0),
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.End,
                 ImageSource = ControlResources.GetImage("gps_24"),
-                FontSize = 30
+                FontSize = 30,
+                Command = _viewModel.GpsButtonCommand
             };
-            gpsButton.Clicked += GpsButton_Clicked;
 
             grid.AddWithSpan(gpsButton, 0);
         }
@@ -214,7 +214,7 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateBottomSheetAddOccurrence(Grid grid)
         {
-            var bottomSheetAddOccurrence = new BottomSheetAddOccurrenceCustom(eventHandler: AddOccurrenceButton_Clicked);           
+            var bottomSheetAddOccurrence = new BottomSheetAddOccurrenceCustom(commandButtonSave: _viewModel.SaveOccurrenceCommand);           
             bottomSheetAddOccurrence.SetBinding(BottomSheet.StateProperty, nameof(_viewModel.BottomSheetAddOccurrenceState), BindingMode.TwoWay);
 
             bottomSheetAddOccurrence.TextEditTitle.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.TitleOccurrence));
@@ -246,7 +246,7 @@ namespace FocamapMaui.MVVM.Views
             bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.Clicked += LowChipButton_Clicked;             
             bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.Clicked += AverageChipButton_Clicked;
             bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.Clicked += HighChipButton_Clicked;
-            bottomSheetAddOccurrence.TextEditAddress.EndIconClicked += TextEditAddress_EndIconClicked;
+            bottomSheetAddOccurrence.TextEditAddress.EndIconCommand = _viewModel.TextEditAddressEndIconCommand;
 
             grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
@@ -259,28 +259,15 @@ namespace FocamapMaui.MVVM.Views
         {
             if (!_viewModel.IsOpenMenu)
             {
-                SetTrueValueToIsVisiblePropertyOfFloatButtons(x: 0, y: -15);
-                
-                await ExecuteMainButtonAnimation(90, "close_24");
-
-                _viewModel.IsOpenMenu = true;
+                await OpenFloatMenuButtonsUnlocked();               
             }
             else
             {
-                SetFalseValueToIsVisiblePropertyOfFloatButtons();
-                
-                await ExecuteMainButtonAnimation(0, "menu_24");
-
-                _viewModel.IsOpenMenu = false;
+                await CloseFloatMenuButtonsLocked();
             }
-        }
-        
-        private void GpsButton_Clicked(object sender, EventArgs e)
-        {
-            _viewModel.IsShowingUser = true;
-        }
+        }       
 
-        private void LockUnlockButton_Clicked(object sender, EventArgs e)
+        private async void LockUnlockButton_Clicked(object sender, EventArgs e)
         {
             if (sender is Button element)
             {
@@ -288,9 +275,16 @@ namespace FocamapMaui.MVVM.Views
 
                 var name = nameImageSource.Target;
 
+                var nameIcon = name.ToString()[6..];
+
+                if (nameIcon.Equals("unlock_24"))
+                {
+                    await CloseFloatMenuButtonsLocked();                 
+                }
+               
                 _viewModel.ChangeLockUnlokImage(name);
             }            
-        }
+        }       
 
         private async void CloseButtonBottomSheetTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
         {
@@ -301,9 +295,7 @@ namespace FocamapMaui.MVVM.Views
                 _viewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
             }            
         }
-
-        private async void AddOccurrenceButton_Clicked(object sender, EventArgs e) => await _viewModel.SaveOccurrence();
-
+        
         private void BottomSheetAddOccurrence_StateChanged(object sender, ValueChangedEventArgs<BottomSheetState> e)
         {
             if (e.NewValue.Equals(BottomSheetState.Hidden))
@@ -311,13 +303,7 @@ namespace FocamapMaui.MVVM.Views
                 _viewModel.ClearInputsOfBottomSheetAddOccurrence();
             }
         }
-
-        private void TextEditAddress_EndIconClicked(object sender, EventArgs e)
-        {
-            _viewModel.IsSelectingAddressOnMap = true;
-            _viewModel.BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
-        }
-
+       
         private async void Map_MapClicked(object sender, MapClickedEventArgs e)
         {
             if (_viewModel.IsSelectingAddressOnMap)
@@ -366,37 +352,6 @@ namespace FocamapMaui.MVVM.Views
 
         #region Actions
 
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-
-            SetFalseToIsBusyViewModelBase();
-
-            await LoadPinsOfFirebase();
-
-            await LoadUserLocationAsync();
-
-            SetsTheFullContentToView();
-
-            ApplyModificationsToTheMap();
-
-            SetFalseToIsBusyViewModelBase();
-        }
-
-        protected override void OnDisappearing()
-        {
-            base.OnDisappearing();
-
-            EnsurePopupCloses();
-
-            SetsTemporaryContentToView();            
-        }
-
-        protected override bool OnBackButtonPressed()
-        {
-            return true;
-        }
-
         private void SetNavigationServiceInstancaFromViewModel(INavigationService navigationService, IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
         {
             _viewModel = new HomeMapViewModel(navigationService, realtimeDatabaseService, mapService);
@@ -421,7 +376,7 @@ namespace FocamapMaui.MVVM.Views
         }
 
         private async Task LoadPinsOfFirebase() => await _viewModel.LoadPins();
-       
+
         private async Task LoadUserLocationAsync()
         {
             try
@@ -434,9 +389,9 @@ namespace FocamapMaui.MVVM.Views
                 _locationOfUserLogged = new Location();
             }
         }
-       
+
         private void ApplyModificationsToTheMap() => OnHandlerChanged();
-       
+
         private void EnsurePopupCloses()
         {
             if (App.popupLoading != null)
@@ -496,6 +451,59 @@ namespace FocamapMaui.MVVM.Views
             await _menuFloatButton.MainButton.RotateTo(rotation, 100);
         }
 
+        private async Task CloseFloatMenuButtonsLocked()
+        {
+            SetFalseValueToIsVisiblePropertyOfFloatButtons();
+
+            await ExecuteMainButtonAnimation(0, "menu_24");
+
+            _viewModel.IsOpenMenu = false;
+        }
+
+        private async Task OpenFloatMenuButtonsUnlocked()
+        {
+            SetTrueValueToIsVisiblePropertyOfFloatButtons(x: 0, y: -15);
+
+            await ExecuteMainButtonAnimation(90, "close_24");
+
+            _viewModel.IsOpenMenu = true;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+
+            SetFalseToIsBusyViewModelBase();
+
+            await LoadPinsOfFirebase();
+
+            await LoadUserLocationAsync();
+
+            SetsTheFullContentToView();
+
+            ApplyModificationsToTheMap();
+
+            SetFalseToIsBusyViewModelBase();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            EnsurePopupCloses();
+
+            SetsTemporaryContentToView();
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            return true;
+        }
+
         protected override void OnHandlerChanged()
         {
             // Handler to NOT leave the map Null after building the page.
@@ -520,6 +528,6 @@ namespace FocamapMaui.MVVM.Views
 #endif
         }
 
-        #endregion
+        #endregion        
     }   
 }

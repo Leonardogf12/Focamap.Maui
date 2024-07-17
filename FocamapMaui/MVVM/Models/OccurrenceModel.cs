@@ -19,5 +19,7 @@ namespace FocamapMaui.MVVM.Models
         public int Status { get; set; }
        
         public LocationOccurrence Location { get; set; }
+
+        public UserModel User { get; set; }
     }
 }

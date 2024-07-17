@@ -74,7 +74,7 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateHeader(Grid grid)
         {           
-            var header = new HeaderWithIconAndImage(iconName: "back_24", iconGoBackEventHandler: BackButtonTapGestureRecognizer_Tapped,
+            var header = new HeaderWithIconAndImage(iconName: "arrow_back_24", iconGoBackEventHandler: GoBackButton_Clicked,
                             imageNameEventHandler: ImageNameTapGestureRecognizer_Tapped);
             header.LabelNameUser.SetBinding(Label.TextProperty, nameof(ViewModel.LetterUserName));
 
@@ -129,11 +129,11 @@ namespace FocamapMaui.MVVM.Views
        
         private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e) => DropdownRegions.Unfocus();
 
-        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await SetBodyImageElementForEvent(sender, GoBack);
+        private async void GoBackButton_Clicked(object sender, EventArgs e) => await GoBack();
 
         private async void ImageNameTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await SetBodyImageElementForEvent(sender, SetValuesIsEnabled);
 
-        private async void GoBack() => await _navigationService.GoBack();
+        private async Task GoBack() => await _navigationService.GoBack();
 
         private void SetValuesIsEnabled() => ViewModel.SetsValueForIsEnabledInputs(true);
 

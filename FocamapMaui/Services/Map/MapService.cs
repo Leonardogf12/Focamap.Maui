@@ -10,7 +10,7 @@ namespace FocamapMaui.Services.Map
         {
             try
             {
-                string apiKey = StringConstants.GEOCODING_API_KEY;
+                string apiKey = ControlFiles.GetValueFromFilePropertyJson("googlecloud-config.json", StringConstants.GOOGLE_CLOUD, StringConstants.GEOCODING_API_KEY);
 
                 string latitude = location.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture);
 

@@ -9,7 +9,7 @@ namespace FocamapMaui.Repositories
 
 		public GenericRepository()
 		{
-			_dbConnection = new SQLiteAsyncConnection(StringConstants.DB_PATH);
+			_dbConnection = new SQLiteAsyncConnection(GetDbPath());
 			_dbConnection.CreateTableAsync<T>();
         }
 
@@ -31,6 +31,11 @@ namespace FocamapMaui.Repositories
         public async Task<int>DeleteAsync(T model)
         {
             return await _dbConnection.DeleteAsync(model);
+        }
+
+        private static string GetDbPath()
+        {
+            return ControlFiles.GetValueFromFilePropertyJson("app-config.json", StringConstants.APP_CONFIG, StringConstants.DB_PATH);
         }
     }
 }

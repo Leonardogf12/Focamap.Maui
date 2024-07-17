@@ -9,11 +9,11 @@ namespace FocamapMaui.Repositories
 		private readonly SQLiteAsyncConnection _dbConnection;
 
 		public UserRepository()
-		{
-			_dbConnection = new SQLiteAsyncConnection(StringConstants.DB_PATH);
+		{           
+            _dbConnection = new SQLiteAsyncConnection(GetDbPath());
         }
-
-		public async Task<UserModel> GetById(int id)
+        
+        public async Task<UserModel> GetById(int id)
 		{
             return await _dbConnection.Table<UserModel>().Where(x => x.Id == id).FirstAsync();
 		}
@@ -21,6 +21,11 @@ namespace FocamapMaui.Repositories
         public async Task<UserModel> GetByLocalIdFirebase(string localIdFirebase)
         {
             return await _dbConnection.Table<UserModel>().Where(x => x.LocalIdFirebase == localIdFirebase).FirstAsync();
+        }
+
+        private static string GetDbPath()
+        {
+            return ControlFiles.GetValueFromFilePropertyJson("app-config.json", StringConstants.APP_CONFIG, StringConstants.DB_PATH);
         }
     }
 }

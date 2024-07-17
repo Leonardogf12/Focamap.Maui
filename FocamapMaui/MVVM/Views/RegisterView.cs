@@ -80,8 +80,8 @@ namespace FocamapMaui.MVVM.Views
 
         private void CreateHeader(Grid grid)
         {
-            var header = new HeaderWithIconAndTitle(iconName: "back_24",
-                            textTitle: "Registro", iconEventHandler: BackButtonTapGestureRecognizer_Tapped);
+            var header = new HeaderWithIconAndTitle(iconName: "arrow_back_24",
+                            textTitle: "Registro", iconEventHandler: GoBackButton_Clicked);
 
             grid.AddWithSpan(header);
         }
@@ -164,15 +164,7 @@ namespace FocamapMaui.MVVM.Views
             await ViewModel.RegisterNewUser();           
         }
       
-        private async void BackButtonTapGestureRecognizer_Tapped(object sender, TappedEventArgs e)
-        {
-            if (sender is Image element)
-            {
-                await element.FadeAnimation();
-
-                await _navigationService.GoBack();                
-            }
-        }
+        private async void GoBackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();          
 
         private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e)
         {
