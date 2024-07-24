@@ -36,9 +36,7 @@ namespace FocamapMaui
         {
             Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
             Routing.RegisterRoute(nameof(ForgotPasswordView), typeof(ForgotPasswordView));
-            Routing.RegisterRoute(nameof(HomeMapView), typeof(HomeMapView));
-            Routing.RegisterRoute(nameof(SettingsView), typeof(SettingsView));
-            Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));
+            Routing.RegisterRoute(nameof(HomeMapView), typeof(HomeMapView));               
             Routing.RegisterRoute(nameof(OccurrencesHistoryView), typeof(OccurrencesHistoryView));                       
         }
     }

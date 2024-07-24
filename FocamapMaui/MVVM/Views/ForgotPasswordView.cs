@@ -55,9 +55,7 @@ namespace FocamapMaui.MVVM.Views
                 return grid;
             }
         }
-
-        public object CommomBasics { get; private set; }
-
+        
         private static Grid CreateMainGrid()
         {
             return new Grid
@@ -123,7 +121,6 @@ namespace FocamapMaui.MVVM.Views
 
             grid.AddWithSpan(stackButtons, 2);
         }
-
         
         #endregion
 
@@ -140,4 +137,3 @@ namespace FocamapMaui.MVVM.Views
         #endregion
     }
 }
-

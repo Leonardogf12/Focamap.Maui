@@ -18,13 +18,10 @@ namespace FocamapMaui.MVVM.Views
         #region Properties
 
         private readonly IAuthenticationService _authenticationService;
-
         private readonly INavigationService _navigationService;
 
         public LoginViewModel ViewModel;
-
         public TextEditCustom EmailTextEdit;
-
         public PasswordEditCustom PasswordTextEdit;
 
         #endregion

@@ -11,39 +11,10 @@ namespace FocamapMaui.MVVM.Base
 
             Content = new Grid();
         }
-
-        public static void CreateLoadingPopupViewOLD<TViewModel>(Page page, TViewModel viewModel) where TViewModel : INotifyPropertyChanged
-        {
-            viewModel.PropertyChanged += (s, a) =>
-            {
-                var vm = s as ViewModelBase;
-
-                if (a.PropertyName == "IsBusy")
-                {
-                    MainThread.BeginInvokeOnMainThread(async () => {
-
-                        if (vm.IsBusy)
-                        {
-                            App.popupLoading ??= new();
-
-                            await page.ShowPopupAsync(App.popupLoading);
-                        }
-                        else
-                        {
-                            if (App.popupLoading == null) return;
-                           
-                            await App.popupLoading.CloseAsync();
-
-                            App.popupLoading = null;
-                        }
-                    });
-                }
-            };
-        }
-
+        
         public static void CreateLoadingPopupView<TViewModel>(Page page, TViewModel viewModel) where TViewModel : INotifyPropertyChanged
         {
-            // Remova qualquer assinatura anterior para evitar múltiplos assinantes
+            // Remove qualquer assinatura anterior para evitar múltiplos assinantes
             viewModel.PropertyChanged -= OnViewModelPropertyChanged;
             viewModel.PropertyChanged += OnViewModelPropertyChanged;
 
@@ -73,4 +44,3 @@ namespace FocamapMaui.MVVM.Base
         }
     }
 }
-

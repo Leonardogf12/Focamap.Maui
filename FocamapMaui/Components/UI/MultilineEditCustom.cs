@@ -33,4 +33,3 @@ namespace FocamapMaui.Components.UI
         }
     }
 }
-

@@ -138,6 +138,5 @@ namespace FocamapMaui.Services.Firebase
                 return default;
             }                       
         }
-
     }
 }

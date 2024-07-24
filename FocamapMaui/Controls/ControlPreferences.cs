@@ -1,5 +1,4 @@
-﻿using FocamapMaui.Models;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace FocamapMaui.Controls
 {

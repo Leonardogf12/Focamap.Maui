@@ -196,4 +196,3 @@ namespace FocamapMaui.MVVM.Views
         #endregion
     }
 }
-

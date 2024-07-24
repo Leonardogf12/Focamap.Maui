@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using FocamapMaui.Helpers.Models;
-using FocamapMaui.Models;
 
 namespace FocamapMaui.MVVM.Base
 {
@@ -30,4 +28,3 @@ namespace FocamapMaui.MVVM.Base
         }
     }
 }
-

@@ -175,7 +175,6 @@ namespace FocamapMaui.Components.UI
 
         #endregion
 
-
         private async void EventTapShared_Tapped(object sender, TappedEventArgs e) => await OpenMapOnLocation(_pin);
       
         public static async Task OpenMapOnLocation(PinDto pin)

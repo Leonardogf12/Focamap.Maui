@@ -6,8 +6,7 @@ namespace FocamapMaui.Controls.Maps
 {
     public class OnMapReadyCallback : Java.Lang.Object, IOnMapReadyCallback
     {
-        //Método criado para Localizar e Definir o arquivo de estilo de Mapa ao...
-        //objeto Map criado na HomeMapView cujo a renderizacao ocorre fora de sincronia.
+        //Method set style to the map
         public void OnMapReady(GoogleMap googleMap)
         {            
             var assembly = Assembly.GetExecutingAssembly();
@@ -23,6 +22,5 @@ namespace FocamapMaui.Controls.Maps
           
             googleMap.SetMapStyle(new MapStyleOptions(json));
         }
-    }
-   
+    }   
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using FocamapMaui.Controls.Resources;
+﻿using FocamapMaui.Controls.Resources;
 
 namespace FocamapMaui.Components.UI.Basics
 {
-	public static class CommomBasic
+    public static class CommomBasic
 	{
         public static StackLayout GetStackLayoutBasic(int spacing = 15, bool useMargin = false)
         {
@@ -48,4 +47,3 @@ namespace FocamapMaui.Components.UI.Basics
         }
     }
 }
-

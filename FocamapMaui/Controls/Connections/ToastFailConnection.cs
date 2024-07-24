@@ -23,4 +23,3 @@ namespace FocamapMaui.Controls.Connections
         }
     }
 }
-

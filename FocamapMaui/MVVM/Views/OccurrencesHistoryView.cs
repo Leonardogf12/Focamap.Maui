@@ -70,4 +70,3 @@ namespace FocamapMaui.MVVM.Views
         private async void GoBackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();
     }
 }
-
