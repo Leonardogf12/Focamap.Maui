@@ -142,14 +142,27 @@ namespace FocamapMaui.MVVM.ViewModels
 
         public async Task RegisterNewUser()
         {
-            if (CheckIfInputsAreOk())
+            IsBusy = true;
+
+            try
             {
-                await _authenticationService.RegisterNewUserAsync(Name, Email, Password, SelectedCity);
+                if (CheckIfInputsAreOk())
+                {
+                    await _authenticationService.RegisterNewUserAsync(Name, Email, Password, SelectedCity);
 
-                return;
+                    return;
+                }
+
+                await App.Current.MainPage.DisplayAlert("Atenção", "Preencha corretamente todos os campos.", "OK");
             }
-
-            await App.Current.MainPage.DisplayAlert("Atenção", "Preencha corretamente todos os campos.", "OK");            
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }                    
         }
 
         public void LoadCities()

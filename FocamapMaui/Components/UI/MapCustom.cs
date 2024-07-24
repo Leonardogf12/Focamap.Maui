@@ -22,7 +22,7 @@ namespace FocamapMaui.Components.UI
 
             map.MapClicked += eventMapClicked;
             map.PropertyChanged += propertyChangedMap;
-
+           
             return map;
         }
        

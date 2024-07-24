@@ -42,6 +42,8 @@ namespace FocamapMaui.MVVM.Views
 
             ViewModel = new(_authenticationService);
 
+            CreateLoadingPopupView(this, ViewModel);
+
             BindingContext = ViewModel;
         }
 

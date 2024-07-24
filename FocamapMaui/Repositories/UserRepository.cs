@@ -12,11 +12,13 @@ namespace FocamapMaui.Repositories
 		{           
             _dbConnection = new SQLiteAsyncConnection(GetDbPath());
         }
-        
+
+        /*
         public async Task<UserModel> GetById(int id)
 		{
             return await _dbConnection.Table<UserModel>().Where(x => x.Id == id).FirstAsync();
 		}
+        */
 
         public async Task<UserModel> GetByLocalIdFirebase(string localIdFirebase)
         {

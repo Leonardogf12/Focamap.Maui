@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui.Views;
 using SkiaSharp.Extended.UI.Controls;
 
-namespace FocamapMaui.Components
+namespace FocamapMaui.Components.UI
 {
     public class PopupLoadingView : Popup
     {

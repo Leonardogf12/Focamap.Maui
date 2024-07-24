@@ -3,7 +3,7 @@ using FocamapMaui.Controls.Resources;
 using FocamapMaui.Helpers.Models;
 using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
-using FocamapMaui.Repositories;
+using FocamapMaui.MVVM.Models;
 using FocamapMaui.Services.Authentication;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -55,52 +55,39 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        private bool _allOkToLogin;
-        public bool AllOkToLogin
-        {
-            get => _allOkToLogin;
-            set
-            {
-                _allOkToLogin = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private readonly IAuthenticationService _authenticationService;
-
-        private readonly UserRepository _userRepository;
+       
+        private readonly IAuthenticationService _authenticationService;    
 
         #endregion
 
         public LoginViewModel(IAuthenticationService authenticationService)
         {
-            _authenticationService = authenticationService;
-            _userRepository = new();
+            _authenticationService = authenticationService;            
         }
 
         #region Private Methods
 
-        private async void SetKeysOfPreferencesFromUser()
+        private static void SetKeysOfPreferencesFromUser()
         {
-            var city = await GetCityOfUserLogged();
+            City city = GetCityOfUserLogged();
+
+            if (city is null) return;
 
             UpdateKeyCity(city);
         }
 
-        private async Task<City> GetCityOfUserLogged()
-        {
-            var userLogged = await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
+        private static City GetCityOfUserLogged()
+        {           
+            var userLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(key: StringConstants.FIREBASE_USER_LOGGED_KEY);
 
             var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
 
-            return cities.Where(x => x.Name.Equals(userLogged.City) && x.State.Equals(userLogged.State)).FirstOrDefault();
+            return cities.Where(x => x.Name.Equals(userLogged.City.Name) && x.State.Equals(userLogged.City.State)).FirstOrDefault();
         }
 
         private static void UpdateKeyCity(City city)
         {
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.CITY);
-            ControlPreferences.AddKeyObjectOnPreferences(StringConstants.CITY, contentOfObject: city);
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.CITY, valueString: null, contentObject: city);          
         }
 
         private static Color GetBorderColorErrorToInput() => ControlResources.GetResource<Color>("CLErrorBorderColor");
@@ -121,7 +108,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
                     if (logged)
                     {
-                        SetKeysOfPreferencesFromUser();
+                        LoginViewModel.SetKeysOfPreferencesFromUser();
                         await Shell.Current.GoToAsync(StringConstants.HOMEMAPVIEW_ROUTE);
                     }
                 }

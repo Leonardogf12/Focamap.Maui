@@ -180,7 +180,7 @@ namespace FocamapMaui.MVVM.ViewModels
         private void GetNewValuesForNameInput()
         {
             Email = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_EMAIL);
-            DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
+            DisplayName = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_DISPLAY_NAME);
         }
 
         private bool ValidateNameInput(bool hasOk)
@@ -215,7 +215,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private void GetUserDisplayName()
         {
-            OldNameUser = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_LOGGED);
+            OldNameUser = ControlPreferences.GetKeyOfPreferences(StringConstants.FIREBASE_USER_DISPLAY_NAME);
         }
 
         #endregion
@@ -224,6 +224,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
         public async Task UpdateProfileUser()
         {
+            /*
             try
             {
                 if (CheckIfInputsAreOk())
@@ -247,7 +248,8 @@ namespace FocamapMaui.MVVM.ViewModels
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }               
+            }
+            */
         }
 
         public void LoadCities()

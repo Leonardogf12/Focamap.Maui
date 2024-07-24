@@ -119,7 +119,6 @@
 	  <None Remove="Resources\Images\marker_y31.svg" />
 	  <None Remove="Resources\Raw\loading.json" />
 	  <None Remove="Helpers\Models\" />
-	  <None Remove="Components\Views\" />
 	  <None Remove="Services\Firebase\" />
 	  <None Remove="Resources\Images\title_24.svg" />
 	  <None Remove="Models\Map\" />
@@ -130,6 +129,7 @@
 	  <None Remove="Resources\HelpFiles\googlecloud-config.json" />
 	  <None Remove="Resources\HelpFiles\App-config.json" />
 	  <None Remove="Resources\Images\arrow_back_24.svg" />
+	  <None Remove="Resources\Images\settings_24.svg" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -160,7 +160,6 @@
 	  <Folder Include="Services\Map\" />
 	  <Folder Include="Models\UI\" />
 	  <Folder Include="Helpers\Models\" />
-	  <Folder Include="Components\Views\" />
 	  <Folder Include="Services\Firebase\" />
 	  <Folder Include="Models\Map\" />
 	  <Folder Include="Resources\HelpFiles\" />
@@ -206,6 +205,7 @@
 	  <BundleResource Include="Resources\Images\btnmap_24.svg" />
 	  <BundleResource Include="Resources\Images\button_map_24.svg" />
 	  <BundleResource Include="Resources\Images\arrow_back_24.svg" />
+	  <BundleResource Include="Resources\Images\settings_32.svg" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Google.Cloud.Firestore" Version="3.8.0" />
@@ -224,6 +224,7 @@
 		<PackageReference Include="FirebaseAdmin" Version="2.4.1" />
 		<PackageReference Include="FirebaseAuthentication.net" Version="3.7.2" />
 		<PackageReference Include="SkiaSharp.Extended.UI.Maui" Version="2.0.0" />
+		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
 	  <PackageReference Include="DevExpress.Maui.Controls" Version="23.1.8" />

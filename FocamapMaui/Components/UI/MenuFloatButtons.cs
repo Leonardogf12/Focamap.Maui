@@ -5,14 +5,12 @@ namespace FocamapMaui.Components.UI
     public class MenuFloatButtons : AbsoluteLayout
 	{
 		public Button MainButton;
-        public Button UserButton;
+        public Button SettingsButton;
         public Button AddOccurrenceButton;
-        public Button DetailOccurrenceButton;
-        public Button ExitButton;
+        public Button DetailOccurrenceButton;      
 
-        public MenuFloatButtons(EventHandler eventMainButton,
-                                ICommand commandExitButton,
-                                ICommand commandUserButton,
+        public MenuFloatButtons(EventHandler eventMainButton,                              
+                                ICommand commandSettingsButton,
                                 ICommand commandAddOccurrenceButton,
                                 ICommand commandDetailOccurrenceButton)
         {
@@ -25,10 +23,7 @@ namespace FocamapMaui.Components.UI
             MainButton = CreateMainButton(eventMainButton);
             mainGrid.AddWithSpan(MainButton, 1);
           
-            var detailButton = CreateDetailButtons(commandExitButton,
-                                                   commandUserButton,
-                                                   commandAddOccurrenceButton,
-                                                   commandDetailOccurrenceButton);
+            var detailButton = CreateDetailButtons(commandSettingsButton, commandAddOccurrenceButton, commandDetailOccurrenceButton);
 
             mainGrid.AddWithSpan(detailButton, 0);
 
@@ -59,10 +54,8 @@ namespace FocamapMaui.Components.UI
             return roundMainButton;
         }
         
-        private Grid CreateDetailButtons(ICommand commandExitBtn,
-                                         ICommand commandUserBtn,
-                                         ICommand commandAddBtn,
-                                         ICommand commandDetailBtn)
+        private Grid CreateDetailButtons(ICommand commandSettingsBtn,
+                                         ICommand commandAddBtn, ICommand commandDetailBtn)
         {
             var gridDetailButtons = CreateDetailsButtonGrid();
 
@@ -72,11 +65,10 @@ namespace FocamapMaui.Components.UI
             AddOccurrenceButton = RoundButton.GetRoundButton(iconName: "add_24", eventHandler: null, command: commandAddBtn);
             gridDetailButtons.AddWithSpan(AddOccurrenceButton, 1);
 
-            UserButton = RoundButton.GetRoundButton(iconName: "user_24", eventHandler: null, command: commandUserBtn);
-            gridDetailButtons.AddWithSpan(UserButton, 2);
+            SettingsButton = RoundButton.GetRoundButton(iconName: "settings_32", eventHandler: null, command: commandSettingsBtn);
+            SettingsButton.FontSize = 30;
 
-            ExitButton = RoundButton.GetRoundButton(iconName: "exit_24", eventHandler: null, command: commandExitBtn);
-            gridDetailButtons.AddWithSpan(ExitButton, 3);
+            gridDetailButtons.AddWithSpan(SettingsButton, 2);          
                                              
             return gridDetailButtons;
         }

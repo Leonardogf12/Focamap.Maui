@@ -1,6 +1,7 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
 using FocamapMaui.Controls;
+using FocamapMaui.MVVM.Models;
 
 namespace FocamapMaui.Services.Firebase
 {
@@ -47,14 +48,13 @@ namespace FocamapMaui.Services.Firebase
         public async Task<List<T>> GetByRegion<T>(string firstChild, string firstOrderBy, string firstEqualTo) where T : new()
         {
             try
-            {               
-              
-              
+            {                
                 var query = await _client
-                            .Child(firstChild)
-                            .OrderBy(firstOrderBy)
-                            .EqualTo(firstEqualTo)
-                            .OnceAsync<T>();
+                              .Child(firstChild)
+                              .OrderBy(firstOrderBy)                             
+                              .EqualTo(firstEqualTo)
+                              .OnceAsync<T>();
+
                
                 List<T> list = new();
 
@@ -65,13 +65,18 @@ namespace FocamapMaui.Services.Firebase
 
                 return list;
             }
+            catch (FirebaseException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new List<T>();
+            }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return new List<T>();
             }
         }
-
+       
         public async Task SaveAsync<T>(string nameChild, T model) where T : new()
         {
             try
@@ -83,6 +88,56 @@ namespace FocamapMaui.Services.Firebase
                 Console.WriteLine(ex.Message);
             }           
         }
+
+        public async Task UpdateAsync<T>(string localIdFirebase, string nameChild, T model) where T : new()
+        {
+            try
+            {
+                var user = await _client.Child(nameof(UserModel))
+                                 .OrderBy("LocalIdFirebase") //todo - refactor
+                                 .EqualTo(localIdFirebase)
+                                 .LimitToFirst(1)
+                                 .OnceAsync<UserModel>(); //todo - refactor
+
+                var internalId = user.FirstOrDefault()?.Key;
+
+                string fullPath = $"{nameChild}/{internalId}";
+
+                await _client.Child(fullPath).PutAsync(model);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        
+        public async Task<T> GetUserByFirebaseLocalId<T>(string child, string firebaseLocalId) where T : class
+        {
+            try
+            {                
+                var query = await _client.Child(child)
+                                        .OrderBy("LocalIdFirebase") //todo - refactor
+                                        .EqualTo(firebaseLocalId)
+                                        .LimitToFirst(1)
+                                        .OnceAsync<T>();
+
+                if (query is not null)
+                {                    
+                    return query.First().Object;
+                }
+                return default;
+            }
+            catch (FirebaseException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return default;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return default;
+            }                       
+        }
+
     }
 }
-

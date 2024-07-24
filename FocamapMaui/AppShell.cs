@@ -16,9 +16,9 @@ namespace FocamapMaui
             FlyoutBehavior = FlyoutBehavior.Disabled;
             
             Items.Add(GetShellItem<LoginView>());
-            Items.Add(GetShellItem<HomeMapView>());
+            Items.Add(GetShellItem<HomeMapView>());           
         }
-
+        
         private static ShellContent GetShellItem<T>() where T : ContentPage
         {                      
             var name = typeof(T).Name;
@@ -31,15 +31,15 @@ namespace FocamapMaui
 
             return rote;
         }
-
+        
         private void RouteRegistration()
         {
             Routing.RegisterRoute(nameof(RegisterView), typeof(RegisterView));
             Routing.RegisterRoute(nameof(ForgotPasswordView), typeof(ForgotPasswordView));
             Routing.RegisterRoute(nameof(HomeMapView), typeof(HomeMapView));
+            Routing.RegisterRoute(nameof(SettingsView), typeof(SettingsView));
             Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));
-            Routing.RegisterRoute(nameof(OccurrencesHistoryView), typeof(OccurrencesHistoryView));
-            Routing.RegisterRoute(nameof(UserDetailView), typeof(UserDetailView));
+            Routing.RegisterRoute(nameof(OccurrencesHistoryView), typeof(OccurrencesHistoryView));                       
         }
     }
 }

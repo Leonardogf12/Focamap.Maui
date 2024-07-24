@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using DevExpress.Maui.Controls;
 using FocamapMaui.Controls;
 using FocamapMaui.Controls.Maps;
@@ -9,10 +10,11 @@ using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.Models;
 using FocamapMaui.MVVM.Views;
-using FocamapMaui.Repositories;
+using FocamapMaui.Services.Authentication;
 using FocamapMaui.Services.Firebase;
 using FocamapMaui.Services.Map;
 using FocamapMaui.Services.Navigation;
+using Microsoft.Maui.Maps;
 using Map = Microsoft.Maui.Controls.Maps.Map;
 
 namespace FocamapMaui.MVVM.ViewModels
@@ -44,6 +46,17 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private List<City> _cities;
+        public List<City> Cities
+        {
+            get => _cities;
+            set
+            {
+                _cities = value;
+                OnPropertyChanged();
+            }
+        }
+
         private bool _anonymousAccess;
         public bool AnonymousAccess
         {
@@ -54,61 +67,6 @@ namespace FocamapMaui.MVVM.ViewModels
                 OnPropertyChanged();
 
                 CheckAnonymousAccess(!AnonymousAccess);
-            }
-        }
-
-        private bool _lockUnlockButtonIsEnabled = true;
-        public bool LockUnlockButtonIsEnabled
-        {
-            get => _lockUnlockButtonIsEnabled;
-            set
-            {
-                _lockUnlockButtonIsEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _detailOccurrenceButtonIsEnabled = true;
-        public bool DetailOccurrenceButtonIsEnabled
-        {
-            get => _detailOccurrenceButtonIsEnabled;
-            set
-            {
-                _detailOccurrenceButtonIsEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _addOccurrenceButtonIsEnabled = true;
-        public bool AddOccurrenceButtonIsEnabled
-        {
-            get => _addOccurrenceButtonIsEnabled;
-            set
-            {
-                _addOccurrenceButtonIsEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _userButtonIsEnabled = true;
-        public bool UserButtonIsEnabled
-        {
-            get => _userButtonIsEnabled;
-            set
-            {
-                _userButtonIsEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _exitButtonIsEnabled = true;
-        public bool ExitButtonIsEnabled
-        {
-            get => _exitButtonIsEnabled;
-            set
-            {
-                _exitButtonIsEnabled = value;
-                OnPropertyChanged();
             }
         }
 
@@ -123,24 +81,13 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private bool _isShowingUser;
-        public bool IsShowingUser
+        private bool _isVisibleSettingsFloatButton;
+        public bool IsVisibleSettingsFloatButton
         {
-            get => _isShowingUser;
+            get => _isVisibleSettingsFloatButton;
             set
             {
-                _isShowingUser = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private bool _isVisibleUserFloatButton;
-        public bool IsVisibleUserFloatButton
-        {
-            get => _isVisibleUserFloatButton;
-            set
-            {
-                _isVisibleUserFloatButton = value;
+                _isVisibleSettingsFloatButton = value;
                 OnPropertyChanged();
             }
         }
@@ -167,17 +114,7 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private bool _isVisibleExitFloatButton;
-        public bool IsVisibleExitFloatButton
-        {
-            get => _isVisibleExitFloatButton;
-            set
-            {
-                _isVisibleExitFloatButton = value;
-                OnPropertyChanged();
-            }
-        }
-
+       
         private bool _isOpenMenu;
         public bool IsOpenMenu
         {
@@ -266,13 +203,46 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private Grid _mainView;
-        public Grid MainView
+        private bool _isEnabledDisplayName;
+        public bool IsEnabledDisplayName
         {
-            get => _mainView;
+            get => _isEnabledDisplayName;
             set
             {
-                _mainView = value;
+                _isEnabledDisplayName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isEnabledEmail;
+        public bool IsEnabledEmail
+        {
+            get => _isEnabledEmail;
+            set
+            {
+                _isEnabledEmail = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isEnabledPassword;
+        public bool IsEnabledPassword
+        {
+            get => _isEnabledPassword;
+            set
+            {
+                _isEnabledPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool _isEnabledRegion;
+        public bool IsEnabledRegion
+        {
+            get => _isEnabledRegion;
+            set
+            {
+                _isEnabledRegion = value;
                 OnPropertyChanged();
             }
         }
@@ -288,16 +258,16 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        private ImageSource _lockUnlockImage = ControlResources.GetImage("unlock_24");
-        public ImageSource LockUnlockImage
+        private BottomSheetState _bottomSheetSettingsState = BottomSheetState.Hidden;
+        public BottomSheetState BottomSheetSettingsState
         {
-            get => _lockUnlockImage;
+            get => _bottomSheetSettingsState;
             set
             {
-                _lockUnlockImage = value;
+                _bottomSheetSettingsState = value;
                 OnPropertyChanged();
             }
-        }
+        }     
 
         private ImageSource _imageSourceMainButton = ControlResources.GetImage("menu_24");
         public ImageSource ImageSourceMainButton
@@ -361,6 +331,86 @@ namespace FocamapMaui.MVVM.ViewModels
             set
             {
                 _resumeOccurrence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _letterUserName;
+        public string LetterUserName
+        {
+            get => _letterUserName;
+            set
+            {
+                _letterUserName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _displayName;
+        public string DisplayName
+        {
+            get => _displayName;
+            set
+            {
+                _displayName = value;
+                OnPropertyChanged();
+
+                Name = value;
+                OldNameUser = value;
+            }
+        }
+
+        private string _name;
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged();
+            }
+        }        
+
+        private string _password;
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                _password = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string _email;
+        public string Email
+        {
+            get => _email;
+            set
+            {
+                _email = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private City _selectedItemCity;
+        public City SelectedItemCity
+        {
+            get => _selectedItemCity;
+            set
+            {
+                _selectedItemCity = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private City _selectedValueCity;
+        public City SelectedValueCity
+        {
+            get => _selectedValueCity;
+            set
+            {
+                _selectedValueCity = value;
                 OnPropertyChanged();
             }
         }
@@ -464,6 +514,39 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private Color _borderColorPassword = Colors.Transparent;
+        public Color BorderColorPassword
+        {
+            get => _borderColorPassword;
+            set
+            {
+                _borderColorPassword = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _borderColorDisplayName = Colors.Transparent;
+        public Color BorderColorDisplayName
+        {
+            get => _borderColorDisplayName;
+            set
+            {
+                _borderColorDisplayName = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private Color _selectedItemBackgroudColor = ControlResources.GetResource<Color>("CLPrimaryOrange");
+        public Color SelectedItemBackgroudColor
+        {
+            get => _selectedItemBackgroudColor;
+            set
+            {
+                _selectedItemBackgroudColor = value;
+                OnPropertyChanged();
+            }
+        }
+      
         private LocationOccurrence _locationOccurrence;
         public LocationOccurrence LocationOccurrence
         {
@@ -475,30 +558,55 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        private Location _locationOfUserLogged;
+        public Location LocationOfUserLogged
+        {
+            get => _locationOfUserLogged;
+            set
+            {
+                _locationOfUserLogged = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private UserModel _userLogged = new();
+        public UserModel UserLogged
+        {
+            get => _userLogged;
+            set
+            {
+                _userLogged = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string OldNameUser = string.Empty;
+
         private readonly INavigationService _navigationService;
         private readonly IRealtimeDatabaseService _realtimeDatabaseService;
         private readonly IMapService _mapService;
+        private readonly IAuthenticationService _authenticationService;
 
-        private readonly UserRepository _userRepository;
-        
-        public ICommand GoToViewUserDetailCommand;
+        public ICommand OpenBottomSheetSettingsCommand;
         public ICommand ExitViewCommand;    
         public ICommand GoToViewDetailOccurrenceCommand;
         public ICommand OpenBottomSheetAddOccurrenceCommand;        
-        public ICommand SaveOccurrenceCommand;
+        public ICommand SaveOccurrenceCommand;     
         public ICommand TextEditAddressEndIconCommand;
-        public ICommand GpsButtonCommand;
+       
+        public class UpdateMapMessage { }
 
         #endregion
 
         public HomeMapViewModel(INavigationService navigationService,
-                                IRealtimeDatabaseService realtimeDatabaseService, IMapService mapService)
+                                IRealtimeDatabaseService realtimeDatabaseService,
+                                IMapService mapService,
+                                IAuthenticationService authenticationService)
         {
             _navigationService = navigationService;
             _realtimeDatabaseService = realtimeDatabaseService;
             _mapService = mapService;
-
-            _userRepository = new();
+            _authenticationService = authenticationService;
 
             CommandManagment();
         }
@@ -507,22 +615,21 @@ namespace FocamapMaui.MVVM.ViewModels
 
         private void CommandManagment()
         {
-            GoToViewUserDetailCommand = new Command(OnGoToViewUserDetailCommand);
-            ExitViewCommand = new Command(OnExitViewCommand);
+            OpenBottomSheetSettingsCommand = new Command(OnOpenBottomSheetSettingsCommand);
+            ExitViewCommand = new Command(async ()=> await OnExitViewCommand());
             OpenBottomSheetAddOccurrenceCommand = new Command(OnOpenBottomSheetAddOccurrenceCommand);
             GoToViewDetailOccurrenceCommand = new Command(OnGoToViewDetailOccurrenceCommand);
             SaveOccurrenceCommand = new Command(async () => await OnSaveOccurrenceCommand());
-            TextEditAddressEndIconCommand = new Command(OnTextEditAddressEndIconCommand);
-            GpsButtonCommand = new Command(OnGpsButtonCommand);
+            TextEditAddressEndIconCommand = new Command(OnTextEditAddressEndIconCommand);                  
         }
-       
+
         private async Task OnSaveOccurrenceCommand()
         {
             IsBusy = true;
 
             try
             {
-                await _realtimeDatabaseService.SaveAsync(nameof(OccurrenceModel), await CreateOccurrenceModel());
+                await _realtimeDatabaseService.SaveAsync(nameof(OccurrenceModel), CreateOccurrenceModel());
 
                 ClearInputsOfBottomSheetAddOccurrence();
 
@@ -551,28 +658,13 @@ namespace FocamapMaui.MVVM.ViewModels
         {
             await _navigationService.NavigationWithParameter<OccurrencesHistoryView>();
 
-            CloseMunuRoundButtons();
+            CloseMenuRoundButtons();
         }
         
-        private async void OnGoToViewUserDetailCommand()
+        private void OnOpenBottomSheetSettingsCommand()
         {
-            await _navigationService.NavigationWithParameter<UserDetailView>();
-
-            CloseMunuRoundButtons();
-        }
-
-        private async void OnExitViewCommand()
-        {
-            var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
-
-            if (!result) return;
-
-            RemoveUserKeysAndFromPreferences();
-
-            CloseMunuRoundButtons();            
-           
-            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
-        }
+            BottomSheetSettingsState = BottomSheetState.FullExpanded;
+        }       
 
         private void OnTextEditAddressEndIconCommand()
         {
@@ -580,12 +672,7 @@ namespace FocamapMaui.MVVM.ViewModels
             BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         }
 
-        private void OnGpsButtonCommand()
-        {
-            IsShowingUser = true;
-        }
-
-        private async Task<OccurrenceModel> CreateOccurrenceModel()
+        private OccurrenceModel CreateOccurrenceModel()
         {           
             return new()
             {
@@ -596,16 +683,34 @@ namespace FocamapMaui.MVVM.ViewModels
                 Hour = HourOccurrence.ToString(@"hh\:mm"),
                 Resume = ResumeOccurrence,
                 Status = LowChipIsSelectedToAdd ? (int)PinStatus.Baixo : AverageChipIsSelectedToAdd ? (int)PinStatus.Medio : (int)PinStatus.Alto,
+                Region = $"{LocationOccurrence.City}-{LocationOccurrence.State}",
                 Location = LocationOccurrence,
-                User = await GetUserLogged(),
+                User = UserLogged,
             };
-        }
+        }        
 
-        private async Task<UserModel> GetUserLogged()
+        private void UpdateLocationOfUserLoggedAndMoveToNewRegion()
         {
-            return await _userRepository.GetByLocalIdFirebase(App.FirebaseUserLocalIdKey);
-        } 
-      
+            LocationOfUserLogged.Latitude = SelectedItemCity.Latitude;
+            LocationOfUserLogged.Longitude = SelectedItemCity.Longitude;
+
+            var newLocation = new Location
+            {
+                Latitude = SelectedItemCity.Latitude,
+                Longitude = SelectedItemCity.Longitude
+            };
+
+            _map.MoveToRegion(MapSpan.FromCenterAndRadius(newLocation, Distance.FromMeters(2700)));
+        }
+               
+        private void UpdateUserInfos()
+        {
+            Email = UserLogged.Email;
+            DisplayName = UserLogged.Name;            
+            SelectedItemCity = UserLogged.City;
+            LetterUserName = DisplayName[0].ToString();
+        }
+        
         private void UpdateListPins(List<OccurrenceModel> list)
         {
             PinsList.Clear();
@@ -637,29 +742,63 @@ namespace FocamapMaui.MVVM.ViewModels
             return pins;
         }
 
-        private void ChangeIconOfLockUnlockButton(string nameIcon)
+        private static void SendWeakReferenceMessenger_OnHandlerChanged()
         {
-            LockUnlockImage = ControlResources.GetImage(nameIcon);
+            WeakReferenceMessenger.Default.Send(new UpdateMapMessage());
         }
 
-        private void ChangeIsEnabledOnGroupButtons(bool isEnabled)
+        private void ChangeIconOfLockUnlockButton(string nameIcon)
         {
-            MainButtonIsEnabled = isEnabled;
-            DetailOccurrenceButtonIsEnabled = isEnabled;
-            AddOccurrenceButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
+            ImageSourceMainButton = ControlResources.GetImage(nameIcon);
+        }
+
+        private bool CheckIfInputsAreOk()
+        {
+            var HasOk = true;
+
+            if (!ValidateNameInput(HasOk) || !ValidatePasswordInput(HasOk))
+            {
+                HasOk = false;
+            }
+
+            return HasOk;
+        }
+
+        private bool ValidatePasswordInput(bool hasOk)
+        {
+            if (string.IsNullOrEmpty(Password) || Name.Length < 3)
+            {
+                BorderColorPassword = ControlResources.GetResource<Color>("CLErrorBorderColor");
+                hasOk = false;
+            }
+            else
+            {
+                BorderColorPassword = Colors.Transparent;
+            }
+
+            return hasOk;
+        }
+
+        private bool ValidateNameInput(bool hasOk)
+        {
+            if (string.IsNullOrEmpty(Name) || Name.Length < 3)
+            {
+                BorderColorDisplayName = ControlResources.GetResource<Color>("CLErrorBorderColor");
+                hasOk = false;
+            }
+            else
+            {
+                BorderColorDisplayName = Colors.Transparent;
+            }
+
+            return hasOk;
         }
 
         private void CheckAnonymousAccess(bool isEnabled)
         {
-            ChangeIconOfLockUnlockButton(isEnabled ? "unlock_24" : "anonymous_24");
+            ChangeIconOfLockUnlockButton(isEnabled ? "menu_24" : "anonymous_24");
 
-            LockUnlockButtonIsEnabled = isEnabled;
-            DetailOccurrenceButtonIsEnabled = isEnabled;
-            AddOccurrenceButtonIsEnabled = isEnabled;
-            UserButtonIsEnabled = isEnabled;
-            ExitButtonIsEnabled = isEnabled;
+            MainButtonIsEnabled = isEnabled;          
         }
         
         private void SetFalseToStatusOfSelectionChipsButtos()
@@ -710,17 +849,31 @@ namespace FocamapMaui.MVVM.ViewModels
             IsSelectingAddressOnMap = value;
         }
 
-        private static void RemoveUserKeysAndFromPreferences()
+        private static void RemoveUserKeysOfPreferencesForLogOff()
         {
             ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_AUTH_TOKEN_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED);
-            ControlPreferences.RemoveKeyFromPreferences(StringConstants.CITY);
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOCAL_ID_KEY);         
+            ControlPreferences.RemoveKeyFromPreferences(StringConstants.FIREBASE_USER_LOGGED_KEY);           
         }
-        
+
         #endregion
 
         #region Public Methods
+
+        public async Task OnExitViewCommand()
+        {
+            var result = await App.Current.MainPage.DisplayAlert("Sair", "Deseja realmente deslogar sua conta?", "Sim", "Cancelar");
+
+            if (!result) return;
+
+            RemoveUserKeysOfPreferencesForLogOff();
+
+            CloseBottomSheetSettings();
+
+            CloseMenuRoundButtons();
+
+            await _navigationService.NavigationWithRoute(StringConstants.LOGINVIEW_ROUTE);
+        }
 
         public void OnOpenBottomSheetAddOccurrenceCommand()
         {
@@ -732,11 +885,9 @@ namespace FocamapMaui.MVVM.ViewModels
             IsBusy = true;
 
             try
-            {               
-                var userLogged = await GetUserLogged();
-
+            {                              
                 var list = await _realtimeDatabaseService.GetByRegion<OccurrenceModel>(firstChild: nameof(OccurrenceModel),
-                            firstOrderBy: "Location/City", firstEqualTo: userLogged.City);
+                            firstOrderBy: "Region", firstEqualTo: $"{UserLogged.City.Name}-{UserLogged.City.State}");
 
                 if (list.Count == 0)
                 {
@@ -757,23 +908,42 @@ namespace FocamapMaui.MVVM.ViewModels
                 IsBusy = false;
             }
         }
-       
-        public async Task<Location> GetLocationOfUserLogged()
+
+        public async Task UpdateProfileUser()
         {
+            IsBusy = true;
+
             try
             {
-                var userLogged = await GetUserLogged();
+                if (CheckIfInputsAreOk())
+                {
+                    var result = await _authenticationService.UpdateUserProfile(Email, Password, Name, SelectedItemCity);
 
-                var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+                    if (result.Equals(StringConstants.OK))
+                    {
+                        GetUserLogged();
 
-                var city = cities.Where(x => x.Name.Equals(userLogged.City) && x.State.Equals(userLogged.State)).FirstOrDefault();
+                        UpdateLocationOfUserLoggedAndMoveToNewRegion();
 
-                return new Location(city.Latitude, city.Longitude);
+                        await LoadPins();
+
+                        SendWeakReferenceMessenger_OnHandlerChanged();
+                        
+                        await App.Current.MainPage.DisplayAlert("Sucesso", "Alterações realizadas com sucesso!", "Ok");
+
+                        return;
+                    }
+                }
+
+                await App.Current.MainPage.DisplayAlert("Atenção", "Preencha corretamente todos os campos.", "OK");
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return new Location();
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
@@ -783,7 +953,7 @@ namespace FocamapMaui.MVVM.ViewModels
 
             try
             {
-                var address = await _mapService.GetAddressFromLocationAsync(location);
+                var address = await _mapService.GetReverseGeocodingAsync(location);
 
                 if (!string.IsNullOrEmpty(address))
                 {
@@ -799,12 +969,12 @@ namespace FocamapMaui.MVVM.ViewModels
                     {
                         AddressOccurrence = address;
 
-                        var city = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
+                        var userLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(StringConstants.FIREBASE_USER_LOGGED_KEY);
 
                         LocationOccurrence = new LocationOccurrence
                         {
-                            State = city.State,
-                            City = city.Name,
+                            State = userLogged.City.State,
+                            City = userLogged.City.Name,
                             Latitude = location.Latitude,
                             Longitude = location.Longitude
                         };
@@ -824,22 +994,63 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
-        public void ChangeLockUnlokImage(object file)
+        public async Task GetGeocoding(string entry)
         {
-            var name = file.ToString()[6..];
+            IsBusy = true;
 
-            if (name.Equals("lock_24"))
+            try
             {
-                ChangeIconOfLockUnlockButton("unlock_24");
-                ChangeIsEnabledOnGroupButtons(isEnabled: true);             
+                var geocodeResult = await _mapService.GetGeocodingAsync(entry);
+
+                if (geocodeResult is not null)
+                {
+                    //todo - Add new marker on Map and navigate to local.
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Buscar", "Local não encontrado. Tente buscar o endereço desta forma; \"Nome_Rua, Nome_Bairro, Nome_Cidade\".", "Ok");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                ChangeIconOfLockUnlockButton("lock_24");
-                ChangeIsEnabledOnGroupButtons(isEnabled: false);              
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops", "Parece que não foi possivel obter o local especificado. Verifique sua conexão e tente novamente.", "Ok");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
-                       
+
+        public void GetUserLogged()
+        {
+            UserLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(StringConstants.FIREBASE_USER_LOGGED_KEY);
+
+            UpdateUserInfos();
+        }
+
+        public void LoadCities()
+        {
+            Cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+        }
+
+        public Location GetLocationOfUserLogged()
+        {
+            try
+            {
+                var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+
+                var city = cities.Where(x => x.Name.Equals(UserLogged.City.Name) && x.State.Equals(UserLogged.City.State)).FirstOrDefault();
+
+                return new Location(city.Latitude, city.Longitude);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return new Location();
+            }
+        }       
+    
         public void SetChangeOnSelectedChip(string chip)
         { 
             switch (chip)
@@ -855,7 +1066,7 @@ namespace FocamapMaui.MVVM.ViewModels
                     break;
             }
         }
-       
+      
         public void SetChangeDefaultStyleOnChips()
         {
             LowChipTextColor = ControlResources.GetResource<Color>("CLGray");
@@ -883,10 +1094,10 @@ namespace FocamapMaui.MVVM.ViewModels
         }
        
         private static bool CheckIfRegionIsAllowed(string address)
-        {
-           var city = ControlPreferences.GetKeyObjectOfPreferences<City>(StringConstants.CITY);
+        {           
+            var userLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(StringConstants.FIREBASE_USER_LOGGED_KEY);
 
-            return address.Contains(city.Name) && address.Contains(city.State);
+            return address.Contains(userLogged.City.Name) && address.Contains(userLogged.City.State);
         }
         
         private void CloseBottomSheetAddOccurrence()
@@ -894,12 +1105,16 @@ namespace FocamapMaui.MVVM.ViewModels
             BottomSheetAddOccurrenceState = BottomSheetState.Hidden;
         }
 
-        public void CloseMunuRoundButtons()
+        private void CloseBottomSheetSettings()
+        {
+            BottomSheetSettingsState = BottomSheetState.Hidden;
+        }
+
+        public void CloseMenuRoundButtons()
         {
             IsVisibleDetailOccurrenceFloatButton = false;
             IsVisibleAddOccurrenceFloatButton = false;
-            IsVisibleUserFloatButton = false;
-            IsVisibleExitFloatButton = false;
+            IsVisibleSettingsFloatButton = false;           
             ImageSourceMainButton = ControlResources.GetImage("menu_24");
             IsOpenMenu = false;
         }

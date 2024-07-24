@@ -11,7 +11,7 @@ namespace FocamapMaui.Components.UI
                 ColumnDefinitions = new ColumnDefinitionCollection
                 {
                     new(){Width = GridLength.Star},
-                    new(){Width = GridLength.Star},
+                    new(){Width = GridLength.Auto},
                     new(){Width = GridLength.Star},
                 },
             };

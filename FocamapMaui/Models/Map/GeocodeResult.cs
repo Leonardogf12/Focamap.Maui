@@ -6,5 +6,8 @@ namespace FocamapMaui.Models.Map
     {
         [JsonProperty("formatted_address")]
         public string FormattedAddress { get; set; }
+
+        [JsonProperty("geometry")]
+        public GeocodeGeometry Geometry { get; set; }
     }
 }

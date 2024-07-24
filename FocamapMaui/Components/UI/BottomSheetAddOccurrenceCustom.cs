@@ -1,10 +1,9 @@
 ﻿using System.Windows.Input;
 using DevExpress.Maui.Controls;
-using FocamapMaui.Components.UI;
 using FocamapMaui.Components.UI.Basics;
 using FocamapMaui.Controls.Resources;
 
-namespace FocamapMaui.Components.Views
+namespace FocamapMaui.Components.UI
 {
     public class BottomSheetAddOccurrenceCustom : BottomSheet
     {

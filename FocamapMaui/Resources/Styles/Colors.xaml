@@ -15,6 +15,9 @@
     <Color x:Key="CLGray">#ACACAC</Color>
     <Color x:Key="CLErrorBorderColor">#E95D5D</Color>
     <Color x:Key="CLRoundImageLetterName">#46698A</Color>
+    <Color x:Key="CLLinkColor">#528ADA</Color>
+
+    
     <Color x:Key="CLPopupRiskHigh">#D63C3C</Color>
     <Color x:Key="CLPopupRiskMedium">#D67C3C</Color>
     <Color x:Key="CLPopupRiskLow">#DBA92A</Color>

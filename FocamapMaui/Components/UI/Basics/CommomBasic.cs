@@ -15,13 +15,13 @@ namespace FocamapMaui.Components.UI.Basics
             };
         }
 
-        public static Label GetLabelTitleBasic(string title, int fontSize = 18)
+        public static Label GetLabelTitleBasic(string title, int fontSize = 18, string fontFamily = "MontserratSemibold")
         {
             return new Label
             {
                 Text = title,
                 FontSize = fontSize,
-                FontFamily = "MontserratSemibold",
+                FontFamily = fontFamily,
                 TextColor = ControlResources.GetResource<Color>("CLWhite"),
                 HorizontalTextAlignment = TextAlignment.Center,
                 VerticalOptions = LayoutOptions.Center

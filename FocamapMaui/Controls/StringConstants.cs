@@ -23,17 +23,20 @@
         public const string AUTH_SECRET = "AuthSecret";
         public const string FIREBASE_AUTH_TOKEN_KEY = "FirebaseAuthToken";
         public const string FIREBASE_USER_EMAIL = "FirebaseUserEmail";
-        public const string FIREBASE_USER_LOGGED = "FirebaseUserLogged";
+        public const string FIREBASE_USER_DISPLAY_NAME = "FirebaseUserDisplayName";
         public const string FIREBASE_USER_LOCAL_ID_KEY = "FirebaseUserLocalIdKey";
         public const string FIREBASE_REALTIME_DATABASE = "FirebaseRealtimeDatabase";
         public const string FIREBASE_AUTH_PROVIDER_KEY = "FirebaseAuthProviderKey";
+        public const string FIREBASE_USER_LOGGED_KEY = "FirebaseUserLoggedKey";
 
         #endregion
 
         #region GOOGLE CLOUD
 
         public const string GOOGLE_CLOUD = "GoogleCloud";
+        public const string REVERSE_GEOCODING_API_KEY = "ReverseGeocodingApiKey";
         public const string GEOCODING_API_KEY = "GeocodingApiKey";
+        public const string GLOBAL_URL_GOOGLE_CLOUD = "https://maps.googleapis.com/maps/api/geocode/json?";
 
         #endregion
 

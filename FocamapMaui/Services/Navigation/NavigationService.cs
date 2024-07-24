@@ -23,6 +23,25 @@
             }                        
         }
 
+        public async Task NavigationPopToRoot()
+        {
+            if (_isBrowsing) return;
+
+            try
+            {
+                _isBrowsing = true;              
+                await Shell.Current.Navigation.PopToRootAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                _isBrowsing = false;
+            }
+        }
+
         public async Task NavigationWithParameter<T>(IDictionary<string, object> parameter = null, View view = null) where T : IView
 		{
             if (_isBrowsing) return;

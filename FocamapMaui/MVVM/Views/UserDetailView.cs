@@ -107,7 +107,7 @@ namespace FocamapMaui.MVVM.Views
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
             DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.Cities));         
             DropdownRegions.SetBinding(IsEnabledProperty, nameof(ViewModel.IsEnabledRegion), BindingMode.TwoWay);
-            DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged; ;
+            DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged;
             stackInputs.Children.Add(DropdownRegions);
 
             grid.AddWithSpan(stackInputs, 1);
@@ -129,12 +129,10 @@ namespace FocamapMaui.MVVM.Views
        
         private void RegionDropdownInput_SelectionChanged(object sender, EventArgs e) => DropdownRegions.Unfocus();
 
-        private async void GoBackButton_Clicked(object sender, EventArgs e) => await GoBack();
+        private async void GoBackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();
 
         private async void ImageNameTapGestureRecognizer_Tapped(object sender, TappedEventArgs e) => await SetBodyImageElementForEvent(sender, SetValuesIsEnabled);
-
-        private async Task GoBack() => await _navigationService.GoBack();
-
+      
         private void SetValuesIsEnabled() => ViewModel.SetsValueForIsEnabledInputs(true);
 
         private async void EditButton_Clicked(object sender, EventArgs e)

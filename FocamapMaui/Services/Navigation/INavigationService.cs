@@ -6,6 +6,8 @@
 
         Task NavigationWithRoute(string route);
 
+        Task NavigationPopToRoot();
+
         Task GoBack();
     }
 }

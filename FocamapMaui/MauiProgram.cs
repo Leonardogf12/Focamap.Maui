@@ -45,10 +45,11 @@ public static class MauiProgram
         builder.Services.AddTransient<RegisterView>();
         builder.Services.AddTransient<ForgotPasswordView>();
         builder.Services.AddTransient<HomeMapView>();
-        builder.Services.AddTransient<OccurrencesHistoryView>();
+        builder.Services.AddSingleton<SettingsView>();
         builder.Services.AddTransient<UserDetailView>();
+        builder.Services.AddTransient<OccurrencesHistoryView>();              
     }
-    
+
     private static void RegisterDependencyForInterfaces(MauiAppBuilder builder)
     {
         builder.Services.AddSingleton<INavigationService, NavigationService>();

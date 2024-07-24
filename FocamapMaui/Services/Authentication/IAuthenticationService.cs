@@ -10,6 +10,6 @@ namespace FocamapMaui.Services.Authentication
 
 		Task RegisterNewUserAsync(string name, string email, string password, City city);
 
-        Task<string> UpdateUserProfile(string email, string password, string newName);
+        Task<string> UpdateUserProfile(string email, string password, string newName, City city);
     }
 }
