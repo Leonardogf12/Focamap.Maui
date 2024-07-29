@@ -71,36 +71,46 @@ namespace FocamapMaui.Components.UI
                 Spacing = -4
             };
 
-            var frame = new Frame
+            var border = new Border
             {
                 BackgroundColor = ControlResources.GetResource<Color>("CLRoundImageLetterName"),
-                BorderColor = Colors.Transparent,
-                WidthRequest = 80,
-                HeightRequest = 80,
-                CornerRadius = 50,
+                StrokeThickness = 0,
+                WidthRequest = 90,
+                HeightRequest = 90,
+                StrokeShape = new RoundRectangle
+                {
+                    CornerRadius = 50,
+                }             
+            };
+
+            var stackLetter = new StackLayout
+            {              
+                VerticalOptions = LayoutOptions.Center,
             };
 
             LabelNameUser = new Label
-            {
-                FontFamily = "MontserratBold",
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
-                FontSize = 40,
+            {                
+                FontFamily = "MontserratBold",                               
+                FontSize = 50,               
                 TextColor = Colors.White,
-                HorizontalTextAlignment = TextAlignment.Center
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center
             };
+            stackLetter.Children.Add(LabelNameUser);
 
-            frame.Content = LabelNameUser;
+            border.Content = stackLetter;
 
             IconEdit = new Image
             {
                 Source = ControlResources.GetImage("edit_24"),
                 HeightRequest = 24,
                 HorizontalOptions = LayoutOptions.Center,
-                Margin = new Thickness(65, -30, 0, 0),
+                Margin = new Thickness(65, -20, 0, 0),
             };
             
-            stack.Children.Add(frame);
+            stack.Children.Add(border);
             stack.Children.Add(IconEdit);
 
            return stack;

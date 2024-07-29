@@ -63,7 +63,7 @@ namespace FocamapMaui.MVVM.Views
 
             BindingContext = _viewModel;
 
-            RegisterWeakReferenceMessenger_OnHandlerChanged();            
+            //RegisterWeakReferenceMessenger_OnHandlerChanged();            
         }
         
         #region UI
@@ -186,11 +186,12 @@ namespace FocamapMaui.MVVM.Views
             bottomSheetAddOccurrence.ChipButtonGroup.LowChipButton.Clicked += LowChipButton_Clicked;             
             bottomSheetAddOccurrence.ChipButtonGroup.AverageChipButton.Clicked += AverageChipButton_Clicked;
             bottomSheetAddOccurrence.ChipButtonGroup.HighChipButton.Clicked += HighChipButton_Clicked;
+            bottomSheetAddOccurrence.TextEditAddress.Unfocused += TextEditAddress_Unfocused;
             bottomSheetAddOccurrence.TextEditAddress.EndIconCommand = _viewModel.TextEditAddressEndIconCommand;
-
+            
             grid.AddWithSpan(bottomSheetAddOccurrence, 0);
         }
-
+        
         private void CreateBottomSheetSettings(Grid grid)
         {
             _bottomSheetSettingsCustom = new BottomSheetSettingsCustom();
@@ -298,7 +299,17 @@ namespace FocamapMaui.MVVM.Views
                 _viewModel.OnOpenBottomSheetAddOccurrenceCommand();                       
             }          
         }
-        
+
+        private async void TextEditAddress_Unfocused(object sender, FocusEventArgs e)
+        {
+            if(sender is TextEditCustom element)
+            {
+                if (string.IsNullOrEmpty(element.Text)) return;
+
+                await _viewModel.GetLocationByGeocoding(element.Text);
+            }
+        }
+
         private void Map_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(_map.VisibleRegion))

@@ -1033,6 +1033,38 @@ namespace FocamapMaui.MVVM.ViewModels
             }
         }
 
+        public async Task GetLocationByGeocoding(string entry)
+        {
+            IsBusy = true;
+
+            try
+            {
+                var geocodeResult = await _mapService.GetGeocodingAsync(entry);
+
+                if (geocodeResult is not null)
+                {
+                    AddressOccurrence = geocodeResult.FormattedAddress;
+
+                    var location = new Location(geocodeResult.Geometry.Location.Latitude, geocodeResult.Geometry.Location.Longitude);
+
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromMeters(2700)));
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Buscar", "Local não encontrado. Tente buscar o endereço desta forma; \"Nome_Rua, Nome_Bairro, Nome_Cidade\".", "Ok");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await App.Current.MainPage.DisplayAlert("Ops", "Parece que não foi possivel obter o local especificado. Verifique sua conexão e tente novamente.", "Ok");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
         public void GetUserLogged()
         {
             if(AnonymousAccess)
