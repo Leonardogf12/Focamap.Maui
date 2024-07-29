@@ -130,8 +130,6 @@
 	  <None Remove="Resources\HelpFiles\App-config.json" />
 	  <None Remove="Resources\Images\arrow_back_24.svg" />
 	  <None Remove="Resources\Images\settings_24.svg" />
-	  <None Remove="Resources\Videos\" />
-	  <None Remove="Resources\Videos\presentation.mp4" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -165,7 +163,6 @@
 	  <Folder Include="Services\Firebase\" />
 	  <Folder Include="Models\Map\" />
 	  <Folder Include="Resources\HelpFiles\" />
-	  <Folder Include="Resources\Videos\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -209,7 +206,6 @@
 	  <BundleResource Include="Resources\Images\button_map_24.svg" />
 	  <BundleResource Include="Resources\Images\arrow_back_24.svg" />
 	  <BundleResource Include="Resources\Images\settings_32.svg" />
-	  <BundleResource Include="Resources\Videos\presentation.mp4" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Google.Cloud.Firestore" Version="3.8.0" />
