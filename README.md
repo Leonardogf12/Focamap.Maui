@@ -1,5 +1,11 @@
 # Focamap: App .NET MAUI 8 - Integração; Google Cloud, GoogleMaps API e Firebase.
 
+
+
+https://github.com/user-attachments/assets/26aa0ce0-df11-472e-8391-918b637c4bf1
+
+
+
 ## Tutorial para implementar o GoogleMaps
 
 ### 0) Crie um Novo Projeto no GoogleCloud. 
