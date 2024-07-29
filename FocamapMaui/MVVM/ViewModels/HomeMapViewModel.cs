@@ -885,17 +885,26 @@ namespace FocamapMaui.MVVM.ViewModels
             IsBusy = true;
 
             try
-            {                              
-                var list = await _realtimeDatabaseService.GetByRegion<OccurrenceModel>(firstChild: nameof(OccurrenceModel),
-                            firstOrderBy: "Region", firstEqualTo: $"{UserLogged.City.Name}-{UserLogged.City.State}");
+            {
+                List<OccurrenceModel> listOccurrences = new();
 
-                if (list.Count == 0)
+                if(AnonymousAccess)
+                {
+                    listOccurrences = await _realtimeDatabaseService.GetAllAsync<OccurrenceModel>(nameChild: nameof(OccurrenceModel));
+                }
+                else
+                {
+                    listOccurrences = await _realtimeDatabaseService.GetByRegion<OccurrenceModel>(firstChild: nameof(OccurrenceModel),
+                                                firstOrderBy: "Region", firstEqualTo: $"{UserLogged.City.Name}-{UserLogged.City.State}");
+                }
+
+                if (listOccurrences.Count == 0)
                 {
                     PinsList.Clear();
                     return;
                 }
 
-                UpdateListPins(list);
+                UpdateListPins(listOccurrences);
 
                 await Task.CompletedTask;
             }
@@ -1004,7 +1013,9 @@ namespace FocamapMaui.MVVM.ViewModels
 
                 if (geocodeResult is not null)
                 {
-                    //todo - Add new marker on Map and navigate to local.
+                    var location = new Location(geocodeResult.Geometry.Location.Latitude, geocodeResult.Geometry.Location.Longitude);
+
+                    Map.MoveToRegion(MapSpan.FromCenterAndRadius(location, Distance.FromMeters(2700)));
                 }
                 else
                 {
@@ -1024,9 +1035,32 @@ namespace FocamapMaui.MVVM.ViewModels
 
         public void GetUserLogged()
         {
+            if(AnonymousAccess)
+            {
+                GetAnonymousUserLogged();
+                return;
+            }
+
             UserLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(StringConstants.FIREBASE_USER_LOGGED_KEY);
 
             UpdateUserInfos();
+        }
+
+        private void GetAnonymousUserLogged()
+        {                      
+            var cities = CitiesOfEs.GetCitiesOfEspiritoSanto();
+
+            var city = cities.Where(x => x.Name.StartsWith("Vitória") && x.State.Equals(StringConstants.ES)).FirstOrDefault();
+
+            ControlPreferences.UpdateKeyFromPreference(key: StringConstants.FIREBASE_USER_LOGGED_KEY, valueString: "", contentObject: new UserModel
+            {
+                Name = "Anonymous",
+                Email = "anonymousaccess@focamap.com",
+                City = city,
+                LocalIdFirebase = "no_id"
+            });
+
+            UserLogged = ControlPreferences.GetKeyObjectOfPreferences<UserModel>(StringConstants.FIREBASE_USER_LOGGED_KEY);
         }
 
         public void LoadCities()

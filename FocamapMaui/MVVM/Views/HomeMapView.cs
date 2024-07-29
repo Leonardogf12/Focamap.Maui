@@ -9,6 +9,7 @@ using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
+using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Authentication;
@@ -125,13 +126,13 @@ namespace FocamapMaui.MVVM.Views
                 HorizontalOptions = LayoutOptions.Center,
                 Children =
                 {
-                    new SearchBarCustom("Burcar", SearchBar_SearchButtonPressed),
+                    new SearchBarCustom("Burcar", SearchBar_SearchButtonPressed),                    
                 }
             };
            
             grid.AddWithSpan(stack, 0);
         }
-                   
+             
         private void CreateGroupButtons(Grid grid)
         {
             _menuFloatButton = new MenuFloatButtons(eventMainButton: MainButton_ClickedEvent,                                                  
@@ -235,6 +236,8 @@ namespace FocamapMaui.MVVM.Views
                 {
                     await _viewModel.GetGeocoding(element.Text);
                 }
+
+                element.Unfocus();
             } 
         }
 
