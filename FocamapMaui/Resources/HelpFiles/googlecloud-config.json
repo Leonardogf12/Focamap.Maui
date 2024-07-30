@@ -1,6 +1,6 @@
 ﻿{
   "GoogleCloud": {
-    "ReverseGeocodingApiKey": "AIzaSyDOyRpa1QqG6btASTZ_z64MyxjsxTqOXO0",
-    "GeocodingApiKey": "AIzaSyCezSCZoV4eGGsvlHa8Eq8On7zaiMmXRYI"
+    "ReverseGeocodingApiKey": "repo_secret",
+    "GeocodingApiKey": "repo_secret"
   }
 }

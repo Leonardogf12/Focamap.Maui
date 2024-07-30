@@ -1,6 +1,5 @@
 ﻿{
   "AppConfig": {
-    "DbPath": "/data/user/0/com.companyname.focamapmaui/files/dbfocamap.db3"
+    "DbPath": "repo_secret"
   }
 }
-
