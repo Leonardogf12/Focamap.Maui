@@ -20,7 +20,7 @@ namespace FocamapMaui.MVVM.Views
         private readonly IAuthenticationService _authenticationService;
 
 
-        public RegisterViewModel ViewModel;
+        private readonly RegisterViewModel _viewModel;
 
         public TextEditCustom NameTextEdit;
         public TextEditCustom EmailTextEdit;
@@ -40,11 +40,11 @@ namespace FocamapMaui.MVVM.Views
 
             Content = BuildRegisterView;
 
-            ViewModel = new(_authenticationService);
+            _viewModel = new(_authenticationService);
 
-            CreateLoadingPopupView(this, ViewModel);
+            CreateLoadingPopupView(this, _viewModel);
 
-            BindingContext = ViewModel;
+            BindingContext = _viewModel;
         }
 
         #region UI
@@ -93,33 +93,33 @@ namespace FocamapMaui.MVVM.Views
             var stackInputs = CommomBasic.GetStackLayoutBasic(spacing: 20);
 
             NameTextEdit = new TextEditCustom(startIcon: "user_24", endIcon: null, placeholder: "Nome");
-            NameTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Name));
-            NameTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorNameInput));
+            NameTextEdit.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Name));
+            NameTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(_viewModel.BorderColorNameInput));
             NameTextEdit.TextChanged += NameTextEdit_TextChanged;
             stackInputs.Children.Add(NameTextEdit);
 
             EmailTextEdit = new TextEditCustom(startIcon: "user_24", endIcon: null, placeholder: "Email", keyboard: Keyboard.Email);
-            EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Email));
-            EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorEmailInput));
+            EmailTextEdit.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Email));
+            EmailTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(_viewModel.BorderColorEmailInput));
             EmailTextEdit.TextChanged += EmailTextEdit_TextChanged;
             stackInputs.Children.Add(EmailTextEdit);
 
             PasswordTextEdit = new PasswordEditCustom(icon: "password_24", placeholder: "Senha");
-            PasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.Password));
-            PasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorPasswordInput));
+            PasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.Password));
+            PasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(_viewModel.BorderColorPasswordInput));
             PasswordTextEdit.TextChanged += PasswordTextEdit_TextChanged;
             stackInputs.Children.Add(PasswordTextEdit);
 
             RePasswordTextEdit = new PasswordEditCustom(icon: "password_24", placeholder: "Repita a senha");
-            RePasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(ViewModel.RepeatPassword));
-            RePasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorRePasswordInput));
+            RePasswordTextEdit.SetBinding(TextEditBase.TextProperty, nameof(_viewModel.RepeatPassword));
+            RePasswordTextEdit.SetBinding(EditBase.BorderColorProperty, nameof(_viewModel.BorderColorRePasswordInput));
             RePasswordTextEdit.TextChanged += RePasswordTextEdit_TextChanged;
             stackInputs.Children.Add(RePasswordTextEdit);
 
             DropdownRegions = new ComboboxEditCustom(icon: "menu_24");
-            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(ViewModel.Cities));          
-            DropdownRegions.SetBinding(ComboBoxEdit.SelectedItemProperty, nameof(ViewModel.SelectedCity));
-            DropdownRegions.SetBinding(EditBase.BorderColorProperty, nameof(ViewModel.BorderColorRegionInput));
+            DropdownRegions.SetBinding(ItemsEditBase.ItemsSourceProperty, nameof(_viewModel.Cities));          
+            DropdownRegions.SetBinding(ComboBoxEdit.SelectedItemProperty, nameof(_viewModel.SelectedCity));
+            DropdownRegions.SetBinding(EditBase.BorderColorProperty, nameof(_viewModel.BorderColorRegionInput));
             DropdownRegions.SelectionChanged += RegionDropdownInput_SelectionChanged;
 
             stackInputs.Children.Add(DropdownRegions);
@@ -142,28 +142,32 @@ namespace FocamapMaui.MVVM.Views
 
         private void NameTextEdit_TextChanged(object sender, EventArgs e)
         {
-            ViewModel.CheckIfInputsAreOk();
+            //_viewModel.CheckIfInputsAreOk();
+            _viewModel.ValidateNameInput();
         }
 
         private void EmailTextEdit_TextChanged(object sender, EventArgs e)
-        {
-            ViewModel.CheckIfInputsAreOk();
+        {            
+            //_viewModel.CheckIfInputsAreOk();
+            _viewModel.ValidateEmailInput();
         }
 
         private void PasswordTextEdit_TextChanged(object sender, EventArgs e)
         {
-            ViewModel.CheckIfInputsAreOk();
+            //_viewModel.CheckIfInputsAreOk();
+            _viewModel.ValidatePasswordInput();
         }
 
         private void RePasswordTextEdit_TextChanged(object sender, EventArgs e)
         {
-            ViewModel.CheckIfInputsAreOk();
+            //_viewModel.CheckIfInputsAreOk();
+            _viewModel.ValidateRepeatPasswordInput();
         }               
 
         private async void EnterButton_Clicked(object sender, EventArgs e)
         {
             SetUnfocusFromAllInputs();
-            await ViewModel.RegisterNewUser();           
+            await _viewModel.RegisterNewUser();           
         }
       
         private async void GoBackButton_Clicked(object sender, EventArgs e) => await _navigationService.GoBack();          
@@ -181,7 +185,7 @@ namespace FocamapMaui.MVVM.Views
         {
             base.OnAppearing();
 
-            ViewModel.LoadCities();
+            _viewModel.LoadCities();
         }
 
         private void SetUnfocusFromAllInputs()

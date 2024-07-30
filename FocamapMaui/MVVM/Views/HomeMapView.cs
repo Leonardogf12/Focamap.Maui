@@ -9,7 +9,6 @@ using FocamapMaui.Controls.Extensions.Animations;
 using FocamapMaui.Controls.Extensions.Events;
 using FocamapMaui.Controls.Maps;
 using FocamapMaui.Controls.Resources;
-using FocamapMaui.Models.Map;
 using FocamapMaui.MVVM.Base;
 using FocamapMaui.MVVM.ViewModels;
 using FocamapMaui.Services.Authentication;

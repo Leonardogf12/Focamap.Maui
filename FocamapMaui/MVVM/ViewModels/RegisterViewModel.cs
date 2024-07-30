@@ -140,6 +140,8 @@ namespace FocamapMaui.MVVM.ViewModels
             _authenticationService = authenticationService;
 		}
 
+        #region Public Methods
+
         public async Task RegisterNewUser()
         {
             IsBusy = true;
@@ -162,7 +164,7 @@ namespace FocamapMaui.MVVM.ViewModels
             finally
             {
                 IsBusy = false;
-            }                    
+            }
         }
 
         public void LoadCities()
@@ -174,91 +176,87 @@ namespace FocamapMaui.MVVM.ViewModels
         {
             var HasOk = true;
 
-            if (!ValidateNameInput(HasOk)
-            || !ValidateEmailInput(HasOk)
-            || !ValidatePasswordInput(HasOk)
-            || !ValidateRepeatPasswordInput(HasOk)
-            || !ValidateRegionInput(HasOk))
+            if (!ValidateNameInput()
+            || !ValidateEmailInput()
+            || !ValidatePasswordInput()
+            || !ValidateRepeatPasswordInput()
+            || !ValidateRegionInput())
             {
                 HasOk = false;
             }
-           
+
             return HasOk;
         }
-       
-        private bool ValidateNameInput(bool hasOk)
+
+        public bool ValidateNameInput()
         {
             if (string.IsNullOrEmpty(Name) || Name.Length < 3)
             {
                 BorderColorNameInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
-                hasOk = false;
-            }
-            else
-            {
-                BorderColorNameInput = Colors.Transparent;
+                return false;
             }
 
-            return hasOk;
+            BorderColorNameInput = Colors.Transparent;
+
+            return true;
         }
 
-        private bool ValidateEmailInput(bool hasOk)
+        public bool ValidateEmailInput()
         {
-            if (string.IsNullOrEmpty(Email) || !Email.Contains('@'))
+            if (string.IsNullOrEmpty(Email) || !Email.Contains('@') || Email.Length < 7)
             {
                 BorderColorEmailInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
-                hasOk = false;
-            }
-            else
-            {
-                BorderColorEmailInput = Colors.Transparent;
+                return false;
             }
 
-            return hasOk;
+            BorderColorEmailInput = Colors.Transparent;
+
+            return true;
         }
 
-        private bool ValidateRepeatPasswordInput(bool hasOk)
-        {
-            if (string.IsNullOrEmpty(RepeatPassword) || RepeatPassword.Length < 6)
-            {
-                BorderColorRePasswordInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
-                hasOk = false;
-            }
-            else
-            {
-                BorderColorRePasswordInput = Colors.Transparent;
-            }
-
-            return hasOk;
-        }
-
-        private bool ValidatePasswordInput(bool hasOk)
+        public bool ValidatePasswordInput()
         {
             if (string.IsNullOrEmpty(Password) || Password.Length < 6)
             {
                 BorderColorPasswordInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
-                hasOk = false;
-            }
-            else
-            {
-                BorderColorPasswordInput = Colors.Transparent;
+                return false;
             }
 
-            return hasOk;
+            BorderColorPasswordInput = Colors.Transparent;
+
+            return true;
         }
 
-        private bool ValidateRegionInput(bool hasOk)
+        public bool ValidateRepeatPasswordInput()
+        {
+            if (string.IsNullOrEmpty(RepeatPassword) || RepeatPassword.Length < 6 || !(RepeatPassword == Password))
+            {
+                BorderColorRePasswordInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
+                return false;
+            }
+
+            BorderColorRePasswordInput = Colors.Transparent;
+
+            return true;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private bool ValidateRegionInput()
         {
             if (SelectedCity == null)
             {
                 BorderColorRegionInput = ControlResources.GetResource<Color>("CLErrorBorderColor");
-                hasOk = false;
-            }
-            else
-            {
-                BorderColorRegionInput = Colors.Transparent;
+                return false;
             }
 
-            return hasOk;
+            BorderColorRegionInput = Colors.Transparent;
+
+            return true;
         }
+
+        #endregion
     }
 }

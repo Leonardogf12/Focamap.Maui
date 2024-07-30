@@ -207,9 +207,6 @@
 	  <BundleResource Include="Resources\Images\button_map_24.svg" />
 	  <BundleResource Include="Resources\Images\arrow_back_24.svg" />
 	  <BundleResource Include="Resources\Images\settings_32.svg" />
-	  <BundleResource Include="Resources\HelpFiles\app-config.json" />
-	  <BundleResource Include="Resources\HelpFiles\firebase-config.json" />
-	  <BundleResource Include="Resources\HelpFiles\googlecloud-config.json" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Google.Cloud.Firestore" Version="3.8.0" />
@@ -242,6 +239,9 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Maps\dark_map_style.json" />
 	  <EmbeddedResource Include="Resources\Maps\night_map_style.json" />
+	  <EmbeddedResource Include="Resources\HelpFiles\app-config.json" />
+	  <EmbeddedResource Include="Resources\HelpFiles\firebase-config.json" />
+	  <EmbeddedResource Include="Resources\HelpFiles\googlecloud-config.json" />
 	</ItemGroup>
 
 	<ItemGroup>
