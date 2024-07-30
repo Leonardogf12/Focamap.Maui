@@ -406,4 +406,4 @@ ASALocalRun/
 
 # Remove hellfire path
 
-/Resources/HelpFiles
+./Resources/HelpFiles
