@@ -1,0 +1,7 @@
+﻿{
+  "Firebase": {
+    "FirebaseRealtimeDatabase": "https://focamapmaui-23c5c-default-rtdb.firebaseio.com/",
+    "AuthSecret": "DRxO7Q2ASQpWfhup19QaNnX248610D29xmpMLbI8",
+    "FirebaseAuthProviderKey": "AIzaSyBmEIGJpn6VnoMIXxgQTgFxvybI9xPO_gE"
+  }
+}
