@@ -405,7 +405,4 @@ ASALocalRun/
 .localhistory/
 
 # Remove hellfire path
-Resources/HelpFiles/
-Resources/HelpFiles/app-config.json
-Resources/HelpFiles/firebase-config.json
-Resources/HelpFiles/googlecloud-config.json
+/FocamapMaui/Resources/HelpFiles/
