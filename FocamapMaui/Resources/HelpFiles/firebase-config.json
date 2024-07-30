@@ -1,7 +1,0 @@
-﻿{
-  "Firebase": {
-    "FirebaseRealtimeDatabase": "repo_secret",
-    "AuthSecret": "repo_secret",
-    "FirebaseAuthProviderKey": "repo_secret"
-  }
-}

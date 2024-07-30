@@ -1,6 +1,0 @@
-﻿{
-  "GoogleCloud": {
-    "ReverseGeocodingApiKey": "repo_secret",
-    "GeocodingApiKey": "repo_secret"
-  }
-}

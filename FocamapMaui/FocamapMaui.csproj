@@ -124,9 +124,7 @@
 	  <None Remove="Models\Map\" />
 	  <None Remove="Resources\Images\btnmap_24.svg" />
 	  <None Remove="Resources\Images\button_map_24.svg" />
-	  <None Remove="Resources\HelpFiles\firebase-config.json" />
 	  <None Remove="Resources\HelpFiles\" />
-	  <None Remove="Resources\HelpFiles\googlecloud-config.json" />
 	  <None Remove="Resources\HelpFiles\App-config.json" />
 	  <None Remove="Resources\Images\arrow_back_24.svg" />
 	  <None Remove="Resources\Images\settings_24.svg" />
@@ -238,9 +236,6 @@
 	<ItemGroup>
 	  <EmbeddedResource Include="Resources\Maps\dark_map_style.json" />
 	  <EmbeddedResource Include="Resources\Maps\night_map_style.json" />
-	  <EmbeddedResource Include="Resources\HelpFiles\firebase-config.json" />
-	  <EmbeddedResource Include="Resources\HelpFiles\googlecloud-config.json" />
-	  <EmbeddedResource Include="Resources\HelpFiles\app-config.json" />
 	</ItemGroup>
 
 	<ItemGroup>
