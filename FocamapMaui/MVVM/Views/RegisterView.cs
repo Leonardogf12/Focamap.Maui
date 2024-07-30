@@ -141,26 +141,22 @@ namespace FocamapMaui.MVVM.Views
         #region Events
 
         private void NameTextEdit_TextChanged(object sender, EventArgs e)
-        {
-            //_viewModel.CheckIfInputsAreOk();
+        {           
             _viewModel.ValidateNameInput();
         }
 
         private void EmailTextEdit_TextChanged(object sender, EventArgs e)
-        {            
-            //_viewModel.CheckIfInputsAreOk();
+        {                       
             _viewModel.ValidateEmailInput();
         }
 
         private void PasswordTextEdit_TextChanged(object sender, EventArgs e)
-        {
-            //_viewModel.CheckIfInputsAreOk();
+        {           
             _viewModel.ValidatePasswordInput();
         }
 
         private void RePasswordTextEdit_TextChanged(object sender, EventArgs e)
-        {
-            //_viewModel.CheckIfInputsAreOk();
+        {           
             _viewModel.ValidateRepeatPasswordInput();
         }               
 
